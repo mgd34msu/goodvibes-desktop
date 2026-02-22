@@ -8,6 +8,8 @@ import type { ThemeId } from './theme-types.js';
 // Settings Types
 // ============================================================================
 
+export type TmuxMode = 'single-session' | 'separate-sessions';
+
 export interface AppSettings {
   theme: 'dark' | 'light';
   colorTheme: ThemeId;
@@ -70,6 +72,10 @@ export interface AppSettings {
   // Clipboard image settings
   clipboardImageCleanupEnabled: boolean;
   clipboardImageMaxAgeDays: number;
+  // Tmux integration settings
+  tmuxEnabled: boolean;
+  tmuxMode: TmuxMode;
+  tmuxSessionName: string;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -134,6 +140,9 @@ export const DEFAULT_SETTINGS: AppSettings = {
   // Clipboard image settings
   clipboardImageCleanupEnabled: true,
   clipboardImageMaxAgeDays: 7,
+  tmuxEnabled: false,
+  tmuxMode: 'single-session',
+  tmuxSessionName: 'goodvibes',
 };
 
 // Settings version - increment this when adding new settings that need migration
@@ -157,7 +166,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
 // Version 12: Added rate limit toggle for tag scanning
 // Version 13: Added agent session scanning toggle
 // Version 14: Added clipboard image cleanup settings
-export const SETTINGS_VERSION = 14;
+// Version 15: Added tmux integration settings
+export const SETTINGS_VERSION = 15;
 
 // Settings that were added/changed in each version and need to be reset to defaults
 export const SETTINGS_MIGRATIONS: Record<number, (keyof AppSettings)[]> = {
@@ -232,6 +242,12 @@ export const SETTINGS_MIGRATIONS: Record<number, (keyof AppSettings)[]> = {
   14: [
     'clipboardImageCleanupEnabled',
     'clipboardImageMaxAgeDays',
+  ],
+  // Version 15: Added tmux integration settings
+  15: [
+    'tmuxEnabled',
+    'tmuxMode',
+    'tmuxSessionName',
   ],
 };
 

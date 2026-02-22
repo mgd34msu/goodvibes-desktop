@@ -6,6 +6,7 @@ import { useSettings } from './hooks';
 import { AppearanceSettings } from './AppearanceSettings';
 import { StartupSettings, ClaudeSettings, GitSettings, BudgetSettings, BackupSettings } from './GeneralSettings';
 import { TerminalSettings } from './TerminalSettings';
+import { TmuxSettings } from './TmuxSettings';
 import { TimezoneSettings } from './TimezoneSettings';
 import { GitHubSettings } from './GitHubSettings';
 import { SessionPreviewVisibilitySettings, SessionPreviewExpandSettings } from './SessionPreviewSettings';
@@ -46,6 +47,9 @@ export default function SettingsView() {
 
         {/* Terminal Settings */}
         <TerminalSettings settings={settings} onChange={handleChange} />
+
+        {/* Tmux Integration */}
+        <TmuxSettings settings={settings} onChange={handleChange} />
 
         {/* Git Integration */}
         <GitSettings settings={settings} onChange={handleChange} />

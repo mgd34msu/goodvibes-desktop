@@ -8,6 +8,7 @@ import * as path from 'path';
 import { ipcMain } from 'electron';
 import { sendToRenderer } from '../window.js';
 import { getSetting, logActivity } from '../database/index.js';
+import { tmuxService } from './tmuxService.js';
 import { addRecentProject } from './recentProjects.js';
 import { Logger } from './logger.js';
 import { getPTYStreamAnalyzer } from './ptyStreamAnalyzer.js';
@@ -271,8 +272,19 @@ export async function startTerminal(options: TerminalStartOptions): Promise<Term
     const fullCommand = `${claudePath} ${args.join(' ')}`;
     logger.info(`Full Claude command: ${fullCommand}`);
 
+    let spawnCommand = claudePath;
+    let spawnArgs = args;
+
+    const tmuxEnabled = getSetting('tmuxEnabled');
+    if (tmuxEnabled && tmuxService.isAvailable()) {
+      const windowName = `session-${options.resumeSessionId || 'new'}`;
+      const wrapped = tmuxService.wrapCommand(claudePath, args, windowName);
+      spawnCommand = wrapped.command;
+      spawnArgs = wrapped.args;
+    }
+
     // Spawn Claude with node-pty
-    const ptyProc = pty.spawn(claudePath, args, {
+    const ptyProc = pty.spawn(spawnCommand, spawnArgs, {
       name: 'xterm-256color',
       cols: 120,
       rows: 30,
@@ -399,8 +411,19 @@ export async function startPlainTerminal(options: TerminalStartOptions): Promise
 
     logger.info(`Starting plain terminal with shell: ${shell} (custom: ${!!customShell}) in ${workingDir}`);
 
+    let spawnCommand = shell;
+    let spawnArgs: string[] = [];
+
+    const tmuxEnabled = getSetting('tmuxEnabled');
+    if (tmuxEnabled && tmuxService.isAvailable()) {
+      const windowName = `term-${terminalId}`;
+      const wrapped = tmuxService.wrapCommand(shell, [], windowName);
+      spawnCommand = wrapped.command;
+      spawnArgs = wrapped.args;
+    }
+
     // Spawn shell with node-pty
-    const ptyProc = pty.spawn(shell, [], {
+    const ptyProc = pty.spawn(spawnCommand, spawnArgs, {
       name: 'xterm-256color',
       cols: 120,
       rows: 30,

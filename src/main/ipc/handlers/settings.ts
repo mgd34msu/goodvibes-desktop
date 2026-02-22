@@ -3,6 +3,7 @@
 // ============================================================================
 
 import { ipcMain, app } from 'electron';
+import { tmuxService } from '../../services/tmuxService.js';
 import { Logger } from '../../services/logger.js';
 import { withContext } from '../utils.js';
 import * as db from '../../database/index.js';
@@ -88,6 +89,11 @@ export function registerSettingsHandlers(): void {
     }
 
     return app.getPath(validation.data as AppPathName);
+  }));
+
+  ipcMain.handle('tmux:detect', withContext('tmux:detect', async () => {
+    const result = tmuxService.detectTmux();
+    return { available: result !== null, path: result };
   }));
 
   logger.info('Settings handlers registered');

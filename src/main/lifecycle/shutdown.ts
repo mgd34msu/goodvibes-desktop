@@ -16,6 +16,7 @@ import { stopHookServer } from '../services/hookServer.js';
 import { shutdownGitWatcher } from '../services/gitWatcher.js';
 import { shutdownDeviceFlow } from '../services/github/index.js';
 import { removeAllListeners } from './listenerRegistry.js';
+import { tmuxService } from '../services/tmuxService.js';
 import { GRACEFUL_SHUTDOWN_TIMEOUT_MS } from '../../shared/constants.js';
 
 const logger = new Logger('Shutdown');
@@ -92,6 +93,10 @@ export async function performGracefulShutdown(): Promise<void> {
     closeAllTerminals();
     await waitForTerminals();
     logger.info('All terminals closed');
+
+    // Cleanup tmux sessions
+    tmuxService.cleanup();
+    logger.info('Tmux sessions cleaned up');
 
     // Close database
     closeDatabase();

@@ -163,6 +163,7 @@ const mockGoodVibesAPI = {
   getAppVersion: vi.fn().mockResolvedValue('1.0.0'),
   getAppPath: vi.fn().mockResolvedValue('/tmp'),
   getPlatform: vi.fn().mockReturnValue('win32'),
+  detectTmux: vi.fn().mockResolvedValue({ available: false, path: null }),
   getAvailableEditors: vi.fn().mockResolvedValue([]),
 
   // Maintenance

@@ -92,6 +92,9 @@ const settingsSchema: PersistenceSchema<AppSettings> = {
     tagScanAgentSessions: validators.isBoolean,
     clipboardImageCleanupEnabled: validators.isBoolean,
     clipboardImageMaxAgeDays: validators.isInRange(1, 365),
+    tmuxEnabled: validators.isBoolean,
+    tmuxMode: validators.isOneOf(['single-session', 'separate-sessions'] as const),
+    tmuxSessionName: validators.isString,
   },
 };
 

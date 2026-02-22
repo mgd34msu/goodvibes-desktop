@@ -18,4 +18,7 @@ export const settingsApi = {
   /** Returns the OS platform: 'win32', 'darwin', 'linux', etc. */
   getPlatform: (): NodeJS.Platform =>
     process.platform,
+  /** Detects whether tmux is available and returns its path */
+  detectTmux: () =>
+    ipcRenderer.invoke('tmux:detect'),
 };
