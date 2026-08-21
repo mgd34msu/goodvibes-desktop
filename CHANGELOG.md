@@ -5,6 +5,17 @@ All notable changes to GoodVibes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.5] - 2026-08-21
+
+### Changed
+
+- First release under continuous integration. The repo now gates every push
+  on the real build, a failing-test-file ratchet, typecheck error-count
+  ratchets, and lint count ratchets against measured baselines that can only
+  shrink, and the release script runs those same gates and the packaging
+  before any commit, tag, or push exists.
+- Documentation and comments cleaned up; no behavior change.
+
 ## [1.1.0] - 2026-02-03
 
 ### Added
