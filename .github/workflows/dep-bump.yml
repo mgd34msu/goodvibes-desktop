@@ -1,0 +1,45 @@
+name: Dependency bump (manual)
+
+# The development environment refuses registry fetches, so lockfile-changing
+# dependency bumps run here: the runner installs the requested package, proves
+# the tree still builds and the ratchets hold on the target Node, and uploads
+# the changed manifest pair as an artifact for a human-driven commit. This
+# workflow never pushes.
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_spec:
+        description: "npm package spec to install, e.g. better-sqlite3@^12"
+        required: true
+      node_version:
+        description: "Node version to prove the install against"
+        required: true
+        default: "26"
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+      - name: Install the requested spec
+        run: npm install ${{ inputs.package_spec }} --save
+      - name: Prove a clean install on this Node
+        run: rm -rf node_modules && npm ci
+      - name: Ratchets and build
+        run: |
+          node scripts/ci/check-typecheck-ratchet.mjs
+          node scripts/ci/check-lint-ratchet.mjs
+          node scripts/ci/check-test-ratchet.mjs
+          npm run build
+      - name: Upload the changed manifests
+        uses: actions/upload-artifact@v4
+        with:
+          name: manifest-bump
+          path: |
+            package.json
+            package-lock.json
