@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GoodVibes Desktop — UX Deep Dive</title>
+<style>
+  :root {
+    --bg: #f6f6fa;
+    --surface: #ffffff;
+    --surface-2: #eeeef5;
+    --ink: #1c1e2e;
+    --muted: #5c6079;
+    --line: #d9dae6;
+    --accent: #6d5ce6;
+    --accent-ink: #5646c9;
+    --good: #0f8f6c;
+    --good-bg: #e2f5ee;
+    --crit: #d23359;
+    --crit-bg: #fbe7ec;
+    --high: #c26a00;
+    --high-bg: #fcefdd;
+    --med: #2270b8;
+    --med-bg: #e4eff9;
+    --low: #667;
+    --low-bg: #ececf2;
+    --code-bg: #eeeef6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1020;
+      --surface: #171a2e;
+      --surface-2: #1f2340;
+      --ink: #e7e9f5;
+      --muted: #9297b3;
+      --line: #2b2f4d;
+      --accent: #8f7ff0;
+      --accent-ink: #a99cf5;
+      --good: #3ecfa4;
+      --good-bg: #12352c;
+      --crit: #ff6b8e;
+      --crit-bg: #3d1626;
+      --high: #ffb15c;
+      --high-bg: #3a2a12;
+      --med: #6cb8f2;
+      --med-bg: #16304a;
+      --low: #9aa0bb;
+      --low-bg: #23263c;
+      --code-bg: #202441;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  main { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent-ink); font-weight: 600; margin-bottom: 10px;
+  }
+  h1 { font-size: 34px; line-height: 1.15; margin: 0 0 14px; text-wrap: balance; font-weight: 750; }
+  h2 {
+    font-size: 22px; margin: 56px 0 6px; padding-top: 24px; border-top: 1px solid var(--line);
+    text-wrap: balance;
+  }
+  h2 .sec-note { display:block; font-size: 13px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+  h3 { font-size: 16px; margin: 24px 0 8px; }
+  p { margin: 10px 0; }
+  .standfirst { font-size: 18px; color: var(--muted); max-width: 64ch; }
+  .statrow { display: flex; flex-wrap: wrap; gap: 12px; margin: 26px 0 8px; }
+  .stat {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 18px; min-width: 130px; flex: 1;
+  }
+  .stat b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 12.5px; color: var(--muted); }
+  .chip {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; padding: 2px 9px; border-radius: 999px; vertical-align: 2px;
+  }
+  .chip.crit { color: var(--crit); background: var(--crit-bg); }
+  .chip.high { color: var(--high); background: var(--high-bg); }
+  .chip.med  { color: var(--med);  background: var(--med-bg); }
+  .chip.low  { color: var(--low);  background: var(--low-bg); }
+  .chip.good { color: var(--good); background: var(--good-bg); }
+  .chip.verified { color: var(--accent-ink); background: var(--surface-2); border: 1px solid var(--line); }
+  code, .path {
+    font: 13px/1.5 ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+    background: var(--code-bg); border-radius: 5px; padding: 1px 6px; word-break: break-all;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 18px; margin: 12px 0;
+  }
+  .card h4 { margin: 0 0 6px; font-size: 15.5px; line-height: 1.4; }
+  .card p { margin: 6px 0; font-size: 14.5px; }
+  .card .fix { color: var(--muted); font-size: 14px; }
+  .card .fix b { color: var(--ink); }
+  .goodgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 14px; }
+  .goodgrid .card { margin: 0; border-left: 3px solid var(--good); }
+  .goodgrid .card h4 { font-size: 14.5px; }
+  .goodgrid .card p { font-size: 13.5px; color: var(--muted); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  .tablewrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 10px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); background: var(--surface-2); }
+  tr:last-child td { border-bottom: none; }
+  td { background: var(--surface); }
+  ul.tight { padding-left: 20px; margin: 8px 0; }
+  ul.tight li { margin: 5px 0; font-size: 14.5px; }
+  .p-band {
+    border-radius: 12px; border: 1px solid var(--line); background: var(--surface);
+    padding: 18px 20px; margin: 14px 0;
+  }
+  .p-band .p-tag {
+    font-size: 12px; font-weight: 800; letter-spacing: .1em; color: var(--accent-ink);
+  }
+  .p-band h3 { margin: 4px 0 8px; }
+  .footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">UX deep dive · goodvibes-desktop v1.1.4 · July 6, 2026</div>
+  <h1>Strong bones, unfinished nervous system</h1>
+  <p class="standfirst">
+    Fifteen reviewer agents read the app end to end across ten UX dimensions; seventeen high-stakes claims
+    were re-verified by adversarial agents against the source, and the app was built and run live for
+    screenshots of both a fresh first-run and real data. The verdict: the visual design, component
+    consistency, and data engineering are genuinely good — but the app repeatedly builds a capability and
+    then fails to connect it, and the core loop (a running Claude terminal) fails silently in the moments
+    that matter most.
+  </p>
+
+  <div class="statrow">
+    <div class="stat"><b>10 + 1</b><span>UX dimensions + completeness critic</span></div>
+    <div class="stat"><b>83</b><span>friction findings, cited to file &amp; line</span></div>
+    <div class="stat"><b>16 / 17</b><span>high-stakes claims confirmed by adversarial re-verification (1 refuted)</span></div>
+    <div class="stat"><b>~2.1M</b><span>agent tokens · 870+ tool calls</span></div>
+  </div>
+
+  <h2>The one-paragraph diagnosis</h2>
+  <p>
+    GoodVibes' single biggest UX problem is not any one screen — it's a pattern. At least <b>eleven fully
+    built features exist in the codebase and are never wired to anything</b>: an onboarding wizard, a
+    notification center, a loading-progress overlay, a full-text session search engine, terminal search,
+    screen-reader announcements, a rich error-recovery UI, session titles/summaries, tag filtering, the
+    theme toggle, and per-project budget/permission settings. Each one looks finished in the UI or the
+    code, so users (and future maintainers) trust it — and each one silently does nothing. Paired with a
+    core loop that hides failure (terminal tabs vanish without explanation, the whole app quits without
+    warning while sessions run), the app currently <i>under-delivers its own engineering</i>. The fastest
+    route to "zero friction" is not new features: it's wiring or deleting what's already there, and making
+    every failure loud.
+  </p>
+
+  <h2>What already works <span class="sec-note">Keep these — several are better than the ecosystem norm</span></h2>
+  <div class="goodgrid">
+    <div class="card"><h4>Cost math is trustworthy</h4><p>No double-counting: four disjoint token buckets, per-message dedup by <code>sha256(messageId|requestId)</code>, and a <i>dated pricing history</i> so old sessions are costed at the price in effect at the time (<span class="path">pricing-fetcher.ts:260-347</span>). The scary-looking $7,971 / 11.95B totals are real cumulative billing, just unexplained in the UI.</p></div>
+    <div class="card"><h4>Four feature views are perfect twins</h4><p>Hooks, Skills, Agents, Commands share one header/empty-state/confirm-dialog/spinner language. Learn one, know all four.</p></div>
+    <div class="card"><h4>Settings survive corruption</h4><p>Field-level validation recovers bad settings individually and tells the user exactly which fields were reset (<span class="path">settingsStore.ts:243-251</span>). Migrations were hardened after a real bug, with the lesson documented in code.</p></div>
+    <div class="card"><h4>First-run welcome screen</h4><p>Clean hero, four clear actions, a disabled state with explanation, and a keyboard hint. Verified live with a fresh HOME.</p></div>
+    <div class="card"><h4>Zero-setup GitHub sign-in</h4><p>Device flow ships a default client ID, with a polished code/countdown UI. (An earlier reviewer claim that this was broken was <b>refuted</b> on verification.)</p></div>
+    <div class="card"><h4>Dirty-tree checkout guard, no force-push</h4><p>Branch switching with uncommitted changes gets a real explain-and-confirm modal; force-push simply doesn't exist in the UI.</p></div>
+    <div class="card"><h4>Performance fundamentals</h4><p>No sync IPC anywhere, watchers debounced, big lists virtualized, PTY analyzer buffer bounded, window shown only on <code>ready-to-show</code>.</p></div>
+    <div class="card"><h4>Crash containment</h4><p>Layered error boundaries: a crashing view or terminal shows a scoped, retryable fallback ("Other terminals are unaffected") instead of a white screen.</p></div>
+    <div class="card"><h4>One-click session resume</h4><p>Session rows resume straight into a terminal via <code>--resume</code> with ID validation. Claude binary auto-discovery covers the stripped-PATH desktop-launch case.</p></div>
+  </div>
+
+  <h2>Theme 1 — The core loop hides failure <span class="sec-note">A terminal app must never lose a terminal silently</span></h2>
+
+  <div class="card">
+    <h4><span class="chip crit">Critical</span> <span class="chip verified">Verified</span> A terminal tab vanishes with zero notice when its process exits or crashes</h4>
+    <p>The main process sends <code>terminal-exit</code> with the exit code; the renderer's only listener discards the code and silently deletes the tab (<span class="path">useIpcListeners.ts:65-71</span>). If Claude crashes mid-task, the tab just disappears — no toast, no exit code, no last output, no restart-in-place.</p>
+    <p class="fix"><b>Fix:</b> keep the tab in a dimmed "exited (code N)" state with Restart / Close actions. Only user-initiated close removes immediately.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip high">High</span> <span class="chip verified">Verified</span> Closing a tab kills the process instantly — hover-reveal X, no confirmation, no undo</h4>
+    <p>The close button (visible only on hover) calls <code>killTerminal</code> directly (<span class="path">TerminalHeader.tsx:171-187</span>). A misclick during a long agent run kills it outright.</p>
+    <p class="fix"><b>Fix:</b> confirm (or toast-undo) when the session looks busy — the PTY stream analyzer already tracks activity.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip high">High</span> Closing the window kills every running session with no warning — and there's no tray</h4>
+    <p>window-all-closed → graceful shutdown → force-kill terminals + <code>tmuxService.cleanup()</code>. <code>before-quit</code> never checks <code>getTerminalCount()</code> (<span class="path">shutdown.ts</span>). One accidental close ends all active work.</p>
+    <p class="fix"><b>Fix:</b> "You have N running sessions — quit anyway?" plus an optional close-to-tray.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip high">High</span> <span class="chip verified">Verified</span> tmux settings promise "persistence" — but the app kills tmux sessions on quit</h4>
+    <p>The setting copy says sessions are wrapped in tmux "for persistence and external access" (<span class="path">TmuxSettings.tsx:44</span>); <span class="path">shutdown.ts:97-99</span> unconditionally runs <code>tmux kill-session</code> on quit. The feature's headline benefit does the opposite of what it says.</p>
+    <p class="fix"><b>Fix:</b> detach instead of kill on quit (offer kill as an explicit action), or correct the copy.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip high">High</span> <span class="chip verified">Verified</span> If the Claude CLI is missing, the primary button is a dead end</h4>
+    <p>No pre-flight check. Either a generic "Terminal Error" toast that deliberately drops the real error string (<span class="path">terminalStore.ts:63-112</span>), or the tab flashes and silently vanishes via the exit path above. No "install Claude Code" guidance anywhere.</p>
+    <p class="fix"><b>Fix:</b> startup probe → persistent banner with install link; include <code>result.error</code> in the toast; special-case fast nonzero exits ("Claude exited immediately — is it installed and logged in?").</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip med">Medium</span> No tab restore after restart; tabs can't be renamed or reordered; terminal has no search UI</h4>
+    <p>Only a single-session "Quick Restart" exists. Tab names are frozen at the folder basename, indistinguishable across worktrees. <code>@xterm/addon-search</code> is loaded but nothing ever calls it — Ctrl+F does nothing (<span class="path">TerminalInstance.tsx:245-249</span>).</p>
+    <p class="fix"><b>Fix:</b> persist open-tab layout (cwd + resume ID) with a "Restore N tabs" offer; double-click-to-rename; wire the already-loaded SearchAddon to Ctrl+F.</p>
+  </div>
+
+  <h2>Theme 2 — The keyboard is broken exactly where users live <span class="sec-note">Focus is in a terminal ~90% of the time; that's where shortcuts die</span></h2>
+
+  <div class="card">
+    <h4><span class="chip crit">Critical</span> App shortcuts don't fire while a terminal has focus</h4>
+    <p>The global handler skips every non-<code>global</code> shortcut when focus is in an input — and xterm's hidden textarea counts (<span class="path">useKeyboardShortcuts.ts:550-558</span>). Only the palette, quick switcher, help, and escape are global. Next/prev tab, new terminal, zoom, and all Ctrl+1–9 view switches are dead in the app's default state.</p>
+    <p class="fix"><b>Fix:</b> mark app-level navigation shortcuts <code>global: true</code>, or exempt the xterm helper textarea from the "user is typing" heuristic.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip crit">Critical</span> xterm swallows Ctrl+Tab, Ctrl+K, Ctrl+N, Ctrl+3–8 — and leaks them into your shell</h4>
+    <p>Independent of the bug above: xterm cancels these at the textarea before the app ever sees them, sending control codes to the shell instead (Ctrl+K = kill-line, Ctrl+N = next-history). Fixing the first bug alone won't restore them.</p>
+    <p class="fix"><b>Fix:</b> <code>attachCustomKeyEventHandler</code> in <span class="path">TerminalInstance.tsx</span> to preempt app-reserved combos — or move to combos terminals don't reserve (Ctrl+PageUp/PageDown for tabs).</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip high">High</span> Three surfaces advertise shortcuts that don't exist</h4>
+    <p>Settings' hardcoded list claims Ctrl+W (close tab) and Ctrl+F (terminal search) — neither is implemented (<span class="path">KeyboardSettings.tsx:11-20</span>). The command palette fabricates Ctrl+10…15 hints and a fictitious Ctrl+, (<span class="path">CommandPalette.tsx:39-73</span>). The QuickSwitcher's own footer says "Ctrl Tab" when the real binding is Ctrl+K. A real, customizable shortcut registry with conflict detection already exists — none of these surfaces read from it.</p>
+    <p class="fix"><b>Fix:</b> derive every displayed hint from the shortcut registry. Delete the static Settings list.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip med">Medium</span> Palette &amp; QuickSwitcher lack focus traps and dialog semantics; a11y infrastructure is unused</h4>
+    <p>The two most-used overlays are the only modals <i>not</i> wrapped in the app's own FocusTrap, with no <code>role="dialog"</code>. <code>useAnnounce()</code> has zero call sites; ~56 icon-only buttons have no accessible name; no <code>prefers-reduced-motion</code> rule exists across 112 animated files.</p>
+    <p class="fix"><b>Fix:</b> copy the proven KeyboardShortcutsPanel pattern; one global reduced-motion rule; an aria-label sweep.</p>
+  </div>
+
+  <h2>Theme 3 — Built, shipped, never wired <span class="sec-note">The wire-or-delete ledger</span></h2>
+  <p>Each of these looks finished — to users, or to the next developer — and does nothing. Every one is a standing trust leak.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Feature</th><th>State</th><th>Evidence</th><th>Call</th></tr>
+    <tr><td>Onboarding wizard (5 steps, tests)</td><td>Never rendered; no first-run flag exists</td><td><span class="path">components/onboarding/</span></td><td><b>Wire</b> behind a persisted flag, skippable</td></tr>
+    <tr><td>Notification bell + SQLite store</td><td>Polls every 30s; <code>createNotification()</code> has zero production callers — permanently empty</td><td><span class="path">TitleBar.tsx:353</span>, <span class="path">notifications.ts</span></td><td><b>Wire</b> to terminal exits, scan completion, hook failures</td></tr>
+    <tr><td>Loading overlay with real progress bar</td><td>Startup scan events fire before the window exists; the only other trigger (<code>rescan-sessions</code>) has no UI entry point</td><td><span class="path">initialization.ts:78-112</span></td><td><b>Wire</b> — see Theme 5 (startup)</td></tr>
+    <tr><td>Full-text session search (FTS5 + LIKE engines)</td><td>Both complete in main process; search box only filters project names client-side</td><td><span class="path">search.ts</span>, <span class="path">sessionSummaries/fts.ts</span></td><td><b>Wire</b> the search box through FTS</td></tr>
+    <tr><td>Session titles &amp; summaries</td><td>UI renders <code>customTitle</code>/<code>summary</code> prominently; nothing ever writes those columns — every row is a bare project name</td><td><span class="path">SessionCard.tsx:64</span></td><td><b>Wire</b> (backfill from session_summaries) + manual rename</td></tr>
+    <tr><td>Tag filtering (modal + shortcut "T")</td><td>Stub: always sets results to <code>[]</code> — a filter that empties the list every time, silently</td><td><span class="path">SessionsView/hooks.ts:148-165</span></td><td><b>Hide</b> until the IPC handler exists</td></tr>
+    <tr><td>Theme toggle (palette)</td><td>Writes via raw IPC nothing listens to; visibly does nothing until restart</td><td><span class="path">CommandPalette.tsx:76-92</span></td><td><b>Wire</b> through <code>useSettingsStore.updateSetting</code></td></tr>
+    <tr><td>Per-project Permission Mode &amp; Budget Limit</td><td>Dialog saves them; no code ever reads them — an inert safeguard the user believes is active</td><td><span class="path">ProjectSettingsDialog.tsx:65-91</span></td><td><b>Wire</b> or remove from the dialog</td></tr>
+    <tr><td>Terminal search addon</td><td>Loaded, ref stored, never invoked</td><td><span class="path">TerminalInstance.tsx:245-249</span></td><td><b>Wire</b> to Ctrl+F</td></tr>
+    <tr><td>ErrorRecovery.tsx (626 lines: categorization, auto-retry)</td><td>Zero imports; two other divergent error-fallback UIs in use</td><td><span class="path">common/ErrorRecovery.tsx</span></td><td><b>Delete</b> (or make it the one canonical fallback)</td></tr>
+    <tr><td>LiveRegion / useAnnounce + <code>defaultFilterLogic</code> setting</td><td>Provider mounted app-wide, zero callers; setting validated &amp; migrated, no UI</td><td><span class="path">LiveRegion.tsx</span>, <span class="path">settings-types.ts:61</span></td><td><b>Wire</b> announce at async completions; delete the dead setting</td></tr>
+  </table></div>
+
+  <h2>Theme 4 — The UI tells untruths <span class="sec-note">Copy and state that contradict what the code does</span></h2>
+
+  <div class="card">
+    <h4><span class="chip crit">Critical</span> The Memory view never touches your real CLAUDE.md files</h4>
+    <p>The view says "CLAUDE.md files provide persistent instructions for Claude" and shows user/project/local files — but saves go to the app's internal <code>knowledge_entries</code> SQLite table, never to disk (<span class="path">useMemoryFiles.ts:43-219</span>). A user "saves" instructions, sees success, and Claude never sees them. The real file I/O exists in <span class="path">contextInjection.ts</span>, unconnected.</p>
+    <p class="fix"><b>Fix:</b> read/write the real files (like Hooks/Skills/Agents already do), or label it a draft area with an explicit Apply step. Interim: a one-line disclaimer.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip high">High</span> The Live Monitor contradicts itself by design</h4>
+    <p>"Live Sessions" counts any Claude activity machine-wide in the last 5 minutes; the Idle pill counts this window's terminals; "Uptime" is a component-local counter that resets to 0s on every view switch; three live rows can render pixel-identical labels (<span class="path">MonitorPanel.tsx</span>). Seen live: "27 Live Sessions · 0 Terminals · Idle · 0s Uptime".</p>
+    <p class="fix"><b>Fix:</b> relabel to what each number measures, add a distinguishing suffix per live row, use real process uptime or drop the stat.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip med">Medium</span> Analytics is polluted and unexplained</h4>
+    <p>Ephemeral workflow/worktree dirs (<code>wf_*</code>) appear as peer "projects" in Cost-by-Project; cumulative token totals (300M+ per session, legitimately) get no framing, so correct numbers read as bugs. Cache pricing is scraped per-model, then discarded for hardcoded multipliers that only coincidentally match.</p>
+    <p class="fix"><b>Fix:</b> roll temp paths into an "Ephemeral" bucket, add a "cumulative across N API calls" caption, use the scraped cache rates.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip med">Medium</span> Naming drift: "Notebook" vs "Knowledge", "Commands" vs "Skills"</h4>
+    <p>The menu says Notebook; the table, IPC methods, and the repo's own e2e map still say Knowledge (the e2e nav entry is dead). Commands and Skills are two skins over the identical skills IPC/table — they will drift. The Commands view reuses the Terminal icon.</p>
+    <p class="fix"><b>Fix:</b> one mechanical rename; give Commands/Skills distinct backends (they are distinct Claude Code concepts) and a distinct icon.</p>
+  </div>
+
+  <h2>Theme 5 — Startup: the window waits on everything <span class="sec-note">The whole init chain runs before anything appears</span></h2>
+  <div class="card">
+    <h4><span class="chip crit">Critical</span> <span class="chip verified">Verified</span> Window creation is serialized behind DB init, sync file backups, a full ~/.claude/projects walk-and-parse, and an un-timeout-bounded GitHub network call</h4>
+    <p><span class="path">initialization.ts:34-127</span> awaits everything — including <code>initializeGitHub()</code> whose <code>verifyToken</code> fetch has no AbortController (a captive portal can hang launch for a minute+) — before <code>createWindow()</code>. The progress events for the import are sent to a window that doesn't exist yet and are silently dropped. Big history + slow disk = a long, indistinguishable-from-crashed blank launch.</p>
+    <p class="fix"><b>Fix:</b> create the window after DB + IPC registration only; stream the existing <code>scan-status</code> events into the already-built LoadingOverlay; 3–5s timeout on token verification and reconcile in the background.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip med">Medium</span> Three overlapping watchers poll the same session tree forever</h4>
+    <p>An fs.watch watcher (good) <i>plus</i> a 2-second full recursive re-walk in main <i>plus</i> a 10-second full re-walk while SessionsView is open — continuous background I/O that grows with the session history the app encourages you to accumulate.</p>
+    <p class="fix"><b>Fix:</b> let fs.watch drive updates; keep a single 60s safety-net poll.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip high">High</span> <span class="chip verified">Verified</span> Every view switch destroys state — including terminal scrollback</h4>
+    <p>Only the active view is mounted (<span class="path">MainContent.tsx:207-214</span>). Filters, search text, file-manager path, and selections reset on every switch; xterm instances are disposed, so glancing at Analytics wipes the build output you were reading. The team already solved this pattern for terminal tabs (keep mounted, toggle visibility) — it just isn't applied at the top level.</p>
+    <p class="fix"><b>Fix:</b> keep Terminal (at minimum) permanently mounted; lift view filter/search state into small persistent store slices.</p>
+  </div>
+
+  <h2>Theme 6 — Destructive actions without guardrails</h2>
+  <div class="card">
+    <h4><span class="chip high">High</span> File manager deletes files and whole directories with zero confirmation</h4>
+    <p>Context-menu Delete calls <code>deleteFile</code>/<code>deleteDirectory</code> (recursive) immediately (<span class="path">FilesView/index.tsx:272-285</span>) — on real home-directory paths. Six other views use a styled danger confirm; this one has nothing.</p>
+    <p class="fix"><b>Fix:</b> same <code>useConfirm</code> pattern; typed confirmation for directory deletes.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip high">High</span> Installing a built-in silently overwrites your custom hook/skill/agent/command of the same name</h4>
+    <p><code>writeMarkdownFile</code>/<code>writeHookScript</code> write unconditionally, no existence check (<span class="path">features.ts:73-97</span>).</p>
+    <p class="fix"><b>Fix:</b> <code>existsSync</code> guard → overwrite confirm (the install modals already exist to host it).</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip high">High</span> Merge-conflict "resolution" is two hover-revealed buttons that discard content</h4>
+    <p>Whole-file Ours/Theirs only — no diff of the conflicting hunks, no open-in-editor path, no hint that partial resolution isn't supported (<span class="path">GitConflicts.tsx</span>). The highest-stakes git moment gets the least information.</p>
+    <p class="fix"><b>Fix:</b> show conflict hunks (the diff modal already exists) + an explicit "open in editor" action before the side-pick buttons.</p>
+  </div>
+  <div class="card">
+    <h4><span class="chip high">High</span> A corrupt goodvibes.db locks you out of the app — and it's the one file never backed up</h4>
+    <p>No try/catch, no integrity check around DB open/migrations; failure → opaque error box → quit. Raw (replaceable) session JSONLs are diligently backed up; the DB holding irreplaceable curation (tags, notes, titles, collections) is not. WAL mode + force-kill on quit raises exactly this corruption risk. Old builds also silently open newer-schema DBs.</p>
+    <p class="fix"><b>Fix:</b> <code>PRAGMA quick_check</code> + quarantine-and-offer-restore on failure; periodic DB backups; explicit newer-schema message.</p>
+  </div>
+
+  <h2>Theme 7 — Papercuts worth batching <span class="sec-note">Each small; together they set the app's feel</span></h2>
+  <ul class="tight">
+    <li><b>Literal "clipboard" renders instead of 📋</b> in the Activity Feed empty state — <span class="path">MonitorPanel.tsx:153</span> types the string instead of the icon map lookup used four lines down. Seen live in both fresh and real environments.</li>
+    <li><b>Git errors use native OS <code>alert()</code>/<code>confirm()</code></b> for commit/push/pull failures and single-file discard — raw git plumbing text in OS chrome, while the same panel has styled modals for everything else.</li>
+    <li><b>First push of a new branch fails</b> with a raw "no upstream branch" error and no retry — bare <code>git push</code>, no <code>-u</code> fallback.</li>
+    <li><b>Detached HEAD</b> shows literal <code>HEAD (no branch)</code> with no explanation or "create branch from here" rescue.</li>
+    <li><b>No "Stash &amp; Switch"</b> in the dirty-checkout modal — the safe choice takes five manual steps; the destructive one takes one click.</li>
+    <li><b>"Skip Permission Prompts"</b> (i.e. <code>--dangerously-skip-permissions</code>) is styled identically to cosmetic toggles.</li>
+    <li><b>Permission modes have three vocabularies</b> across Settings / Project Registry / Agent templates; only the agent one is actually consumed at runtime.</li>
+    <li><b>54 settings in 16 always-expanded sections</b>, no search, no per-setting reset (only nuke-all), no export/import. Timezone defaults to UTC instead of the system zone.</li>
+    <li><b>Toast overflow is invisible</b>: beyond 3 stacked toasts, the rest render at opacity 0 and expire unseen — batch failures are unreviewable (and the empty notification center can't catch them).</li>
+    <li><b>"Empty" and "failed to load" are indistinguishable</b> in all 8 feature views — a transient IPC error renders "create your first one!"</li>
+    <li><b>Plugins' Installed tab has no search</b>; Files/Project Registry use plain text where six other views use the shared spinner.</li>
+    <li><b>goodvibes:// deep links are dropped on cold start</b> on Windows/Linux (argv never inspected); single window only; no auto-update or even an update-available check (<code>publish: null</code>, portable formats).</li>
+  </ul>
+
+  <h2>Theme 8 — A contributor can't run it <span class="sec-note">Found empirically, not by agents</span></h2>
+  <div class="card">
+    <h4><span class="chip high">High</span> Fresh clone fails at install, can't launch, and typecheck reports 902 errors</h4>
+    <p>No <code>engines</code> field, no version pin anywhere: on current Node 26, <code>better-sqlite3</code> fails to compile (V8 API drift) and <code>npm install</code> dies. After installing under Node 22, the app still can't launch — native modules are built for Node's ABI (127) while Electron 39 needs 140, and there is no <code>electron-rebuild</code> step, postinstall, or doc (<code>npmRebuild: false</code>). And <code>npm run typecheck</code> fails with 902 errors because no <code>window.goodvibes</code> type declaration exists anywhere — there is no <code>.d.ts</code> for the entire preload bridge. The e2e suite couldn't launch the app for the same ABI reason.</p>
+    <p class="fix"><b>Fix:</b> add <code>engines</code> + <code>.nvmrc</code>; add <code>@electron/rebuild</code> as a postinstall; write the preload bridge <code>.d.ts</code> (this also restores type safety across 880 currently-unchecked call sites); make CI run install→typecheck→e2e from scratch.</p>
+  </div>
+
+  <h2>The roadmap <span class="sec-note">Ordered by trust recovered per unit of effort</span></h2>
+
+  <div class="p-band">
+    <div class="p-tag">P0 · STOP LYING, STOP LOSING WORK — days, not weeks</div>
+    <h3>Make every failure loud and every destructive action guarded</h3>
+    <ul class="tight">
+      <li>Terminal exit → visible "exited" tab state with code + Restart (kills the worst silent failure).</li>
+      <li>Quit guard when sessions are running; confirm on busy-tab close; Files delete confirmation; install-overwrite guard.</li>
+      <li>Memory view: disclaimer now, real CLAUDE.md file I/O next.</li>
+      <li>Hide the tag filter stub; fix the theme toggle; remove or wire the inert per-project budget/permission fields.</li>
+      <li>One-liners: the "clipboard" string, QuickSwitcher hint, fabricated palette hints, tmux copy.</li>
+    </ul>
+  </div>
+
+  <div class="p-band">
+    <div class="p-tag">P1 · THE DAILY DRIVER — the two flows a user touches every hour</div>
+    <h3>Startup and keyboard</h3>
+    <ul class="tight">
+      <li>Show the window after DB init only; stream scan progress into the existing overlay; timeout the GitHub fetch.</li>
+      <li>Make navigation shortcuts global + <code>attachCustomKeyEventHandler</code> so tabs/views/palette work from inside a terminal (where users actually are).</li>
+      <li>Keep the Terminal view mounted across navigation (scrollback survives); persist per-view filter state.</li>
+      <li>Derive all shortcut hints from the registry — one source of truth.</li>
+    </ul>
+  </div>
+
+  <div class="p-band">
+    <div class="p-tag">P2 · WIRE OR DELETE — the ledger above, item by item</div>
+    <h3>Finish what's built before building more</h3>
+    <ul class="tight">
+      <li>Highest yield: FTS search behind the search box, session titles/summaries backfill, notification bell fed by real events (which also fixes toast overflow), onboarding wizard behind a first-run flag.</li>
+      <li>Delete honestly: ErrorRecovery.tsx, <code>defaultFilterLogic</code>, the static shortcuts list, dead e2e nav entries.</li>
+    </ul>
+  </div>
+
+  <div class="p-band">
+    <div class="p-tag">P3 · STRUCTURAL BETS — schedule deliberately</div>
+    <h3>Durability and reach</h3>
+    <ul class="tight">
+      <li>DB integrity check + backups + recovery dialog; update-available check (then electron-updater).</li>
+      <li>Tab-layout restore after restart; tray / close-to-tray; multi-window or per-project workspaces.</li>
+      <li>Conflict resolution with real hunks; a11y pass (focus traps, labels, reduced motion, announcements).</li>
+    </ul>
+  </div>
+
+  <h2>Method</h2>
+  <p style="font-size:14.5px; color:var(--muted)">
+    Multi-agent workflow: 10 dimension reviewers (first-run, navigation/IA, terminal, sessions/analytics,
+    git/GitHub, settings, feedback/errors, perceived performance, feature-view consistency, keyboard/a11y)
+    reading source directly with file:line citations; every critical/high claim re-examined by an
+    independent adversarial verifier instructed to refute it (16 confirmed, 1 refuted — the GitHub OAuth
+    zero-setup path, which works via a bundled device-flow client ID); a completeness critic sweeping for
+    missed areas (it found the DB-corruption, update, tray/quit, and deep-link issues). Live evidence:
+    the app was built and launched under Playwright twice — once with a fresh HOME (true first run) and
+    once against real data — producing screenshots of both. Empirical checks: fresh-clone
+    install on Node 26 and 22, typecheck, build, and the repo's own e2e suite. Roughly 2.1M agent tokens,
+    870+ tool calls, 593 source files in scope.
+  </p>
+
+  <div class="footer">
+    GoodVibes Desktop v1.1.4 · audit run July 6, 2026 · 83 friction findings / ~40 works-well findings ·
+    severities: reviewer-assigned, adversarially spot-verified
+  </div>
+</main>
+</body>
+</html>

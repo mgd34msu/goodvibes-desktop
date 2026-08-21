@@ -13,7 +13,7 @@ env:
   # The ratchet baselines in scripts/ci/test-baseline.json were measured on
   # Node 26; a different major shifts both the tsc diagnostic counts and the
   # set of failing test files, which would make the gates lie.
-  NODE_VERSION: "26.1.0" # exact pin: newer 26.x ships the V8 that removed PropertyCallbackInfo::This, which the pinned better-sqlite3 cannot compile against; upgrade better-sqlite3, then widen
+  NODE_VERSION: "24" # better-sqlite3 12.6 ships prebuilds for the Node 24 ABI; the runner's Node 26 forces a source build against a V8 it predates. Bump better-sqlite3, prove the install, then raise
 
 permissions:
   contents: read
