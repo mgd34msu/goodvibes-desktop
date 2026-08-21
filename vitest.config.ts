@@ -34,7 +34,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      electron: path.resolve(__dirname, './src/test-utils/electron-stub.ts'),
+      electron: path.resolve(__dirname, './src/test/electron-stub.ts'),
       '@': path.resolve(__dirname, './src'),
       '@shared': path.resolve(__dirname, './src/shared'),
       '@main': path.resolve(__dirname, './src/main'),
