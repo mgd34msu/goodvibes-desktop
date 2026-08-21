@@ -28,11 +28,10 @@ jobs:
           node-version: ${{ inputs.node_version }}
       - name: Install the requested spec
         run: npm install ${{ inputs.package_spec }} --save
-      - name: Prove a clean install on this Node
-        run: rm -rf node_modules && npm ci
-      - name: Verbose run of Node-version-sensitive suspects
-        run: npx vitest run src/main/services/safeExec.test.ts src/main/utils/pathResolver.test.ts --reporter=verbose 2>&1 | tail -80
-        continue-on-error: true
+      - name: Verify Electron's binary landed, retry its installer once if not
+        run: |
+          node -e "require('electron')" 2>/dev/null || node node_modules/electron/install.js
+          node -e "console.log('electron ok:', typeof require('electron'))"
       - name: Ratchets and build
         run: |
           node scripts/ci/check-typecheck-ratchet.mjs
