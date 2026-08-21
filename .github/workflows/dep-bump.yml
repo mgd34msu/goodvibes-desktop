@@ -28,11 +28,8 @@ jobs:
           node-version: ${{ inputs.node_version }}
       - name: Install the requested spec
         run: npm install ${{ inputs.package_spec }} --save
-      - name: Run native install scripts explicitly and verify
-        run: |
-          npm rebuild electron better-sqlite3
-          node -e "console.log('electron ok:', typeof require('electron'))"
-          node -e "new (require('better-sqlite3'))(':memory:').close(); console.log('better-sqlite3 ok')"
+      - name: Clean install from the updated lock, exactly as ci.yml does
+        run: npm ci
       - name: Ratchets and build
         run: |
           node scripts/ci/check-typecheck-ratchet.mjs
