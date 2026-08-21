@@ -13,7 +13,7 @@ env:
   # The ratchet baselines in scripts/ci/test-baseline.json were measured on
   # Node 26; a different major shifts both the tsc diagnostic counts and the
   # set of failing test files, which would make the gates lie.
-  NODE_VERSION: "24" # better-sqlite3 12.6 ships prebuilds for the Node 24 ABI; the runner's Node 26 forces a source build against a V8 it predates. Bump better-sqlite3, prove the install, then raise
+  NODE_VERSION: "26" # better-sqlite3 12.11 compiles here and unit tests no longer touch the real Electron binary
 
 permissions:
   contents: read
