@@ -38,6 +38,7 @@ import {
 } from './state.js';
 import { refreshTokenIfNeeded } from './token-manager.js';
 import { getOAuthConfig, setOAuthCredentials, clearOAuthCredentials } from './oauth-config.js';
+import { migrateLegacySecrets, getSecretStorageStatus } from './secure-storage.js';
 import {
   startDeviceFlow,
   waitForDeviceFlowCompletion,
@@ -95,6 +96,24 @@ export {
  */
 export async function initializeGitHub(): Promise<void> {
   logger.info('Initializing GitHub service');
+
+  // Move any secrets still held under the old obfuscated-key layout into
+  // OS-encrypted storage. Converges after one successful run and is a no-op
+  // afterwards, so it is safe to call on every startup.
+  const migration = migrateLegacySecrets();
+  const storageStatus = getSecretStorageStatus();
+
+  logger.info('GitHub secret storage backend resolved', {
+    backend: storageStatus.backend,
+    encryptionAvailable: storageStatus.encryptionAvailable,
+    linuxBackend: storageStatus.linuxBackend ?? 'n/a',
+    migratedCount: migration.migrated.length,
+    skippedCount: migration.skipped.length,
+  });
+
+  if (storageStatus.weakness) {
+    logger.warn(`GitHub token storage is not OS-protected. ${storageStatus.weakness}`);
+  }
 
   try {
     const { accessToken: storedToken, user: storedUser, tokenExpiresAt } = getStoredCredentials();

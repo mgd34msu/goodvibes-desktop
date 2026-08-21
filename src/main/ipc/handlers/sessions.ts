@@ -374,7 +374,7 @@ export function registerSessionHandlers(): void {
     }
   }));
 
-  // Session summary handlers (for approvalAgentApi)
+  // Session summary handlers
   ipcMain.handle('session:get', withContext('session:get', async (_, sessionId: string) => {
     const result = sessionIdSchema.safeParse(sessionId);
     if (!result.success) {

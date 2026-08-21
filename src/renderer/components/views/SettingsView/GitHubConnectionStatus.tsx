@@ -202,6 +202,16 @@ export function GitHubConnectionStatus({ oauthStatus }: GitHubConnectionStatusPr
     );
   }
 
+  // The configuration selects the Authorization Code Flow, but no client
+  // secret can be resolved, so that flow cannot complete. Both facts come from
+  // the main process config check rather than being assumed here. Offering a
+  // Connect button in this state produces an opaque failure, so the button is
+  // disabled and the reason is shown instead.
+  const authCodeFlowSelected =
+    oauthStatus?.source === 'custom' && !oauthStatus.useDeviceFlow;
+  const authCodeFlowBlocked =
+    authCodeFlowSelected && oauthStatus?.canUseAuthorizationCodeFlow === false;
+
   // Not authenticated - show login button
   return (
     <div className="px-5 py-4 border-b border-surface-700/50">
@@ -220,13 +230,21 @@ export function GitHubConnectionStatus({ oauthStatus }: GitHubConnectionStatusPr
         </div>
         <button
           onClick={handleLogin}
-          disabled={isLoading}
+          disabled={isLoading || authCodeFlowBlocked}
           className="btn btn-primary btn-sm flex items-center gap-2"
         >
           <GitHubIcon className="w-4 h-4" />
           {isLoading ? 'Connecting...' : 'Connect GitHub'}
         </button>
       </div>
+      {authCodeFlowBlocked && oauthStatus?.authorizationCodeFlowBlockedReason && (
+        <p
+          data-testid="auth-code-flow-blocked-reason"
+          className="mt-2 text-xs text-warning-400"
+        >
+          {oauthStatus.authorizationCodeFlowBlockedReason}
+        </p>
+      )}
     </div>
   );
 }

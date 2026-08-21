@@ -444,4 +444,12 @@ export interface CustomOAuthConfigStatus {
   clientId: string | null;
   useDeviceFlow: boolean;
   hasClientSecret: boolean;
+  /**
+   * Whether a client secret can actually be resolved, which is what the
+   * Authorization Code Flow requires. False on a stock install, because no
+   * secret is bundled with the app.
+   */
+  canUseAuthorizationCodeFlow?: boolean;
+  /** Plain explanation to show when the Authorization Code Flow cannot run. */
+  authorizationCodeFlowBlockedReason?: string | null;
 }

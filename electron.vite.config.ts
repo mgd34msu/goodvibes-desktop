@@ -34,8 +34,11 @@ export default defineConfig(({ mode }) => {
         outDir: 'out/preload',
         minify: isProduction,
         sourcemap: !isProduction,
-        // For sandbox: false, externalize deps
-        // For sandbox: true, use: externalizeDeps: false
+        // The window runs with sandbox: true, so the emitted bundle must not
+        // require anything beyond 'electron'. The externals below are listed
+        // defensively; preload code never imports them, so they do not appear
+        // in out/preload/index.cjs. Verify with:
+        //   grep -oE "require\(\"[^\"]+\"\)" out/preload/index.cjs | sort -u
         rollupOptions: {
           output: {
             format: 'cjs',

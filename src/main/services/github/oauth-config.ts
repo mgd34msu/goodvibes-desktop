@@ -6,7 +6,9 @@ import { app } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import { Logger } from '../logger.js';
-import { githubStore, clearCredentialsCache } from './credentials.js';
+import { clearCredentialsCache } from './credentials.js';
+import { githubStore } from './store.js';
+import { getSecret, setSecret, deleteSecret } from './secure-storage.js';
 
 const logger = new Logger('GitHubOAuthConfig');
 
@@ -66,7 +68,7 @@ export function getOAuthConfig(): OAuthConfigStatus {
   }
 
   const storedClientId = githubStore.get('clientId');
-  const storedClientSecret = githubStore.get('clientSecret');
+  const storedClientSecret = getSecret('clientSecret');
 
   if (storedClientId && storedClientSecret) {
     return {
@@ -107,7 +109,7 @@ function getBundledConfigPaths(): string[] {
  */
 export function setOAuthCredentials(clientId: string, clientSecret: string): void {
   githubStore.set('clientId', clientId);
-  githubStore.set('clientSecret', clientSecret);
+  setSecret('clientSecret', clientSecret);
   clearCredentialsCache();
   logger.info('GitHub OAuth credentials updated (legacy mode)');
 }
@@ -117,7 +119,7 @@ export function setOAuthCredentials(clientId: string, clientSecret: string): voi
  */
 export function clearOAuthCredentials(): void {
   githubStore.delete('clientId');
-  githubStore.delete('clientSecret');
+  deleteSecret('clientSecret');
   clearCredentialsCache();
   logger.info('Legacy GitHub OAuth credentials cleared');
 }

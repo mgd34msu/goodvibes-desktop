@@ -5,59 +5,23 @@
 import { app } from 'electron';
 import path from 'path';
 import fs from 'fs';
-import crypto from 'crypto';
-import os from 'os';
-import Store from 'electron-store';
 import { Logger } from '../logger.js';
-import type { GitHubUser } from '../../../shared/types/github.js';
+import { githubStore } from './store.js';
+import { getSecret, setSecret, deleteSecret } from './secure-storage.js';
 
 const logger = new Logger('GitHubCredentials');
 
 // ============================================================================
 // SECURE STORE
 // ============================================================================
+//
+// The store instance and its schema now live in store.ts, and secret values
+// inside it are encrypted by secure-storage.ts using the OS credential store.
+// This re-export keeps the existing import sites working.
+// ============================================================================
 
-/**
- * Generate a machine-specific encryption key.
- * Uses hardware identifiers to create a per-installation key.
- * This is more secure than a hardcoded key, though still not perfect.
- * For production, consider using OS keychains (Keytar/safeStorage).
- */
-function generateEncryptionKey(): string {
-  // Combine multiple machine identifiers for uniqueness
-  const machineInfo = [
-    os.hostname(),
-    os.platform(),
-    os.arch(),
-    os.homedir(),
-    app.getPath('userData'),
-  ].join('|');
-
-  // Generate a stable hash
-  return crypto.createHash('sha256')
-    .update(`goodvibes-github-${machineInfo}`)
-    .digest('hex')
-    .substring(0, 32);
-}
-
-// Type for GitHub store schema
-interface GitHubStoreSchema {
-  accessToken?: string;
-  refreshToken?: string;
-  tokenExpiresAt?: number;
-  user?: GitHubUser;
-  clientId?: string;
-  clientSecret?: string;
-  // Custom OAuth credentials (user-provided)
-  customClientId?: string;
-  customClientSecret?: string;
-  customUseDeviceFlow?: boolean;
-}
-
-export const githubStore = new Store<GitHubStoreSchema>({
-  name: 'github-auth',
-  encryptionKey: generateEncryptionKey(),
-});
+export { githubStore } from './store.js';
+export type { GitHubStoreSchema } from './store.js';
 
 // ============================================================================
 // CREDENTIAL LOADING
@@ -83,7 +47,7 @@ export function loadOAuthCredentials(): { clientId: string | null; clientSecret:
   // Check custom credentials first (highest priority)
   // Only use custom credentials for auth code flow if they have a secret and are NOT set to use device flow
   const customClientId = githubStore.get('customClientId');
-  const customClientSecret = githubStore.get('customClientSecret');
+  const customClientSecret = getSecret('customClientSecret');
   const customUseDeviceFlow = githubStore.get('customUseDeviceFlow');
 
   if (customClientId && customClientSecret && !customUseDeviceFlow) {
@@ -102,16 +66,7 @@ export function loadOAuthCredentials(): { clientId: string | null; clientSecret:
 
   // Try bundled config file (for production builds)
   try {
-    const configPaths = [
-      // Production: alongside the executable
-      path.join(path.dirname(app.getPath('exe')), 'github-oauth.json'),
-      // Development: in project root
-      path.join(app.getAppPath(), 'github-oauth.json'),
-      // Alternative: in resources
-      path.join(process.resourcesPath || '', 'github-oauth.json'),
-    ];
-
-    for (const configPath of configPaths) {
+    for (const configPath of getBundledConfigPaths()) {
       if (fs.existsSync(configPath)) {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
         if (config.clientId && config.clientSecret) {
@@ -126,7 +81,7 @@ export function loadOAuthCredentials(): { clientId: string | null; clientSecret:
 
   // Legacy fallback: check electron-store for user-saved credentials
   const storedClientId = githubStore.get('clientId');
-  const storedClientSecret = githubStore.get('clientSecret');
+  const storedClientSecret = getSecret('clientSecret');
 
   if (storedClientId && storedClientSecret) {
     logger.debug('Using legacy user-saved OAuth credentials');
@@ -163,6 +118,52 @@ export function isOAuthConfigured(): boolean {
   return true;
 }
 
+/**
+ * Whether a client secret can actually be resolved right now.
+ *
+ * The Authorization Code Flow cannot run without one. No secret is bundled
+ * with GoodVibes, deliberately, because shipping a client secret in a desktop
+ * binary publishes it to everyone who downloads the app. So the only ways a
+ * secret exists are an OAuth App the user configured, environment variables,
+ * or a `github-oauth.json` placed beside the executable by whoever built it.
+ *
+ * This checks the same sources as loadOAuthCredentials, so the UI can report
+ * availability from the real configuration rather than assuming.
+ */
+export function hasResolvableClientSecret(): boolean {
+  if (getSecret('customClientSecret')) {
+    return true;
+  }
+
+  if (process.env.GITHUB_CLIENT_SECRET) {
+    return true;
+  }
+
+  try {
+    for (const configPath of getBundledConfigPaths()) {
+      if (fs.existsSync(configPath)) {
+        const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+        if (config.clientId && config.clientSecret) {
+          return true;
+        }
+      }
+    }
+  } catch {
+    // A missing or unreadable bundled config simply means no secret there.
+  }
+
+  return !!getSecret('clientSecret');
+}
+
+/** The paths a bundled OAuth config may occupy, in priority order. */
+function getBundledConfigPaths(): string[] {
+  return [
+    path.join(path.dirname(app.getPath('exe')), 'github-oauth.json'),
+    path.join(app.getAppPath(), 'github-oauth.json'),
+    path.join(process.resourcesPath || '', 'github-oauth.json'),
+  ];
+}
+
 // ============================================================================
 // CUSTOM OAUTH CREDENTIALS
 // ============================================================================
@@ -184,9 +185,9 @@ export function setCustomOAuthCredentials(
 
   githubStore.set('customClientId', clientId);
   if (clientSecret) {
-    githubStore.set('customClientSecret', clientSecret);
+    setSecret('customClientSecret', clientSecret);
   } else {
-    githubStore.delete('customClientSecret');
+    deleteSecret('customClientSecret');
   }
   githubStore.set('customUseDeviceFlow', useDeviceFlow);
 
@@ -211,7 +212,7 @@ export function getCustomOAuthCredentials(): {
 
   return {
     clientId: customClientId,
-    clientSecret: githubStore.get('customClientSecret') ?? null,
+    clientSecret: getSecret('customClientSecret'),
     useDeviceFlow: githubStore.get('customUseDeviceFlow') ?? true,
   };
 }
@@ -224,7 +225,7 @@ export function clearCustomOAuthCredentials(): void {
   logger.info('Clearing custom OAuth credentials');
 
   githubStore.delete('customClientId');
-  githubStore.delete('customClientSecret');
+  deleteSecret('customClientSecret');
   githubStore.delete('customUseDeviceFlow');
 
   // Clear the cached credentials so they get reloaded
@@ -241,7 +242,17 @@ export function getOAuthConfigStatus(): {
   clientId: string | null;
   useDeviceFlow: boolean;
   hasClientSecret: boolean;
+  canUseAuthorizationCodeFlow: boolean;
+  authorizationCodeFlowBlockedReason: string | null;
 } {
+  const canUseAuthorizationCodeFlow = hasResolvableClientSecret();
+  const authorizationCodeFlowBlockedReason = canUseAuthorizationCodeFlow
+    ? null
+    : 'The Authorization Code Flow needs a client secret, and none ships with GoodVibes. ' +
+      'Publishing a secret inside a downloadable app would expose it to everyone, so this ' +
+      'flow only becomes available once you configure an OAuth App you own and enter its ' +
+      'client secret. Device Flow needs no secret and is the default.';
+
   // Check custom credentials first (highest priority)
   const customCreds = getCustomOAuthCredentials();
   if (customCreds) {
@@ -251,6 +262,8 @@ export function getOAuthConfigStatus(): {
       clientId: customCreds.clientId,
       useDeviceFlow: customCreds.useDeviceFlow,
       hasClientSecret: !!customCreds.clientSecret,
+      canUseAuthorizationCodeFlow,
+      authorizationCodeFlowBlockedReason,
     };
   }
 
@@ -263,6 +276,8 @@ export function getOAuthConfigStatus(): {
       clientId: envClientId,
       useDeviceFlow: !envClientSecret, // Use device flow if no secret
       hasClientSecret: !!envClientSecret,
+      canUseAuthorizationCodeFlow,
+      authorizationCodeFlowBlockedReason,
     };
   }
 
@@ -273,5 +288,7 @@ export function getOAuthConfigStatus(): {
     clientId: null, // Don't expose the default client ID
     useDeviceFlow: true,
     hasClientSecret: false,
+    canUseAuthorizationCodeFlow,
+    authorizationCodeFlowBlockedReason,
   };
 }

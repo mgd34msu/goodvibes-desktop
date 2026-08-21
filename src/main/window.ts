@@ -78,7 +78,18 @@ export function createWindow(): BrowserWindow {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, '..', 'preload', 'index.cjs'),
-      sandbox: false,
+      // The Chromium sandbox is on. A sandboxed preload may only require
+      // 'electron' plus the polyfilled 'events', 'timers' and 'url'. The built
+      // preload bundle (out/preload/index.cjs) requires exactly one module,
+      // 'electron', because every src/preload module imports only ipcRenderer
+      // or contextBridge, the two shared/types imports are `import type` and so
+      // are erased, and the rollupOptions externals (better-sqlite3, node-pty)
+      // are never referenced from preload code. Node work happens in the main
+      // process behind ipcRenderer.invoke, so nothing here needs Node at all.
+      //
+      // If a future preload change needs a Node built-in, move that work to an
+      // IPC handler in src/main/ipc/handlers rather than turning this back off.
+      sandbox: true,
       // Additional security settings
       webSecurity: true,
       allowRunningInsecureContent: false,

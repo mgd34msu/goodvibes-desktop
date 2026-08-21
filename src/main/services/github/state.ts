@@ -4,7 +4,8 @@
 
 import { Logger } from '../logger.js';
 import type { GitHubUser, GitHubAuthState, GitHubOAuthTokens } from '../../../shared/types/github.js';
-import { githubStore } from './credentials.js';
+import { githubStore } from './store.js';
+import { getSecret, setSecret, deleteSecret } from './secure-storage.js';
 
 const logger = new Logger('GitHubState');
 
@@ -89,9 +90,9 @@ export function resetAuthState(): void {
  * Store tokens and user information after successful authentication
  */
 export function storeTokensAndUser(tokens: GitHubOAuthTokens, user: GitHubUser): void {
-  githubStore.set('accessToken', tokens.access_token);
+  setSecret('accessToken', tokens.access_token);
   if (tokens.refresh_token) {
-    githubStore.set('refreshToken', tokens.refresh_token);
+    setSecret('refreshToken', tokens.refresh_token);
   }
   if (tokens.expires_in) {
     const expiresAt = Date.now() + tokens.expires_in * 1000;
@@ -104,9 +105,9 @@ export function storeTokensAndUser(tokens: GitHubOAuthTokens, user: GitHubUser):
  * Update stored tokens after refresh
  */
 export function updateStoredTokens(tokens: GitHubOAuthTokens): void {
-  githubStore.set('accessToken', tokens.access_token);
+  setSecret('accessToken', tokens.access_token);
   if (tokens.refresh_token) {
-    githubStore.set('refreshToken', tokens.refresh_token);
+    setSecret('refreshToken', tokens.refresh_token);
   }
   if (tokens.expires_in) {
     const expiresAt = Date.now() + tokens.expires_in * 1000;
@@ -118,8 +119,8 @@ export function updateStoredTokens(tokens: GitHubOAuthTokens): void {
  * Clear all stored credentials
  */
 export async function clearStoredCredentials(): Promise<void> {
-  githubStore.delete('accessToken');
-  githubStore.delete('refreshToken');
+  deleteSecret('accessToken');
+  deleteSecret('refreshToken');
   githubStore.delete('tokenExpiresAt');
   githubStore.delete('user');
 }
@@ -133,11 +134,14 @@ export function getStoredCredentials(): {
   tokenExpiresAt: number | undefined;
   refreshToken: string | undefined;
 } {
+  // Reading a secret migrates it from the legacy obfuscated layout to
+  // OS-encrypted storage on the way out, so an existing install upgrades on
+  // its first read rather than needing the user to sign in again.
   return {
-    accessToken: githubStore.get('accessToken'),
+    accessToken: getSecret('accessToken') ?? undefined,
     user: githubStore.get('user'),
     tokenExpiresAt: githubStore.get('tokenExpiresAt'),
-    refreshToken: githubStore.get('refreshToken'),
+    refreshToken: getSecret('refreshToken') ?? undefined,
   };
 }
 

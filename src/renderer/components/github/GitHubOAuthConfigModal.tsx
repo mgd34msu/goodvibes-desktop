@@ -334,6 +334,23 @@ export function GitHubOAuthConfigModal({
                   </p>
                 </button>
               </div>
+
+              {/*
+                * Sourced from the main process config check
+                * (hasResolvableClientSecret), not assumed. On a stock install no
+                * client secret exists anywhere, so this flow only works once the
+                * user supplies one for an OAuth App they own.
+                */}
+              {authFlow === 'authorization_code' &&
+                oauthStatus?.canUseAuthorizationCodeFlow === false &&
+                oauthStatus?.authorizationCodeFlowBlockedReason && (
+                  <p
+                    data-testid="auth-code-flow-unavailable-note"
+                    className="mt-2 text-xs text-warning-400"
+                  >
+                    {oauthStatus.authorizationCodeFlowBlockedReason}
+                  </p>
+                )}
             </div>
 
             {/* Client ID */}
