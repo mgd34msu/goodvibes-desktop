@@ -101,23 +101,52 @@ if $DRY_RUN; then
   exit 0
 fi
 
+# =============================================================================
+# Pre-release gates
+# =============================================================================
+# The same build and ratchet scripts that .github/workflows/ci.yml runs. They
+# run before the version bump and before every git operation, so a red tree
+# aborts the release without leaving a commit, a tag, or a pushed ref behind.
+
+cd "$PROJECT_ROOT"
+
+run_gate() {
+  local label="$1"
+  shift
+  echo ""
+  echo "  ---- GATE: $label ----"
+  if ! "$@"; then
+    echo ""
+    echo "  RELEASE ABORTED: the $label gate failed."
+    echo "  Nothing was bumped, committed, tagged, or pushed."
+    exit 1
+  fi
+}
+
+echo "  Running pre-release gates..."
+run_gate "build" npm run build
+run_gate "test ratchet" node scripts/ci/check-test-ratchet.mjs
+run_gate "typecheck ratchet" node scripts/ci/check-typecheck-ratchet.mjs
+run_gate "lint ratchet" node scripts/ci/check-lint-ratchet.mjs
+
+echo ""
+echo "  All gates passed."
+echo ""
+
 # Update package.json
 echo "  Updating package.json..."
 sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" "$PACKAGE_JSON"
 
-# Git operations
-if ! $NO_GIT; then
-  echo "  Committing version bump..."
-  cd "$PROJECT_ROOT"
-  git add package.json
-  git commit -m "chore: bump version to $NEW_VERSION"
-  
-  echo "  Creating git tag v$NEW_VERSION..."
-  git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
-  
-  echo "  Pushing to remote..."
-  git push && git push --tags
-fi
+# The bump is now on disk but not committed. If packaging fails, put the old
+# number back rather than leaving a half-done release in the working tree.
+# Cleared once packaging succeeds.
+restore_version() {
+  sed -i "s/\"version\": \"$NEW_VERSION\"/\"version\": \"$CURRENT_VERSION\"/" "$PACKAGE_JSON"
+  echo ""
+  echo "  RELEASE ABORTED: restored package.json to $CURRENT_VERSION."
+  echo "  Nothing was committed, tagged, or pushed."
+}
+trap restore_version EXIT
 
 # Build
 echo ""
@@ -156,6 +185,30 @@ if [[ -d "$WIN_UNPACKED" ]]; then
   echo "  Created: $(basename "$WIN_ZIP")"
 else
   echo "  WARNING: win-unpacked directory not found"
+fi
+
+# Artifacts for this version now exist, so the bump stays even if a later git
+# step fails.
+trap - EXIT
+
+# =============================================================================
+# Git operations
+# =============================================================================
+# Deliberately last: the commit, tag and push only happen once the gates have
+# passed and the artifacts have actually been built.
+
+if ! $NO_GIT; then
+  echo ""
+  echo "  Committing version bump..."
+  cd "$PROJECT_ROOT"
+  git add package.json
+  git commit -m "chore: bump version to $NEW_VERSION"
+
+  echo "  Creating git tag v$NEW_VERSION..."
+  git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
+
+  echo "  Pushing to remote..."
+  git push && git push --tags
 fi
 
 # Create GitHub release with assets

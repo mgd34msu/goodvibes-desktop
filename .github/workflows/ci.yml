@@ -1,0 +1,201 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  # Single source of truth for the Node version across every job below.
+  # The ratchet baselines in scripts/ci/test-baseline.json were measured on
+  # Node 26; a different major shifts both the tsc diagnostic counts and the
+  # set of failing test files, which would make the gates lie.
+  NODE_VERSION: "26"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Set up Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+  tests-ratchet:
+    # The suite is red today. This gate does not require green; it requires
+    # that the red never grows: a failure in any file outside
+    # scripts/ci/test-baseline.json fails the run, and so does a rise in the
+    # total number of failing tests.
+    name: Tests (ratchet)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Set up Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test ratchet
+        # shell: bash makes GitHub Actions run this with `bash --noprofile
+        # --norc -eo pipefail {0}`, so the step's exit status is the ratchet
+        # script's and not tee's.
+        shell: bash
+        run: node scripts/ci/check-test-ratchet.mjs 2>&1 | tee test-ratchet.log
+
+      - name: Annotate job summary
+        if: always()
+        run: |
+          {
+            echo "## Test ratchet"
+            echo '```'
+            cat test-ratchet.log 2>/dev/null || echo "(no output)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  typecheck-ratchet:
+    # Both tsc projects report errors today. The gate is the count: it may fall
+    # and may not rise. Current vs baseline is printed on every run.
+    name: Typecheck (ratchet)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Set up Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck ratchet
+        shell: bash
+        run: node scripts/ci/check-typecheck-ratchet.mjs 2>&1 | tee typecheck-ratchet.log
+
+      - name: Annotate job summary
+        if: always()
+        run: |
+          {
+            echo "## Typecheck ratchet"
+            echo '```'
+            cat typecheck-ratchet.log 2>/dev/null || echo "(no output)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  lint:
+    # eslint's own --max-warnings cannot gate this repo: one severity-2 error
+    # already exists, and eslint exits non-zero for it whatever the warning cap
+    # is. The script counts errors and warnings separately and holds each at or
+    # below its baseline.
+    name: Lint (ratchet)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Set up Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint ratchet
+        shell: bash
+        run: node scripts/ci/check-lint-ratchet.mjs 2>&1 | tee lint-ratchet.log
+
+      - name: Annotate job summary
+        if: always()
+        run: |
+          {
+            echo "## Lint ratchet"
+            echo '```'
+            cat lint-ratchet.log 2>/dev/null || echo "(no output)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ==========================================================================
+  # E2E (Playwright + Electron) - NOT ENABLED
+  # ==========================================================================
+  # Verified headless on Linux under xvfb-run on 2026-08-20: 48 passed, but
+  # test/e2e/app.e2e.ts fails its beforeAll with "electronApplication
+  # .firstWindow: Timeout 30000ms exceeded while waiting for event 'window'",
+  # which also strands the 17 tests behind that hook. A red job is not worth
+  # shipping, so this stays commented out until that first-window timeout is
+  # fixed (or raised); the recipe below is otherwise ready to enable as-is.
+  #
+  # e2e:
+  #   name: E2E (Playwright)
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 30
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+  #
+  #     - name: Set up Node
+  #       uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+  #       with:
+  #         node-version: ${{ env.NODE_VERSION }}
+  #         cache: npm
+  #
+  #     - name: Install dependencies
+  #       run: npm ci
+  #
+  #     - name: Install Playwright system dependencies
+  #       run: npx playwright install-deps chromium
+  #
+  #     # The e2e specs launch the packaged main process out of out/, so the
+  #     # build has to happen before the suite runs.
+  #     - name: Build
+  #       run: npm run build
+  #
+  #     # Electron needs a display even with no visible window, so the suite
+  #     # runs under a virtual framebuffer.
+  #     - name: Run e2e suite
+  #       run: xvfb-run -a npx playwright test
+  #
+  #     - name: Upload Playwright report on failure
+  #       if: failure()
+  #       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+  #       with:
+  #         name: playwright-report
+  #         path: |
+  #           playwright-report
+  #           test-results
+  #         retention-days: 14
+  #         if-no-files-found: ignore
