@@ -26,7 +26,7 @@
     "release:major": "./scripts/release.sh major"
   },
   "engines": {
-    "node": ">=26.0.0"
+    "node": ">=26.0.0 <26.2.0"
   },
   "keywords": [
     "claude",
