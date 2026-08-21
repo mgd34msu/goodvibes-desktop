@@ -137,6 +137,17 @@ echo ""
 echo "  Updating package.json..."
 sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" "$PACKAGE_JSON"
 
+# The lockfile's two root entries must move with the version, or npm ci reports
+# root drift on every install until someone notices. Offline-safe on purpose:
+# a registry-touching npm invocation cannot be part of the release path here.
+node -e '
+  const fs = require("fs");
+  const lock = JSON.parse(fs.readFileSync("package-lock.json", "utf8"));
+  lock.version = process.argv[1];
+  lock.packages[""].version = process.argv[1];
+  fs.writeFileSync("package-lock.json", JSON.stringify(lock, null, 2) + "\n");
+' "$NEW_VERSION"
+
 # The bump is now on disk but not committed. If packaging fails, put the old
 # number back rather than leaving a half-done release in the working tree.
 # Cleared once packaging succeeds.
