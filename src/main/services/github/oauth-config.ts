@@ -41,7 +41,6 @@ export function getOAuthConfig(): OAuthConfigStatus {
     };
   }
 
-  // Check bundled config
   try {
     const configPaths = getBundledConfigPaths();
 
@@ -66,7 +65,6 @@ export function getOAuthConfig(): OAuthConfigStatus {
     });
   }
 
-  // Check legacy user-saved credentials
   const storedClientId = githubStore.get('clientId');
   const storedClientSecret = githubStore.get('clientSecret');
 

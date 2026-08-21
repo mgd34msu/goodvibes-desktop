@@ -30,7 +30,6 @@ export function SettingsSection({
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Close on click outside when expanded
   useEffect(() => {
     if (!collapsible || !isExpanded) return;
 

@@ -250,11 +250,9 @@ export function findAgentBySession(sessionId: string): AgentRecord | null {
 export function upsertAgent(agent: Omit<AgentRecord, 'spawnedAt' | 'lastActivity' | 'completedAt' | 'exitCode' | 'errorMessage'>): AgentRecord {
   const db = getDatabase();
 
-  // Check if agent with this session already exists
   const existing = agent.sessionPath ? findAgentBySession(agent.sessionPath) : null;
 
   if (existing) {
-    // Update existing agent
     db.prepare(`
       UPDATE agent_registry SET
         name = ?,
@@ -308,7 +306,6 @@ export function cleanupGarbageAgents(): number {
   const db = getDatabase();
   const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 
-  // Define tool names that should NOT be agents
   const toolPatterns = [
     'Read', 'Write', 'Edit', 'Bash', 'Glob', 'Grep', 'Task',
     'WebFetch', 'WebSearch', 'NotebookEdit', 'AskUserQuestion',
@@ -317,7 +314,6 @@ export function cleanupGarbageAgents(): number {
 
   let totalDeleted = 0;
 
-  // Delete agents named after tools
   for (const toolName of toolPatterns) {
     const result = db.prepare(`DELETE FROM agent_registry WHERE name = ?`).run(toolName);
     totalDeleted += result.changes;
@@ -327,13 +323,11 @@ export function cleanupGarbageAgents(): number {
   const exploreResult = db.prepare(`DELETE FROM agent_registry WHERE name LIKE 'Explore #%'`).run();
   totalDeleted += exploreResult.changes;
 
-  // Delete agents with names matching 'ToolName #XXX' pattern for known tools
   for (const toolName of toolPatterns) {
     const result = db.prepare(`DELETE FROM agent_registry WHERE name LIKE ? || ' #%'`).run(toolName);
     totalDeleted += result.changes;
   }
 
-  // Delete orphaned agents (no session, old, still marked active)
   const orphanResult = db.prepare(`
     DELETE FROM agent_registry
     WHERE session_path IS NULL

@@ -16,10 +16,8 @@ const SANITIZE_CONFIG: Config = {
   ALLOWED_ATTR: ['class'],
   // Don't allow any URI attributes
   ALLOW_DATA_ATTR: false,
-  // Remove any potentially dangerous elements/attributes
   FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'a'],
   FORBID_ATTR: ['onclick', 'onerror', 'onload', 'onmouseover', 'onfocus', 'onblur', 'href', 'src', 'srcdoc'],
-  // Return string instead of TrustedHTML
   RETURN_TRUSTED_TYPE: false,
 };
 

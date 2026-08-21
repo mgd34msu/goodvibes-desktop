@@ -106,7 +106,6 @@ export async function removeAllHookScripts(): Promise<void> {
  * Check if all hook scripts are installed
  */
 export async function areHookScriptsInstalled(): Promise<boolean> {
-  // First check if the hooks directory exists at all
   if (!existsSync(HOOKS_DIR)) {
     logger.debug(`Hooks directory does not exist: ${HOOKS_DIR}`);
     return false;

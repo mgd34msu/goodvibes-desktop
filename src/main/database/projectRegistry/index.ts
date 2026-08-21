@@ -88,7 +88,6 @@ export function createProjectRegistryTables(): void {
     )
   `);
 
-  // Create indexes
   createProjectRegistryIndexes();
 
   logger.info('Project registry tables created');

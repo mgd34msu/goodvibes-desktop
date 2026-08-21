@@ -93,7 +93,6 @@ export async function configureClaudeHooks(): Promise<boolean> {
       logger.info(`Created Claude settings directory: ${CLAUDE_SETTINGS_DIR}`);
     }
 
-    // Read existing settings or start fresh
     let settings: Record<string, unknown> = {};
     if (existsSync(CLAUDE_SETTINGS_PATH)) {
       try {
@@ -117,7 +116,6 @@ export async function configureClaudeHooks(): Promise<boolean> {
     const mergedHooks: Record<string, unknown[]> = { ...existingHooks };
 
     for (const [eventType, goodvibesHooks] of Object.entries(hooksConfig)) {
-      // Get existing hooks for this event type (non-GoodVibes ones)
       const existingEventHooks = (existingHooks[eventType] || []).filter((hook: ClaudeHookEntry) => {
         return !isGoodVibesHook(hook);
       });
@@ -128,7 +126,6 @@ export async function configureClaudeHooks(): Promise<boolean> {
 
     settings.hooks = mergedHooks;
 
-    // Write updated settings
     await fs.writeFile(CLAUDE_SETTINGS_PATH, JSON.stringify(settings, null, 2), 'utf-8');
     logger.info(`Configured Claude hooks in: ${CLAUDE_SETTINGS_PATH}`);
 
@@ -162,13 +159,11 @@ export async function removeClaudeHooks(): Promise<boolean> {
         return !isGoodVibesHook(hook);
       });
 
-      // Remove empty arrays
       if (hooks[eventType].length === 0) {
         delete hooks[eventType];
       }
     }
 
-    // Remove hooks object if empty
     if (Object.keys(hooks).length === 0) {
       delete settings.hooks;
     }
@@ -199,7 +194,7 @@ export async function areClaudeHooksConfigured(): Promise<boolean> {
       return false;
     }
 
-    // Check if at least SessionStart hook is configured (our most important hook)
+    // SessionStart is treated as sufficient on its own since it's the hook GoodVibes relies on most
     const sessionStartHooks = settings.hooks.SessionStart || [];
     return sessionStartHooks.some((hook: ClaudeHookEntry) => isGoodVibesHook(hook));
   } catch (error) {

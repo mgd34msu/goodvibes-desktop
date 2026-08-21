@@ -100,7 +100,6 @@ export async function analyzeProjectContext(
   cache: Map<string, { context: ProjectContext; timestamp: number }>,
   cacheTimeoutMs: number
 ): Promise<ProjectContext> {
-  // Check cache
   const cached = cache.get(projectPath);
   if (cached && Date.now() - cached.timestamp < cacheTimeoutMs) {
     return cached.context;
@@ -117,7 +116,6 @@ export async function analyzeProjectContext(
   };
 
   try {
-    // Check for package.json
     const packageJsonPath = path.join(projectPath, 'package.json');
     try {
       const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
@@ -209,7 +207,6 @@ export async function analyzeProjectContext(
       });
     }
 
-    // Check for TypeScript config
     try {
       await fs.access(path.join(projectPath, 'tsconfig.json'));
       context.hasTypeScript = true;
@@ -219,7 +216,6 @@ export async function analyzeProjectContext(
       // This is expected for JavaScript-only projects.
     }
 
-    // Check for Docker
     try {
       await fs.access(path.join(projectPath, 'Dockerfile'));
       context.hasDocker = true;
@@ -236,7 +232,6 @@ export async function analyzeProjectContext(
       }
     }
 
-    // Check for test directories
     if (!context.hasTests) {
       const testDirs = ['__tests__', 'tests', 'test', 'spec'];
       for (const dir of testDirs) {
@@ -284,13 +279,11 @@ export async function getRecommendationsForProject(
     return [];
   }
 
-  // Build search terms from project context
   const searchTerms = [
     ...projectContext.technologies,
     ...projectContext.frameworks,
   ].join(' ');
 
-  // Get matching agents
   const recommendations: Recommendation[] = [];
 
   try {

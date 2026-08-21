@@ -97,7 +97,6 @@ export async function readUserClaudeConfig(): Promise<Record<string, unknown> | 
 export async function syncToClaudeConfig(projectPath?: string): Promise<void> {
   const servers = getAllMCPServers();
 
-  // Build user config
   const userServers: Record<string, {
     command?: string;
     url?: string;
@@ -105,7 +104,6 @@ export async function syncToClaudeConfig(projectPath?: string): Promise<void> {
     env?: Record<string, string>;
   }> = {};
 
-  // Build project config
   const projectServers: Record<string, {
     command?: string;
     url?: string;
@@ -130,7 +128,6 @@ export async function syncToClaudeConfig(projectPath?: string): Promise<void> {
     }
   }
 
-  // Write user config
   if (Object.keys(userServers).length > 0) {
     const userConfigPath = path.join(os.homedir(), '.claude.json');
     try {
@@ -150,7 +147,6 @@ export async function syncToClaudeConfig(projectPath?: string): Promise<void> {
     }
   }
 
-  // Write project config
   if (projectPath && Object.keys(projectServers).length > 0) {
     try {
       await writeMCPConfig(projectPath, { mcpServers: projectServers });

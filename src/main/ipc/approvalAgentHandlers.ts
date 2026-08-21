@@ -36,7 +36,6 @@ export function registerApprovalAgentHandlers(): void {
 function registerApprovalHandlers(): void {
   const policyEngine = getPolicyEngine();
 
-  // Get pending approvals
   ipcMain.handle('approval:getPending', async (_event, sessionId?: string) => {
     return policyEngine.getPendingApprovals(sessionId);
   });
@@ -65,17 +64,14 @@ function registerApprovalHandlers(): void {
     return true;
   });
 
-  // Get all policies
   ipcMain.handle('policy:getAll', async () => {
     return policyEngine.getAllPolicies();
   });
 
-  // Get enabled policies
   ipcMain.handle('policy:getEnabled', async () => {
     return policyEngine.getEnabledPolicies();
   });
 
-  // Create policy
   ipcMain.handle('policy:create', async (_event, policy: {
     name: string;
     matcher: string;
@@ -86,7 +82,6 @@ function registerApprovalHandlers(): void {
     return policyEngine.createPolicy(policy);
   });
 
-  // Update policy
   ipcMain.handle('policy:update', async (_event, id: number, updates: {
     name?: string;
     matcher?: string;
@@ -98,7 +93,6 @@ function registerApprovalHandlers(): void {
     return policyEngine.getPolicy(id);
   });
 
-  // Delete policy
   ipcMain.handle('policy:delete', async (_event, id: number) => {
     policyEngine.deletePolicy(id);
     return true;
@@ -112,47 +106,38 @@ function registerApprovalHandlers(): void {
 function registerAgentTreeHandlers(): void {
   const agentTreeService = getAgentTreeService();
 
-  // Get agent by session ID
   ipcMain.handle('agentTree:getAgent', async (_event, sessionId: string) => {
     return agentTreeService.getAgent(sessionId);
   });
 
-  // Get full tree
   ipcMain.handle('agentTree:getTree', async (_event, rootSessionId: string) => {
     return agentTreeService.getTree(rootSessionId);
   });
 
-  // Get running agents
   ipcMain.handle('agentTree:getRunning', async (_event, rootSessionId?: string) => {
     return agentTreeService.getRunningAgents(rootSessionId);
   });
 
-  // Get children
   ipcMain.handle('agentTree:getChildren', async (_event, sessionId: string) => {
     return agentTreeService.getChildren(sessionId);
   });
 
-  // Get summary
   ipcMain.handle('agentTree:getSummary', async (_event, rootSessionId: string) => {
     return agentTreeService.getSummary(rootSessionId);
   });
 
-  // Get visualization tree
   ipcMain.handle('agentTree:getVisualizationTree', async (_event, rootSessionId: string) => {
     return agentTreeService.getVisualizationTree(rootSessionId);
   });
 
-  // Get flat tree list
   ipcMain.handle('agentTree:getFlatList', async (_event, rootSessionId: string) => {
     return agentTreeService.getFlatTreeList(rootSessionId);
   });
 
-  // Get agent metrics
   ipcMain.handle('agentTree:getMetrics', async (_event, agentName: string) => {
     return agentTreeService.getAgentMetrics(agentName);
   });
 
-  // Get all metrics
   ipcMain.handle('agentTree:getAllMetrics', async () => {
     return agentTreeService.getAllMetrics();
   });

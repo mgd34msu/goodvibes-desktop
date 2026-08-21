@@ -355,7 +355,6 @@ class TagSuggestionService extends EventEmitter {
       // Query database for sessions without AI suggestions
       const pendingSessions = tagSuggestions.getPendingSessions(); // No limit - queue all pending
       
-      // Check if agent session scanning is enabled
       const scanAgentSessions = db.getSetting<boolean>('tagScanAgentSessions') ?? false;
 
       for (const sessionId of pendingSessions) {
@@ -405,7 +404,6 @@ class TagSuggestionService extends EventEmitter {
           continue;
         }
         
-        // Get file path from database
         const session = db.getSession(sessionId);
         
         // Skip if session doesn't exist in DB (not imported yet)
@@ -607,7 +605,6 @@ class TagSuggestionService extends EventEmitter {
     if (rateLimitEnabled) {
       total = this.totalSessionsToScan > 0 ? this.totalSessionsToScan : this.scannedCount + queueSize;
     } else {
-      // Get actual pending count from database when rate limiting is off
       const actualPending = tagSuggestions.getPendingSessions().length;
       total = this.scannedCount + actualPending;
     }
@@ -648,7 +645,6 @@ class TagSuggestionService extends EventEmitter {
       return;
     }
 
-    // Check rate limit BEFORE collecting batch (if enabled)
     const rateLimitEnabled = db.getSetting<boolean>('tagScanRateLimitEnabled') ?? true;
     if (rateLimitEnabled) {
       if (!this.rateLimiter.tryConsume()) {
@@ -666,14 +662,12 @@ class TagSuggestionService extends EventEmitter {
         break;
       }
 
-      // Get next item
       const item = this.queue.dequeue();
       if (!item) break;
       
       batch.push(item.sessionId);
     }
 
-    // Process batch if we have any sessions
     if (batch.length > 0) {
       logger.info(`Processing batch of ${batch.length} sessions`);
       this.isProcessingBatch = true;

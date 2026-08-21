@@ -258,9 +258,7 @@ export const MIGRATIONS: Migration[] = [
     version: 1,
     description: 'Add hook_type and prompt columns to hooks table',
     up: (db) => {
-      // Add hook_type column with default 'command'
       db.exec(`ALTER TABLE hooks ADD COLUMN hook_type TEXT DEFAULT 'command'`);
-      // Add prompt column for prompt-type hooks
       db.exec(`ALTER TABLE hooks ADD COLUMN prompt TEXT`);
     },
     down: (db) => {
@@ -322,7 +320,6 @@ export const MIGRATIONS: Migration[] = [
         )
       `);
 
-      // Create tag_suggestions table
       db.exec(`
         CREATE TABLE tag_suggestions (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -338,7 +335,6 @@ export const MIGRATIONS: Migration[] = [
         )
       `);
 
-      // Create suggestion_feedback table
       db.exec(`
         CREATE TABLE suggestion_feedback (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -351,7 +347,6 @@ export const MIGRATIONS: Migration[] = [
         )
       `);
 
-      // Create tag_templates table
       db.exec(`
         CREATE TABLE tag_templates (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -364,7 +359,6 @@ export const MIGRATIONS: Migration[] = [
         )
       `);
 
-      // Create recent_tags table
       db.exec(`
         CREATE TABLE recent_tags (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -379,7 +373,6 @@ export const MIGRATIONS: Migration[] = [
       db.exec(`ALTER TABLE sessions ADD COLUMN suggestion_scanned_at TEXT DEFAULT NULL`);
       db.exec(`ALTER TABLE sessions ADD COLUMN suggestion_scan_depth TEXT DEFAULT NULL`);
 
-      // Create indexes
       db.exec(`CREATE INDEX idx_tags_pinned ON tags(is_pinned)`);
       db.exec(`CREATE INDEX idx_tags_usage ON tags(usage_count DESC)`);
       db.exec(`CREATE INDEX idx_session_tags_session ON session_tags(session_id)`);
@@ -388,7 +381,6 @@ export const MIGRATIONS: Migration[] = [
       db.exec(`CREATE INDEX idx_suggestions_status ON tag_suggestions(status)`);
       db.exec(`CREATE INDEX idx_sessions_scan_status ON sessions(suggestion_scan_status)`);
 
-      // Calculate initial usage_count
       db.exec(`
         UPDATE tags SET usage_count = (
           SELECT COUNT(*) FROM session_tags WHERE session_tags.tag_id = tags.id
@@ -400,29 +392,24 @@ export const MIGRATIONS: Migration[] = [
     version: 3,
     description: 'Add per-tool token/cost attribution and deduplication support to tool_usage_detailed',
     up: (db) => {
-      // Add token tracking columns
       db.exec(`ALTER TABLE tool_usage_detailed ADD COLUMN input_tokens INTEGER DEFAULT 0`);
       db.exec(`ALTER TABLE tool_usage_detailed ADD COLUMN output_tokens INTEGER DEFAULT 0`);
       db.exec(`ALTER TABLE tool_usage_detailed ADD COLUMN cache_write_tokens INTEGER DEFAULT 0`);
       db.exec(`ALTER TABLE tool_usage_detailed ADD COLUMN cache_read_tokens INTEGER DEFAULT 0`);
       
-      // Add cost tracking
       db.exec(`ALTER TABLE tool_usage_detailed ADD COLUMN cost_usd REAL DEFAULT 0`);
       
-      // Add metadata columns
       db.exec(`ALTER TABLE tool_usage_detailed ADD COLUMN message_id TEXT`);
       db.exec(`ALTER TABLE tool_usage_detailed ADD COLUMN request_id TEXT`);
       db.exec(`ALTER TABLE tool_usage_detailed ADD COLUMN entry_hash TEXT`);
       db.exec(`ALTER TABLE tool_usage_detailed ADD COLUMN tool_index INTEGER DEFAULT 0`);
       db.exec(`ALTER TABLE tool_usage_detailed ADD COLUMN model TEXT`);
 
-      // Create unique index for deduplication
       db.exec(`
         CREATE UNIQUE INDEX IF NOT EXISTS idx_tool_usage_detailed_dedup 
         ON tool_usage_detailed(session_id, entry_hash, tool_index)
       `);
 
-      // Create index for efficient message queries
       db.exec(`
         CREATE INDEX IF NOT EXISTS idx_tool_usage_detailed_message 
         ON tool_usage_detailed(session_id, message_id)

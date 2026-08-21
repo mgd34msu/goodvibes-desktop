@@ -1483,7 +1483,6 @@ describe('IPC Flow Integration', () => {
   it('simulates complete session lifecycle', async () => {
     const sessionId = '550e8400-e29b-41d4-a716-446655440000';
 
-    // Get session
     vi.mocked(mockSessionManager.getSession).mockReturnValue({
       id: sessionId,
       favorite: false,
@@ -1504,7 +1503,6 @@ describe('IPC Flow Integration', () => {
     await toggleArchive!(mockEvent, sessionId);
     expect(db.toggleArchive).toHaveBeenCalledWith(sessionId);
 
-    // Delete session
     const deleteSession = handlers['delete-session'];
     await deleteSession!(mockEvent, sessionId);
     expect(db.deleteSession).toHaveBeenCalledWith(sessionId);
@@ -1517,13 +1515,11 @@ describe('IPC Flow Integration', () => {
       { id: '2', role: 'assistant', content: 'Response' },
     ] as unknown as SessionMessage[];
 
-    // Check if session exists
     vi.mocked(mockSessionManager.getSession).mockReturnValue({ id: sessionId } as Session);
     const getSession = handlers['get-session'];
     const session = await getSession!(mockEvent, sessionId);
     expect(session).toBeDefined();
 
-    // Get messages
     vi.mocked(mockSessionManager.getSessionMessages).mockResolvedValue(mockMessages);
     const getMessages = handlers['get-session-messages'];
     const messages = await getMessages!(mockEvent, sessionId);
@@ -1533,7 +1529,6 @@ describe('IPC Flow Integration', () => {
   it('simulates session refresh and live check flow', async () => {
     const sessionId = '550e8400-e29b-41d4-a716-446655440000';
 
-    // Check if live
     vi.mocked(mockSessionManager.isSessionLive).mockReturnValue(true);
     const isLive = handlers['is-session-live'];
     const liveStatus = await isLive!(mockEvent, sessionId);

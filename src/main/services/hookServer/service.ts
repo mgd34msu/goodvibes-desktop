@@ -119,7 +119,6 @@ export class HookServerService extends EventEmitter {
         stack.splice(index, 1);
         logger.debug('Removed session from sessionStacks', { sessionId, workingDir });
 
-        // Remove empty stacks
         if (stack.length === 0) {
           this.sessionStacks.delete(workingDir);
           logger.debug('Removed empty sessionStacks entry', { workingDir });

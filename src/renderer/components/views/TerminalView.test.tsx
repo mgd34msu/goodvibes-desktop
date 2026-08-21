@@ -124,7 +124,6 @@ vi.mock('../preview/SessionPreviewView', () => ({
 // TEST HELPERS
 // ============================================================================
 
-// Create a wrapper with QueryClient for tests
 function createTestWrapper() {
   const queryClient = new QueryClient({
     defaultOptions: {

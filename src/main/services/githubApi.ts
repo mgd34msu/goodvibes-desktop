@@ -328,7 +328,6 @@ export async function getCheckRuns(
       return data.check_runs as unknown as GitHubCheckRun[];
     } catch (error: unknown) {
       const e = error as { status?: number; message?: string };
-      // Return empty array if ref doesn't exist (404) or is invalid (422)
       if (e.status === 404 || e.status === 422) {
         logger.debug(`Ref "${ref}" not found for ${owner}/${repo} - returning empty check runs`);
         return [];
@@ -357,7 +356,6 @@ export async function getCommitStatus(
       return data as unknown as GitHubCombinedStatus;
     } catch (error: unknown) {
       const e = error as { status?: number; message?: string };
-      // Return null if ref doesn't exist (404) or is invalid (422)
       if (e.status === 404 || e.status === 422) {
         logger.debug(`Ref "${ref}" not found for ${owner}/${repo} - returning null commit status`);
         return null;

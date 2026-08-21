@@ -178,16 +178,12 @@ export async function initDatabase(userDataPath: string): Promise<void> {
   db.pragma('synchronous = NORMAL');
   db.pragma('foreign_keys = ON');
 
-  // Create tables
   createTables();
 
-  // Create primitive tables (agent_registry, hooks, mcp_servers, etc.)
   createPrimitiveTables();
 
-  // Create agency index tables (indexed agents, skills, active agents, queued skills)
   createAgencyIndexTables();
 
-  // Create session summaries tables (for cross-session search and resumption)
   createSessionSummariesTables();
 
   // Run database migrations
@@ -461,7 +457,6 @@ function createTables(): void {
     )
   `);
 
-  // Create indexes for performance
   createIndexes();
 
   logger.info('Database tables created');
@@ -771,7 +766,6 @@ export function clearActivityLog(): void {
   database.prepare('DELETE FROM activity_log').run();
 }
 
-// Export all operations from other modules
 export * from './collections.js';
 export * from './prompts.js';
 export * from './notes.js';

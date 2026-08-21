@@ -55,7 +55,6 @@ export function validateCommand(command: string): { valid: boolean; error?: stri
     return { valid: false, error: `Invalid characters in command: ${command}` };
   }
 
-  // Check for path traversal attacks
   if (command.includes('..')) {
     return { valid: false, error: 'Path traversal not allowed in command' };
   }
@@ -100,7 +99,6 @@ export function sanitizeArgument(arg: string): string {
     return '';
   }
 
-  // Remove dangerous characters
   return arg
     .replace(/[\n\r]/g, ' ')  // Replace newlines with spaces
     .replace(/[`$]/g, '')      // Remove backticks and dollar signs
@@ -145,7 +143,6 @@ export function safeExecSync(
   args: string[],
   options?: SafeExecOptions
 ): SafeExecResult {
-  // Validate command
   const cmdValidation = validateCommand(command);
   if (!cmdValidation.valid) {
     logger.warn(`Rejected invalid command: ${command}`);
@@ -158,7 +155,6 @@ export function safeExecSync(
     };
   }
 
-  // Validate arguments unless skipped
   if (!options?.skipValidation) {
     const argsValidation = validateArguments(args);
     if (!argsValidation.valid) {
@@ -220,7 +216,6 @@ export function safeExecAsync(
   options?: SafeExecOptions
 ): Promise<SafeExecResult> {
   return new Promise((resolve) => {
-    // Validate command
     const cmdValidation = validateCommand(command);
     if (!cmdValidation.valid) {
       logger.warn(`Rejected invalid command: ${command}`);
@@ -234,7 +229,6 @@ export function safeExecAsync(
       return;
     }
 
-    // Validate arguments unless skipped
     if (!options?.skipValidation) {
       const argsValidation = validateArguments(args);
       if (!argsValidation.valid) {
@@ -334,14 +328,12 @@ export function safeSpawn(
   args: string[],
   options?: SafeExecOptions & SpawnOptions
 ): ChildProcess | null {
-  // Validate command
   const cmdValidation = validateCommand(command);
   if (!cmdValidation.valid) {
     logger.warn(`Rejected invalid command: ${command}`);
     return null;
   }
 
-  // Validate arguments unless skipped
   if (!options?.skipValidation) {
     const argsValidation = validateArguments(args);
     if (!argsValidation.valid) {
@@ -374,7 +366,6 @@ export function safeSpawn(
  * @returns true if the command exists and is executable
  */
 export function commandExists(command: string): boolean {
-  // Validate the command name first
   const validation = validateCommand(command);
   if (!validation.valid) {
     return false;
@@ -394,7 +385,6 @@ export function commandExists(command: string): boolean {
  * @returns The full path or null if not found
  */
 export function getCommandPath(command: string): string | null {
-  // Validate the command name first
   const validation = validateCommand(command);
   if (!validation.valid) {
     return null;

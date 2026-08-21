@@ -147,5 +147,4 @@ export function TagColorPicker({
   );
 }
 
-// Export the predefined colors for use in other components
 export { TAG_COLORS };

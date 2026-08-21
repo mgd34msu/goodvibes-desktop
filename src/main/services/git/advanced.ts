@@ -56,7 +56,6 @@ export async function gitRebaseSkip(cwd: string): Promise<GitStatus> {
  */
 export async function gitRebaseInProgress(cwd: string): Promise<boolean> {
   if (!cwd) return false;
-  // Check for rebase-merge or rebase-apply directories
   const mergeResult = await runGitCommand(cwd, ['rev-parse', '--git-path', 'rebase-merge']);
 
   if (mergeResult.success && mergeResult.output) {
@@ -184,7 +183,6 @@ export async function gitSubmodules(cwd: string): Promise<{ success: boolean; su
     }
   }
 
-  // Get URLs from .gitmodules
   const configResult = await runGitCommand(cwd, ['config', '--file', '.gitmodules', '--get-regexp', 'url']);
   if (configResult.success && configResult.output) {
     const urlLines = configResult.output.split('\n').filter(Boolean);
@@ -274,7 +272,6 @@ export async function gitWorktrees(cwd: string): Promise<{ success: boolean; wor
     }
 
     if (worktree.path) {
-      // First worktree is the main one
       if (worktrees.length === 0) {
         worktree.isMain = true;
       }

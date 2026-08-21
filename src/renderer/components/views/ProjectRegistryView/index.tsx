@@ -92,7 +92,6 @@ export default function ProjectRegistryView() {
   }, [confirmDeleteTemplate, deleteTemplate]);
 
   const handleNewSession = useCallback(async (project: RegisteredProject) => {
-    // Start a new Claude session in the project's directory
     try {
       const result = await createTerminal(project.path, project.name);
       if (result.error) {

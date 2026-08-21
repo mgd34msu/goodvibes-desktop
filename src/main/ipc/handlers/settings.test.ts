@@ -890,7 +890,6 @@ describe('IPC Flow Integration', () => {
     let result = await getSetting!(mockEvent, 'fontSize');
     expect(result).toBeNull();
 
-    // Write a value
     const setSetting = handlers['set-setting'];
     await setSetting!(mockEvent, { key: 'fontSize', value: 16 });
     expect(db.setSetting).toHaveBeenCalledWith('fontSize', 16);

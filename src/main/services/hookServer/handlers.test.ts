@@ -182,7 +182,6 @@ function createMockContext(): HandlerContext {
       return stack[stack.length - 1];
     }),
     cleanupSession: vi.fn((sessionId: string) => {
-      // Remove session from all stacks
       for (const stack of sessionStacks.values()) {
         const index = stack.indexOf(sessionId);
         if (index !== -1) {
@@ -441,7 +440,6 @@ describe('Hook Handlers', () => {
     });
 
     it('should inject active agents context', async () => {
-      // Set up mock active agent
       mockActiveAgents.push({ agentId: 'agent-1' });
       mockIndexedAgents.set('agent-1', {
         id: 'agent-1',
@@ -466,7 +464,6 @@ describe('Hook Handlers', () => {
     });
 
     it('should inject pending skills context', async () => {
-      // Set up mock pending skill
       mockPendingSkills.push({ id: 1, skillId: 'skill-1' });
       mockIndexedSkills.set('skill-1', {
         id: 'skill-1',
@@ -511,7 +508,6 @@ describe('Hook Handlers', () => {
 
   describe('SessionEnd Handler', () => {
     it('should mark agent as completed on session end', async () => {
-      // First create an agent
       mockAgents.set('ending-session', {
         id: 'ending-session',
         name: 'Test Session',
@@ -582,7 +578,6 @@ describe('Hook Handlers', () => {
 
   describe('SubagentStart Handler', () => {
     it('should create subagent with parent from session stack', async () => {
-      // Set up parent session
       mockAgents.set('parent-agent', {
         id: 'parent-agent',
         name: 'Parent Session',

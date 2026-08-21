@@ -104,7 +104,6 @@ export function OnboardingWizard({
       const targetStep = steps[index];
       if (!targetStep) return;
 
-      // Validate current step before leaving (if going forward)
       if (index > currentStep && step?.validate) {
         setIsTransitioning(true);
         const isValid = await step.validate();

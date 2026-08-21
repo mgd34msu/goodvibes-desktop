@@ -54,7 +54,6 @@ interface GitHubStoreSchema {
   customUseDeviceFlow?: boolean;
 }
 
-// Create an encrypted store for GitHub credentials
 export const githubStore = new Store<GitHubStoreSchema>({
   name: 'github-auth',
   encryptionKey: generateEncryptionKey(),
@@ -255,7 +254,6 @@ export function getOAuthConfigStatus(): {
     };
   }
 
-  // Check environment variables
   const envClientId = process.env.GITHUB_CLIENT_ID;
   const envClientSecret = process.env.GITHUB_CLIENT_SECRET;
   if (envClientId) {

@@ -203,7 +203,6 @@ export default function MCPView() {
   const handleInstallFromRepo = useCallback(async (_repoUrl: string, repoInfo: ParsedRepoInfo) => {
     setIsInstallingFromRepo(true);
     try {
-      // Create an MCP server that uses npx to run the package from GitHub
       const input: CreateMCPServerInput = {
         name: repoInfo.repo,
         transport: 'stdio',

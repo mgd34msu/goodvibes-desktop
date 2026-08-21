@@ -59,7 +59,6 @@ export function FocusTrap({
     };
   }, [active, autoFocus, getFocusableElements, returnFocusOnDeactivate]);
 
-  // Handle keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (!active || e.key !== 'Tab') return;

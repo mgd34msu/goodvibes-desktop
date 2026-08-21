@@ -154,7 +154,6 @@ export function createAgentTreeTables(): void {
     )
   `);
 
-  // Create indexes
   createAgentTreeIndexes();
 
   logger.info('Agent tree tables created');
@@ -322,7 +321,6 @@ export function updateAgentStatus(
     WHERE session_id = ?
   `).run(status, completedAt, sessionId);
 
-  // Update aggregated metrics
   if (status === 'completed' || status === 'failed') {
     const node = getAgentBySessionId(sessionId);
     if (node) {
@@ -389,14 +387,12 @@ export function allocateBudgetToChild(
 ): boolean {
   const db = getDatabase();
 
-  // Get parent's remaining budget
   const parent = getAgentBySessionId(parentSessionId);
   if (!parent) return false;
 
   const remainingBudget = parent.allocatedBudgetUsd - parent.spentBudgetUsd;
   if (amount > remainingBudget) return false;
 
-  // Update child's allocated budget
   db.prepare(`
     UPDATE agent_tree_nodes SET
       allocated_budget_usd = ?
@@ -436,14 +432,12 @@ function mapRowToAgentNode(row: AgentTreeNodeRow): AgentTreeNode {
 function updateAgentMetrics(node: AgentTreeNode, success: boolean): void {
   const db = getDatabase();
 
-  // Calculate duration
   const startTime = new Date(node.startedAt).getTime();
   const endTime = node.completedAt
     ? new Date(node.completedAt).getTime()
     : Date.now();
   const durationMs = endTime - startTime;
 
-  // Check if metrics record exists
   const existing = db.prepare(
     'SELECT id FROM agent_metrics WHERE agent_name = ?'
   ).get(node.agentName) as { id: number } | undefined;

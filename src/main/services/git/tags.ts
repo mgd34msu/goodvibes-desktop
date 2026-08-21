@@ -11,7 +11,6 @@ import { runGitCommand, validateCommitHash, validateRemoteName, logger } from '.
 export async function gitTags(cwd: string): Promise<{ success: boolean; tags: GitTag[]; error?: string }> {
   if (!cwd) return { success: false, tags: [], error: 'No working directory specified' };
 
-  // Get all tags with their commit hashes
   const result = await runGitCommand(cwd, ['tag', '-l', '--format=%(refname:short)|%(objecttype)|%(objectname:short)']);
 
   if (!result.success) {

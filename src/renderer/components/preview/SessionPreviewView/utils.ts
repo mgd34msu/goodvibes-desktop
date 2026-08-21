@@ -123,11 +123,9 @@ function parseEntry(raw: RawEntry, startId: number): ParsedSessionEntry[] {
     return results;
   }
 
-  // Handle user messages - may contain tool_result content blocks
   if (entryType === 'user') {
     const message = raw.message;
 
-    // Check if content is an array with tool_result blocks
     if (message?.content && Array.isArray(message.content)) {
       for (const block of message.content) {
         if (block.type === 'tool_result') {
@@ -169,7 +167,6 @@ function parseEntry(raw: RawEntry, startId: number): ParsedSessionEntry[] {
     return results;
   }
 
-  // Handle assistant messages - these can contain multiple content blocks
   if (entryType === 'assistant') {
     const message = raw.message;
 
@@ -210,7 +207,6 @@ function parseEntry(raw: RawEntry, startId: number): ParsedSessionEntry[] {
           }
         }
 
-        // Add accumulated text content as assistant message
         if (textContent) {
           results.push({
             id: id++,
@@ -236,7 +232,6 @@ function parseEntry(raw: RawEntry, startId: number): ParsedSessionEntry[] {
     return results;
   }
 
-  // Handle standalone tool_result entries
   if (entryType === 'tool_result') {
     const content = typeof raw.content === 'string'
       ? raw.content
@@ -253,7 +248,6 @@ function parseEntry(raw: RawEntry, startId: number): ParsedSessionEntry[] {
     return results;
   }
 
-  // Handle summary entries
   if (entryType === 'summary') {
     results.push({
       id: id++,
@@ -264,7 +258,6 @@ function parseEntry(raw: RawEntry, startId: number): ParsedSessionEntry[] {
     return results;
   }
 
-  // Handle system entries
   if (entryType === 'system') {
     const content = extractTextContent(raw.message) || (typeof raw.content === 'string' ? raw.content : '');
     if (content) {
@@ -278,8 +271,8 @@ function parseEntry(raw: RawEntry, startId: number): ParsedSessionEntry[] {
     return results;
   }
 
-  // Handle standalone thinking entries (rare, usually embedded in assistant)
   if (entryType === 'thinking') {
+    // Standalone thinking entries are rare - usually thinking blocks are embedded in assistant messages
     const content = typeof raw.content === 'string' ? raw.content : '';
     if (content) {
       results.push({
@@ -292,7 +285,6 @@ function parseEntry(raw: RawEntry, startId: number): ParsedSessionEntry[] {
     return results;
   }
 
-  // Handle any other entry type as unknown
   // Only show if there's actual user-facing content (not metadata)
   if (raw.message || raw.summary) {
     const content = extractTextContent(raw.message) || raw.summary || '';

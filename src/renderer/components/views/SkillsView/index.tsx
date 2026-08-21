@@ -74,7 +74,6 @@ export default function AgentSkillsView() {
   const handleOpenInstallModal = (
     skill: BuiltInAgentSkill & { isBuiltIn: true }
   ) => {
-    // Remove isBuiltIn flag when storing in state
     const { isBuiltIn, ...skillData } = skill;
     setInstallSkill(skillData);
   };

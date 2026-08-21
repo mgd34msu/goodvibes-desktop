@@ -50,7 +50,6 @@ export function parseJestOutput(output: string): Partial<TestResult> {
     failedTestDetails: [],
   };
 
-  // Parse test counts
   // Jest format: "Tests:       5 passed, 2 failed, 7 total"
   const testsMatch = output.match(/Tests:\s+(?:(\d+)\s+passed,?\s*)?(?:(\d+)\s+failed,?\s*)?(?:(\d+)\s+skipped,?\s*)?(?:(\d+)\s+pending,?\s*)?(?:(\d+)\s+todo,?\s*)?(\d+)\s+total/i);
   if (testsMatch) {
@@ -61,7 +60,6 @@ export function parseJestOutput(output: string): Partial<TestResult> {
     result.totalTests = parseInt(testsMatch[6] || '0', 10);
   }
 
-  // Parse suite counts
   // Jest format: "Test Suites: 2 passed, 1 failed, 3 total"
   const suitesMatch = output.match(/Test Suites:\s+(?:(\d+)\s+passed,?\s*)?(?:(\d+)\s+failed,?\s*)?(?:(\d+)\s+skipped,?\s*)?(\d+)\s+total/i);
   if (suitesMatch) {
@@ -79,7 +77,6 @@ export function parseJestOutput(output: string): Partial<TestResult> {
     }
   }
 
-  // Parse failed test details
   // Jest format: "● Suite Name › Test Name"
   const failedTestPattern = /●\s+(.+?)\s+›\s+(.+?)(?:\n|$)/g;
   let match;
@@ -95,7 +92,6 @@ export function parseJestOutput(output: string): Partial<TestResult> {
     });
   }
 
-  // Parse coverage
   result.coverage = parseCoverageTable(output);
 
   return result;
@@ -162,7 +158,6 @@ export function parseVitestOutput(output: string): Partial<TestResult> {
     });
   }
 
-  // Parse coverage
   result.coverage = parseCoverageTable(output);
 
   return result;
@@ -208,7 +203,6 @@ export function parseMochaOutput(output: string): Partial<TestResult> {
   result.totalTests = (result.passedTests || 0) + (result.failedTests || 0) +
                       (result.pendingTests || 0) + (result.skippedTests || 0);
 
-  // Parse failed test details
   // Mocha format: "1) Suite Name test description:"
   const failPattern = /(\d+)\)\s+(.+?):\s*\n/g;
   let match;
@@ -263,7 +257,6 @@ export function parsePytestOutput(output: string): Partial<TestResult> {
 
   result.totalTests = (result.passedTests || 0) + (result.failedTests || 0) + (result.skippedTests || 0);
 
-  // Parse failed test details
   // pytest format: "FAILED test_file.py::test_name - AssertionError"
   const failPattern = /FAILED\s+(.+?)::(.+?)\s+-\s+(.+?)(?:\n|$)/g;
   let match;
@@ -476,7 +469,6 @@ export function extractErrorMessage(output: string, marker: string): string {
   const idx = output.indexOf(marker);
   if (idx === -1) return '';
 
-  // Get the next 500 characters and try to find the error
   const snippet = output.substring(idx, idx + 500);
 
   // Look for common error patterns

@@ -85,8 +85,7 @@ export function validateCommandName(command: string): ValidationResult {
     return { valid: false, error: 'Command cannot be empty' };
   }
 
-  // Check for path components (only allow simple command names or absolute paths)
-  // Reject relative paths that could escape intended directories
+  // Only simple command names or absolute paths are allowed; reject relative paths that could escape intended directories
   for (const pattern of PATH_TRAVERSAL_PATTERNS) {
     if (pattern.test(trimmed)) {
       logger.warn('Command contains path traversal pattern', { command: trimmed });
@@ -120,13 +119,11 @@ export function validateCommandArgument(arg: string): ValidationResult {
 
   const argStr = String(arg);
 
-  // Check for shell metacharacters
   if (SHELL_METACHARACTERS.test(argStr)) {
     logger.warn('Argument contains shell metacharacters', { arg: argStr.substring(0, 50) });
     return { valid: false, error: 'Argument contains potentially dangerous characters' };
   }
 
-  // Check for command substitution patterns
   if (COMMAND_SUBSTITUTION_PATTERN.test(argStr)) {
     logger.warn('Argument contains command substitution pattern', { arg: argStr.substring(0, 50) });
     return { valid: false, error: 'Argument contains command substitution pattern' };
@@ -218,13 +215,11 @@ export function validatePath(pathStr: string, allowAbsolute = true): ValidationR
 
   const trimmed = pathStr.trim();
 
-  // Check for null bytes (common injection technique)
   if (trimmed.includes('\0')) {
     logger.warn('Path contains null byte', { path: trimmed });
     return { valid: false, error: 'Path contains null byte' };
   }
 
-  // Check for path traversal (including URL-encoded variants)
   for (const pattern of PATH_TRAVERSAL_PATTERNS) {
     if (pattern.test(trimmed)) {
       logger.warn('Path contains traversal pattern', { path: trimmed });
@@ -236,7 +231,6 @@ export function validatePath(pathStr: string, allowAbsolute = true): ValidationR
   // This catches cases that regex patterns might miss
   try {
     const resolved = path.resolve(trimmed);
-    // Check if resolved path contains .. components (shouldn't happen after resolve, but defense in depth)
     if (resolved.includes('..')) {
       logger.warn('Path resolves to traversal pattern', { path: trimmed, resolved });
       return { valid: false, error: 'Path contains directory traversal' };
@@ -247,7 +241,6 @@ export function validatePath(pathStr: string, allowAbsolute = true): ValidationR
     return { valid: false, error: 'Invalid path' };
   }
 
-  // Check if absolute path is allowed
   const isAbsolute = /^[/\\]|^[A-Za-z]:/.test(trimmed);
   if (isAbsolute && !allowAbsolute) {
     return { valid: false, error: 'Absolute paths are not allowed' };
@@ -294,7 +287,6 @@ export function validateEnvVarValue(value: string): ValidationResult {
 
   const valueStr = String(value);
 
-  // Check for command substitution that could be expanded
   if (COMMAND_SUBSTITUTION_PATTERN.test(valueStr)) {
     logger.warn('Environment variable value contains command substitution');
     return { valid: false, error: 'Value contains command substitution pattern' };
@@ -357,7 +349,6 @@ export function validateHookCommand(command: string): ValidationResult {
     return { valid: false, error: 'Hook command exceeds maximum length' };
   }
 
-  // Check for null bytes
   if (trimmed.includes('\0')) {
     logger.warn('Hook command contains null byte');
     return { valid: false, error: 'Hook command contains null byte' };

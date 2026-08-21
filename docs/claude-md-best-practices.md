@@ -1,10 +1,10 @@
-# CLAUDE.md Best Practices Guide
+# CLAUDE.md best practices guide
 
 Reference for structuring and maintaining CLAUDE.md files across user, project, and local levels.
 
 ---
 
-## Memory Hierarchy
+## Memory hierarchy
 
 Claude Code loads these in order (higher = more authoritative, loaded first):
 
@@ -17,7 +17,7 @@ Claude Code loads these in order (higher = more authoritative, loaded first):
 
 ---
 
-## User-Level (`~/.claude/CLAUDE.md`)
+## User-level (`~/.claude/CLAUDE.md`)
 
 **Best for:**
 
@@ -45,7 +45,7 @@ Claude Code loads these in order (higher = more authoritative, loaded first):
 
 ---
 
-## Project-Level (`./CLAUDE.md`)
+## Project-level (`./CLAUDE.md`)
 
 **Best for:**
 
@@ -57,7 +57,7 @@ Claude Code loads these in order (higher = more authoritative, loaded first):
 - File boundaries (what not to touch)
 - Known issues and gotchas
 
-This is the **high-leverage** file — shared with the team and defines how Claude works with this codebase.
+This is the high-leverage file, shared with the team and defining how Claude works with this codebase.
 
 **Example structure:**
 
@@ -91,20 +91,20 @@ When working with [X], use the MCP server instead of CLI commands.
 
 ---
 
-## Local Files (`./CLAUDE.local.md`)
+## Local files (`./CLAUDE.local.md`)
 
 Automatically gitignored. Use cases:
 
-1. **Personal sandbox/dev URLs** — your local dev server, test credentials
-2. **Overrides** — if team CLAUDE.md says "use pnpm" but you need npm for debugging
-3. **Experimental instructions** — testing rules before proposing to team
-4. **Worktree-specific context** — feature branch with different needs
+1. **Personal sandbox/dev URLs.** Your local dev server, test credentials.
+2. **Overrides.** If team CLAUDE.md says "use pnpm" but you need npm for debugging.
+3. **Experimental instructions.** Testing rules before proposing to team.
+4. **Worktree-specific context.** Feature branch with different needs.
 
 **Alternative:** The import syntax (`@~/.claude/my-project-prefs.md`) works better across multiple git worktrees since local files are per-directory.
 
 ---
 
-## Import Syntax
+## Import syntax
 
 CLAUDE.md files can import other files:
 
@@ -123,15 +123,15 @@ See @README for project overview and @package.json for available commands.
 
 ---
 
-## Content Principles
+## Content principles
 
-### Less is More
+### Less is more
 
-Instruction-following quality degrades uniformly as instruction count increases. The model doesn't ignore "later" instructions — it ignores all of them more uniformly.
+Instruction-following quality degrades uniformly as instruction count increases. The model doesn't ignore "later" instructions. It ignores all of them more uniformly.
 
 **Target:** Keep your CLAUDE.md as concise as possible while covering essentials.
 
-### Progressive Disclosure
+### Progressive disclosure
 
 Don't tell Claude everything upfront. Tell it **where to find** information so it can retrieve when needed.
 
@@ -143,7 +143,7 @@ Don't tell Claude everything upfront. Tell it **where to find** information so i
 For auth issues or FooBarError, see @docs/auth-troubleshooting.md
 ```
 
-### Always Provide Alternatives
+### Always provide alternatives
 
 Never use negative-only constraints. The agent gets stuck when it thinks it must use a forbidden approach.
 
@@ -155,7 +155,7 @@ Never use the --force flag.
 Use --force-with-lease instead of --force for safer force pushes.
 ```
 
-### Be Specific
+### Be specific
 
 ```markdown
 # Bad
@@ -165,7 +165,7 @@ Format code properly.
 Use 2-space indentation. Run prettier before committing.
 ```
 
-### Commands Should Be Copy-Pasteable
+### Commands should be copy-pasteable
 
 ```markdown
 # Bad
@@ -177,26 +177,26 @@ pnpm test --coverage
 
 ---
 
-## What NOT to Include
+## What not to include
 
-- **Linter rules** — Use actual linters, not instructions
-- **Verbose documentation** — Use imports to reference docs
-- **Information irrelevant to current task** — Extra context leads to unpredictable behavior
-- **Auto-generated content** — CLAUDE.md is high-leverage; hand-craft it
-- **Generic advice** — Only include what's specific to this project/context
+- **Linter rules.** Use actual linters, not instructions.
+- **Verbose documentation.** Use imports to reference docs.
+- **Information irrelevant to the current task.** Extra context leads to unpredictable behavior.
+- **Auto-generated content.** CLAUDE.md is high-leverage; hand-craft it.
+- **Generic advice.** Only include what's specific to this project or context.
 
 ---
 
 ## Maintenance
 
-1. **Start with `/init`** — Use it as a starting point, then delete aggressively
-2. **Update on architecture changes** — Keep it current as project evolves
-3. **Review agent logs** — Find common mistakes and fix them in CLAUDE.md
-4. **Treat as forcing function** — If your CLI commands need paragraphs of docs, write a simpler wrapper instead
+1. **Start with `/init`.** Use it as a starting point, then delete aggressively.
+2. **Update on architecture changes.** Keep it current as the project evolves.
+3. **Review agent logs.** Find common mistakes and fix them in CLAUDE.md.
+4. **Treat as a forcing function.** If your CLI commands need paragraphs of docs, write a simpler wrapper instead.
 
 ---
 
-## Quick Reference
+## Quick reference
 
 | Do | Don't |
 |----|-------|
@@ -209,6 +209,6 @@ pnpm test --coverage
 
 ---
 
-## Checking What's Loaded
+## Checking what's loaded
 
 Run `/memory` in Claude Code to see all loaded memory files and their sources.

@@ -418,7 +418,6 @@ describe('TitleBar', () => {
       let terminalDot = terminalItem.querySelector('.bg-primary-400');
       expect(terminalDot).toBeInTheDocument();
 
-      // Close the dropdown first
       await act(async () => {
         fireEvent.mouseDown(document.body);
       });
@@ -429,7 +428,6 @@ describe('TitleBar', () => {
       });
       rerender(<TitleBar />);
 
-      // Open dropdown again
       codeButton = screen.getByRole('button', { name: /Code/i });
       await user.click(codeButton);
 
@@ -513,7 +511,6 @@ describe('TitleBar', () => {
       const menu = screen.getByRole('menu');
       const menuItems = within(menu).getAllByRole('menuitem');
 
-      // First item should be focused initially
       expect(menuItems[0]).toHaveFocus();
 
       fireEvent.keyDown(menu, { key: 'ArrowDown' });
@@ -550,7 +547,6 @@ describe('TitleBar', () => {
       const user = userEvent.setup();
       render(<TitleBar />);
 
-      // Open Features dropdown (has more items)
       const featuresButton = screen.getByRole('button', { name: /Features/i });
       await user.click(featuresButton);
 
@@ -677,7 +673,6 @@ describe('TitleBar', () => {
       const menu = screen.getByRole('menu');
       const menuItems = within(menu).getAllByRole('menuitem');
 
-      // First item should be focused
       expect(menuItems[0]).toHaveFocus();
 
       // Try to go up
@@ -1021,7 +1016,6 @@ describe('TitleBar', () => {
       await user.click(codeButton);
 
       const menuItems = screen.getAllByRole('menuitem');
-      // First item should have tabIndex 0 (focused), others -1
       expect(menuItems[0]).toHaveAttribute('tabindex', '0');
       if (menuItems.length > 1) {
         expect(menuItems[1]).toHaveAttribute('tabindex', '-1');
@@ -1079,7 +1073,6 @@ describe('TitleBar', () => {
       useAppStore.setState({ currentView: 'settings' });
       rerender(<TitleBar />);
 
-      // Now System should be highlighted
       const systemButton = screen.getByRole('button', { name: /System/i });
       expect(systemButton).toHaveClass('bg-gradient-to-b');
     });
@@ -1113,7 +1106,6 @@ describe('TitleBar', () => {
         vi.advanceTimersByTime(30000);
       });
 
-      // Wait for state update
       await act(async () => {
         await Promise.resolve();
       });

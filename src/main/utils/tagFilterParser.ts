@@ -278,7 +278,6 @@ class Parser {
       const token = this.advance();
       const value = token.value;
       
-      // Check if it's a numeric ID
       const numericId = parseInt(value, 10);
       if (!isNaN(numericId) && String(numericId) === value) {
         // Direct numeric ID reference
@@ -402,13 +401,11 @@ export function validateExpression(expr: TagFilterExpression): ValidationResult 
   const errors: string[] = [];
 
   function validate(node: TagFilterExpression, path: string): void {
-    // Check type validity
     if (!['tag', 'and', 'or', 'not'].includes(node.type)) {
       errors.push(`${path}: Invalid node type '${node.type}'`);
       return;
     }
 
-    // Validate tag nodes
     if (node.type === 'tag') {
       if (node.children !== undefined && node.children.length > 0) {
         errors.push(`${path}: Tag nodes should not have children`);
@@ -497,7 +494,6 @@ export function resolveTagNames(
 
       const tagValue = tagToken.value;
 
-      // Check if it's a numeric ID
       const numericId = parseInt(tagValue, 10);
       if (!isNaN(numericId) && numericId.toString() === tagValue) {
         // Direct ID reference
@@ -567,7 +563,6 @@ export function stringifyExpression(
     const child = expr.children?.[0];
     if (!child) return 'NOT';
     const childStr = stringifyExpression(child, getTagById);
-    // Add parentheses if child is a binary operator
     const needsParens = child.type === 'and' || child.type === 'or';
     return `NOT ${needsParens ? `(${childStr})` : childStr}`;
   }
@@ -580,7 +575,6 @@ export function stringifyExpression(
     const operator = expr.type.toUpperCase();
     const parts = expr.children.map((child) => {
       const childStr = stringifyExpression(child, getTagById);
-      // Add parentheses if child is a lower-precedence operator
       // Precedence: NOT > AND > OR
       // Only add parens if parent has higher precedence than child
       const needsParens = expr.type === 'and' && child.type === 'or';

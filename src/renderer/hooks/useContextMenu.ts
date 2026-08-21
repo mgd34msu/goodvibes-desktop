@@ -17,14 +17,12 @@ export function useContextMenu(): void {
     const handleContextMenu = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
 
-      // Check if target is an input, textarea, or has contenteditable
       const isEditable =
         target instanceof HTMLInputElement ||
         target instanceof HTMLTextAreaElement ||
         target.isContentEditable ||
         target.closest('[contenteditable="true"]') !== null;
 
-      // Get the current selection
       const selection = window.getSelection();
       const hasSelection = selection !== null && selection.toString().length > 0;
 

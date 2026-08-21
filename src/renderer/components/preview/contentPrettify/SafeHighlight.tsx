@@ -32,7 +32,6 @@ export function parseHighlightedCode(html: string): React.ReactNode[] {
     const localRegex = new RegExp(SPAN_PATTERN.source, 'g');
 
     while ((match = localRegex.exec(text)) !== null) {
-      // Add text before this match
       if (match.index > lastIndex) {
         const textBefore = text.slice(lastIndex, match.index);
         if (textBefore) {
@@ -55,7 +54,6 @@ export function parseHighlightedCode(html: string): React.ReactNode[] {
       lastIndex = match.index + match[0].length;
     }
 
-    // Add remaining text
     if (lastIndex < text.length) {
       const remaining = text.slice(lastIndex);
       if (remaining) {
@@ -66,12 +64,10 @@ export function parseHighlightedCode(html: string): React.ReactNode[] {
     return result;
   }
 
-  // Parse the entire HTML with a fresh regex instance
   const mainRegex = new RegExp(SPAN_PATTERN.source, 'g');
   let match: RegExpExecArray | null;
 
   while ((match = mainRegex.exec(html)) !== null) {
-    // Add text before this match
     if (match.index > currentIndex) {
       const textBefore = html.slice(currentIndex, match.index);
       if (textBefore) {
@@ -94,7 +90,6 @@ export function parseHighlightedCode(html: string): React.ReactNode[] {
     currentIndex = match.index + match[0].length;
   }
 
-  // Add remaining text
   if (currentIndex < html.length) {
     const remaining = html.slice(currentIndex);
     if (remaining) {

@@ -62,7 +62,6 @@ export function createTag(input: CreateTagInput): Tag {
   const db = getDatabase();
   const normalizedName = normalizeTagName(input.name);
   
-  // Check if tag already exists
   const existing = getTagByName(normalizedName);
   if (existing) {
     logger.warn(`Tag already exists: ${normalizedName}`);
@@ -189,7 +188,6 @@ export function deleteTag(id: number, reassignTo?: number): void {
           WHERE tag_id = ?
         `).run(reassignTo, id);
         
-        // Delete any duplicates that couldn't be updated
         db.prepare('DELETE FROM session_tags WHERE tag_id = ?').run(id);
         
         // Recalculate usage count for target tag
@@ -199,7 +197,6 @@ export function deleteTag(id: number, reassignTo?: number): void {
         db.prepare('DELETE FROM session_tags WHERE tag_id = ?').run(id);
       }
       
-      // Delete the tag itself
       db.prepare('DELETE FROM tags WHERE id = ?').run(id);
       
       logger.info(`Deleted tag: ${tag.name}`, { tagId: id, reassignedTo: reassignTo });
@@ -237,10 +234,8 @@ export function mergeTags(sourceId: number, targetId: number): Tag {
         WHERE tag_id = ?
       `).run(targetId, sourceId);
       
-      // Delete any duplicate associations
       db.prepare('DELETE FROM session_tags WHERE tag_id = ?').run(sourceId);
       
-      // Delete source tag
       db.prepare('DELETE FROM tags WHERE id = ?').run(sourceId);
       
       // Recalculate usage count for target
@@ -382,13 +377,11 @@ export function createTagAlias(aliasName: string, canonicalId: number): Tag {
   const db = getDatabase();
   const normalizedName = normalizeTagName(aliasName);
   
-  // Check if alias name already exists
   const existing = getTagByName(normalizedName);
   if (existing) {
     throw new Error(`Tag name already exists: ${normalizedName}`);
   }
   
-  // Check if canonical tag exists
   const canonical = getTag(canonicalId);
   if (!canonical) {
     throw new Error(`Canonical tag not found: ${canonicalId}`);
@@ -515,7 +508,6 @@ export function getSessionTags(sessionId: string): Tag[] {
 export function clearSessionTags(sessionId: string): void {
   const db = getDatabase();
   
-  // Get all tag IDs before deleting
   const tagIds = db.prepare(`
     SELECT tag_id FROM session_tags WHERE session_id = ?
   `).all(sessionId) as Array<{ tag_id: number }>;
@@ -545,7 +537,6 @@ export function setSessionTags(sessionId: string, tagIds: number[]): void {
       // Clear existing tags
       clearSessionTags(sessionId);
       
-      // Add new tags
       for (const tagId of tagIds) {
         addTagToSession(sessionId, tagId);
       }

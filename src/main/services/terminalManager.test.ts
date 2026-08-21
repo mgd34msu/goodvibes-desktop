@@ -161,7 +161,6 @@ describe('TerminalManager Service', () => {
     vi.mocked(pty.spawn).mockReturnValue(mockPty as IPty);
     vi.mocked(db.getSetting).mockReturnValue(true); // skipPermissions enabled
 
-    // Initialize the terminal manager
     initTerminalManager();
   });
 
@@ -531,7 +530,6 @@ describe('TerminalManager Service', () => {
   // ============================================================================
 
   describe('startPlainTerminal', () => {
-    // Setup for plain terminal tests - ensure a valid shell is configured
     beforeEach(() => {
       // Configure getSetting to return a known valid shell for tests
       vi.mocked(db.getSetting).mockImplementation((key: string) => {
@@ -748,11 +746,9 @@ describe('TerminalManager Service', () => {
       expect(result.id).toBeDefined();
       const terminalId = result.id as number;
 
-      // Create data larger than PASTE_CHUNK_SIZE (4096 bytes)
       const largeData = 'x'.repeat(5000);
       writeToTerminal(terminalId, largeData);
 
-      // First chunk should be written immediately
       expect(mockPty.write).toHaveBeenCalledTimes(1);
       expect(mockPty.write).toHaveBeenCalledWith('x'.repeat(4096));
 
@@ -794,11 +790,9 @@ describe('TerminalManager Service', () => {
       expect(result.id).toBeDefined();
       const terminalId = result.id as number;
 
-      // Create data that requires 3 chunks (12,000 bytes)
       const largeData = 'x'.repeat(12000);
       writeToTerminal(terminalId, largeData);
 
-      // First chunk
       expect(mockPty.write).toHaveBeenCalledTimes(1);
 
       // Second chunk
@@ -1207,7 +1201,6 @@ describe('TerminalManager Service', () => {
       expect(result.id).toBeDefined();
       const terminalId = result.id as number;
 
-      // First kill
       const firstKill = killTerminal(terminalId);
       expect(firstKill).toBe(true);
 
@@ -1242,7 +1235,6 @@ describe('TerminalManager Service', () => {
   // ============================================================================
 
   describe('Mixed Terminal Types', () => {
-    // Setup for mixed terminal tests - ensure a valid shell is configured
     beforeEach(() => {
       vi.mocked(db.getSetting).mockImplementation((key: string) => {
         if (key === 'preferredShell') return 'bash'; // Known safe shell name

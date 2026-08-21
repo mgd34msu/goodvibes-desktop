@@ -158,7 +158,6 @@ async function renderWithProviders(ui: React.ReactElement): Promise<ReturnType<t
 
   await act(async () => {
     result = render(ui, { wrapper: createTestWrapper() });
-    // Wait for async effects to settle
     await new Promise(resolve => setTimeout(resolve, 10));
   });
 
@@ -194,7 +193,6 @@ describe('TerminalView', () => {
     resetStores();
     vi.clearAllMocks();
 
-    // Setup default mocks
     vi.mocked(window.goodvibes.getMostRecentSession).mockResolvedValue(null);
     vi.mocked(window.goodvibes.getRecentProjects).mockResolvedValue([]);
   });
@@ -600,7 +598,6 @@ describe('TerminalHeader', () => {
       />
     );
 
-    // Open dropdown
     await user.click(screen.getByLabelText('New'));
     expect(screen.getByText('Claude Code Session')).toBeInTheDocument();
 
@@ -1060,7 +1057,6 @@ describe('FolderPickerModal', () => {
       expect(screen.getByText('/test/path')).toBeInTheDocument();
     });
 
-    // Start session
     await user.click(screen.getByText('Start Session'));
 
     await waitFor(() => {
@@ -1296,7 +1292,6 @@ describe('Terminal Store Integration', () => {
     // id3 is active (last created)
     expect(useTerminalStore.getState().activeTerminalId).toBe(id3);
 
-    // Close id3
     useTerminalStore.getState().closePreviewTerminal(id3);
 
     // id2 should now be active

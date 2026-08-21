@@ -109,7 +109,6 @@ describe('useAppStore', () => {
     });
 
     it('sets loading state to false', () => {
-      // First set to true
       useAppStore.setState({ isLoading: true, loadingMessage: 'Loading...' });
 
       const { setLoading } = useAppStore.getState();
@@ -144,7 +143,6 @@ describe('useAppStore', () => {
     });
 
     it('clears message and progress when loading is false', () => {
-      // First set with message and progress
       useAppStore.setState({
         isLoading: true,
         loadingMessage: 'Loading...',
@@ -215,7 +213,6 @@ describe('useAppStore', () => {
 
     describe('closeCommandPalette', () => {
       it('closes the command palette', () => {
-        // First open it
         useAppStore.setState({ isCommandPaletteOpen: true });
 
         const { closeCommandPalette } = useAppStore.getState();

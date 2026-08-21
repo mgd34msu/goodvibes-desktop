@@ -91,7 +91,6 @@ export function registerPrimitivesHandlers(): void {
 
   ipcMain.handle('update-mcp-server', withContext('update-mcp-server', async (_, data: unknown) => {
     const { id, updates } = validateInput(updateMCPServerSchema, data, 'update-mcp-server');
-    // Get server to know project path for sync
     const server = primitives.getMCPServer(id);
     primitives.updateMCPServer(id, updates);
     // Sync to Claude config file after updating
@@ -102,7 +101,6 @@ export function registerPrimitivesHandlers(): void {
 
   ipcMain.handle('delete-mcp-server', withContext('delete-mcp-server', async (_, id: unknown) => {
     const validatedId = validateInput(numericIdSchema, id, 'delete-mcp-server');
-    // Get server to know project path for sync before deleting
     const server = primitives.getMCPServer(validatedId);
     primitives.deleteMCPServer(validatedId);
     // Sync to Claude config file after deleting
@@ -402,7 +400,6 @@ export function registerPrimitivesHandlers(): void {
   logger.info('Primitives handlers registered (with Zod validation)');
 }
 
-  // Get user home directory (cross-platform)
   ipcMain.handle('get-home-directory', async () => {
     const os = await import('os');
     return os.homedir();

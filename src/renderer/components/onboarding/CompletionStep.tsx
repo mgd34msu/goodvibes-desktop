@@ -1,6 +1,5 @@
 // ============================================================================
 // COMPLETION STEP
-// Setup complete confirmation
 // ============================================================================
 
 import { PartyPopper, Terminal, FolderKanban, Bot, Settings, Keyboard, Rocket } from 'lucide-react';

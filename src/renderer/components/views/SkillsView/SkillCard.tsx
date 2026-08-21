@@ -31,7 +31,6 @@ export function SkillCard({
   const [expanded, setExpanded] = useState(false);
   const isBuiltIn = 'isBuiltIn' in skill;
 
-  // Format skill invocation for display
   const invocationText = `Skill skill: "${skill.name}"`;
 
   return (

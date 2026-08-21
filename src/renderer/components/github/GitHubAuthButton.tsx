@@ -56,7 +56,6 @@ export default function GitHubAuthButton({
     }
   }, []);
 
-  // Load auth state on mount
   useEffect(() => {
     isMountedRef.current = true;
     loadAuthState();
@@ -135,7 +134,6 @@ export default function GitHubAuthButton({
     setError(null);
   }, []);
 
-  // Render device flow login if active
   if (showDeviceFlow && !authState.isAuthenticated) {
     return (
       <div className={clsx('flex flex-col gap-4', className)}>

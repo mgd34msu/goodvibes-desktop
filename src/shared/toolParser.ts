@@ -1,6 +1,5 @@
 // ============================================================================
 // TOOL PARSER UTILITIES
-// Parse tool names from Bash commands and MCP-CLI calls
 // ============================================================================
 
 /**
@@ -57,7 +56,6 @@ export function parseBashCommand(command: string): string[] {
     { pattern: /^bun\s+(install|run|test|build|add|remove)/i, name: (m) => `bun ${m[1] ?? ''}` },
     { pattern: /^bun\s+/i, name: 'bun' },
 
-    // Build/test tools
     { pattern: /^(vitest|jest|mocha|playwright|cypress)/i, name: (m) => (m[1] ?? 'unknown').toLowerCase() },
     { pattern: /^(tsc|typescript|eslint|prettier|biome)/i, name: (m) => (m[1] ?? 'unknown').toLowerCase() },
     { pattern: /^(vite|webpack|rollup|esbuild|turbo)/i, name: (m) => (m[1] ?? 'unknown').toLowerCase() },
@@ -133,7 +131,6 @@ export function parseMcpCliTool(toolRef: string): string | null {
     return `mcp-cli: ${toolRef}`;
   }
 
-  // Check for goodvibes MCP server (various possible names)
   const isGoodvibes = server.toLowerCase().includes('goodvibes');
 
   if (isGoodvibes) {
@@ -154,6 +151,5 @@ export function resolveToolNames(toolName: string, toolInput: Record<string, unk
     return parseBashCommand(toolInput.command);
   }
 
-  // Return the tool name as-is for non-Bash tools
   return [toolName];
 }

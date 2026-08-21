@@ -46,7 +46,6 @@ export async function calculateCost(
     ? model.replace(/-\d{8}$/, '').replace(/_/g, '-')
     : null;
 
-  // Get pricing for this model from the pricing fetcher
   // If sessionTimestamp is provided, use historical pricing from that date
   let pricing = normalizedModel 
     ? await getPricing(normalizedModel, sessionTimestamp) 
@@ -60,7 +59,7 @@ export async function calculateCost(
     };
   }
 
-  // Check if this is a Sonnet model eligible for long context pricing
+  // Only Sonnet models get the long context pricing tier
   const isSonnet = normalizedModel?.includes('sonnet-4');
   const totalInputTokens = tokenStats.inputTokens + tokenStats.cacheWriteTokens + tokenStats.cacheReadTokens;
   const isLongContext = isSonnet && totalInputTokens > LONG_CONTEXT_THRESHOLD;
@@ -69,7 +68,6 @@ export async function calculateCost(
   const inputPrice = isLongContext ? pricing.input * LONG_CONTEXT_INPUT_MULTIPLIER : pricing.input;
   const outputPrice = isLongContext ? pricing.output * LONG_CONTEXT_OUTPUT_MULTIPLIER : pricing.output;
 
-  // Calculate costs per token type
   const inputCost = (tokenStats.inputTokens * inputPrice) / 1_000_000;
   const outputCost = (tokenStats.outputTokens * outputPrice) / 1_000_000;
 

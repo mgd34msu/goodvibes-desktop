@@ -251,10 +251,8 @@ class HeadlessRunnerService extends EventEmitter {
         }
       }
 
-      // Build command arguments
       const args = this.buildClaudeArgs(config);
 
-      // Set up environment
       const env = {
         ...process.env,
         ...config.env,
@@ -283,7 +281,6 @@ class HeadlessRunnerService extends EventEmitter {
       this.runningTasks.set(taskId, runningTask);
       this.emit('task:start', { taskId, config });
 
-      // Set up timeout
       const timeoutId = setTimeout(() => {
         if (this.runningTasks.has(taskId)) {
           child.kill('SIGTERM');
@@ -315,13 +312,11 @@ class HeadlessRunnerService extends EventEmitter {
         this.emit('task:error', { taskId, data: text });
       });
 
-      // Write prompt to stdin
       if (config.prompt) {
         child.stdin?.write(config.prompt);
         child.stdin?.end();
       }
 
-      // Handle completion
       child.on('close', (exitCode) => {
         clearTimeout(timeoutId);
         this.runningTasks.delete(taskId);
@@ -362,7 +357,6 @@ class HeadlessRunnerService extends EventEmitter {
         resolve(result);
       });
 
-      // Handle errors
       child.on('error', (error) => {
         clearTimeout(timeoutId);
         this.runningTasks.delete(taskId);
@@ -422,7 +416,6 @@ class HeadlessRunnerService extends EventEmitter {
       args.push('--output-format', 'json');
     }
 
-    // Add the prompt as positional argument
     args.push(config.prompt);
 
     return args;
@@ -440,7 +433,6 @@ class HeadlessRunnerService extends EventEmitter {
     this.taskQueue.push({ id: taskId, config });
     this.emit('task:queued', { taskId, config });
 
-    // Process queue
     this.processQueue();
 
     return taskId;
@@ -585,7 +577,6 @@ class HeadlessRunnerService extends EventEmitter {
     const maxConcurrent = options?.maxConcurrent ?? this.maxConcurrentTasks;
     const results: HeadlessTaskResult[] = [];
 
-    // Process in batches
     for (let i = 0; i < configs.length; i += maxConcurrent) {
       const batch = configs.slice(i, i + maxConcurrent);
       const batchResults = await Promise.all(
@@ -607,7 +598,6 @@ class HeadlessRunnerService extends EventEmitter {
       const result = await this.runTask(config);
       results.push(result);
 
-      // Stop if a task fails and it's critical
       if (!result.success) {
         logger.warn('Sequential task failed, continuing with remaining tasks');
       }
@@ -651,5 +641,4 @@ export function shutdownHeadlessRunner(): void {
   }
 }
 
-// Export the class for testing
 export { HeadlessRunnerService };

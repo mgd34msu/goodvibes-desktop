@@ -21,7 +21,6 @@ function parseDiffOutput(output: string, targetFile?: string): GitFileDiff {
   let newLineNum = 0;
 
   for (const line of lines) {
-    // Check for binary file
     if (line.startsWith('Binary files')) {
       isBinary = true;
       continue;
@@ -39,13 +38,11 @@ function parseDiffOutput(output: string, targetFile?: string): GitFileDiff {
       continue;
     }
 
-    // Parse hunk header
     if (line.startsWith('@@')) {
       if (currentHunk) {
         hunks.push(currentHunk);
       }
 
-      // Parse line numbers from hunk header: @@ -start,count +start,count @@
       const hunkMatch = line.match(/@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
       if (hunkMatch) {
         oldLineNum = parseInt(hunkMatch[1], 10);
@@ -71,7 +68,6 @@ function parseDiffOutput(output: string, targetFile?: string): GitFileDiff {
       continue;
     }
 
-    // Parse diff content lines
     if (currentHunk) {
       let type: GitDiffLine['type'] = 'context';
       let oldNum: number | undefined = oldLineNum;
@@ -163,7 +159,6 @@ export async function gitFileDiff(
     };
   }
 
-  // Parse the diff output
   const diff = parseDiffOutput(result.output, file);
 
   return {
@@ -305,7 +300,6 @@ export async function gitApplyPatch(
       }
     });
 
-    // Write the patch to stdin and close
     try {
       proc.stdin.write(patch);
       proc.stdin.end();
@@ -347,7 +341,6 @@ export async function gitBlame(
     return { success: false, lines: [], error: result.error };
   }
 
-  // Parse porcelain blame output
   const lines: GitBlameLine[] = [];
   const output = result.output || '';
   const outputLines = output.split('\n');
@@ -358,7 +351,6 @@ export async function gitBlame(
   let lineNumber = 0;
 
   for (const line of outputLines) {
-    // First line of a blame entry is: hash origLine finalLine [numLines]
     const hashMatch = line.match(/^([a-f0-9]{40})\s+\d+\s+(\d+)/);
     if (hashMatch) {
       currentHash = hashMatch[1];

@@ -61,10 +61,8 @@ export async function refreshTokenIfNeeded(): Promise<boolean> {
     return false;
   }
 
-  // Update stored tokens
   updateStoredTokens(data);
 
-  // Update auth state
   updateAuthState({
     accessToken: data.access_token,
     tokenExpiresAt: data.expires_in ? Date.now() + data.expires_in * 1000 : null,

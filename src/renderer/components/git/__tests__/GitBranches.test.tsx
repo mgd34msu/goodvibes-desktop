@@ -529,7 +529,6 @@ describe('DeleteBranchModal', () => {
     render(<DeleteBranchModal {...props} />);
 
     // There are two "Delete Branch" texts - one in header, one in button
-    // Get all and click the button one (which is inside a button element)
     const deleteTexts = screen.getAllByText('Delete Branch');
     const deleteButton = deleteTexts.find(el => el.closest('button'));
     expect(deleteButton).toBeDefined();

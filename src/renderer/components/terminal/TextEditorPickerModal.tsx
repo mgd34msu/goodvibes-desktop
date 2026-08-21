@@ -36,7 +36,6 @@ export function TextEditorPickerModal(): React.JSX.Element | null {
   const [isFile, setIsFile] = useState(false);
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
 
-  // Load recent projects when modal opens
   useEffect(() => {
     if (isOpen) {
       window.goodvibes.getRecentProjects()
@@ -83,10 +82,8 @@ export function TextEditorPickerModal(): React.JSX.Element | null {
     if (!selectedPath) return;
 
     try {
-      // Get the working directory (use file's directory if a file was selected)
       const cwd = isFile ? selectedPath.substring(0, selectedPath.lastIndexOf(selectedPath.includes('/') ? '/' : '\\')) : selectedPath;
 
-      // Start a plain terminal in the selected folder
       const result = await createPlainTerminal(cwd);
       if (result.error) {
         // Error already logged by terminalStore, show user-friendly toast
@@ -95,7 +92,6 @@ export function TextEditorPickerModal(): React.JSX.Element | null {
       }
 
       if (result.id !== undefined) {
-        // Get the preferred editor or default
         let editor = preferredTextEditor;
         if (!editor) {
           try {
@@ -109,10 +105,8 @@ export function TextEditorPickerModal(): React.JSX.Element | null {
         }
         if (editor) {
           try {
-            // Build the editor command
             let command = editor;
             if (isFile) {
-              // Open the specific file
               command = `${editor} "${selectedPath}"`;
             }
             // Send the editor command to the terminal

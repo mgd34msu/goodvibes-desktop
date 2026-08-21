@@ -39,7 +39,6 @@ export const registeredListeners: MainProcessListeners = {
  * Should be called during shutdown sequence before shutting down services.
  */
 export function removeAllListeners(): void {
-  // Remove PTY stream analyzer listeners
   const streamAnalyzer = getPTYStreamAnalyzer();
   if (registeredListeners.streamAnalyzer.agentSpawn) {
     streamAnalyzer.off('agent:spawn', registeredListeners.streamAnalyzer.agentSpawn);
@@ -54,7 +53,6 @@ export function removeAllListeners(): void {
     registeredListeners.streamAnalyzer.agentActivity = null;
   }
 
-  // Remove hook server listeners
   const hookServer = getHookServer();
   if (registeredListeners.hookServer.sessionStart) {
     hookServer.off('session:start', registeredListeners.hookServer.sessionStart);
@@ -73,7 +71,6 @@ export function removeAllListeners(): void {
     registeredListeners.hookServer.sessionEnd = null;
   }
 
-  // Remove IPC listeners
   if (registeredListeners.ipcMain.terminalExited) {
     ipcMain.removeListener('terminal-exited', registeredListeners.ipcMain.terminalExited);
     registeredListeners.ipcMain.terminalExited = null;

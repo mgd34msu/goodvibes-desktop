@@ -96,7 +96,6 @@ const mockSessions: Session[] = [
   },
 ];
 
-// Create test wrapper
 function createTestWrapper() {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -199,7 +198,6 @@ describe('SessionsView', () => {
     it('renders session cards after loading', async () => {
       render(<SessionsView />, { wrapper: createTestWrapper() });
 
-      // Wait for the API to be called
       await waitFor(() => {
         expect(vi.mocked(window.goodvibes.getActiveSessions)).toHaveBeenCalled();
       });
@@ -251,7 +249,6 @@ describe('SessionsView', () => {
     it('filters sessions by search term', async () => {
       render(<SessionsView />, { wrapper: createTestWrapper() });
 
-      // Wait for sessions API to be called
       await waitFor(() => {
         expect(vi.mocked(window.goodvibes.getActiveSessions)).toHaveBeenCalled();
       });
@@ -267,7 +264,6 @@ describe('SessionsView', () => {
     it('shows empty state for no matching results', async () => {
       render(<SessionsView />, { wrapper: createTestWrapper() });
 
-      // Wait for sessions API to be called
       await waitFor(() => {
         expect(vi.mocked(window.goodvibes.getActiveSessions)).toHaveBeenCalled();
       });
@@ -320,7 +316,6 @@ describe('SessionsView', () => {
 
       render(<SessionsView />, { wrapper: createTestWrapper() });
 
-      // Wait for sessions API to be called
       await waitFor(() => {
         expect(vi.mocked(window.goodvibes.getActiveSessions)).toHaveBeenCalled();
       });
@@ -335,7 +330,6 @@ describe('SessionsView', () => {
 
       render(<SessionsView />, { wrapper: createTestWrapper() });
 
-      // Wait for sessions API to be called
       await waitFor(() => {
         expect(vi.mocked(window.goodvibes.getActiveSessions)).toHaveBeenCalled();
       });
@@ -350,7 +344,6 @@ describe('SessionsView', () => {
     it('shows favorite star for favorited sessions', async () => {
       render(<SessionsView />, { wrapper: createTestWrapper() });
 
-      // Wait for API to be called with mock data that includes favorited sessions
       await waitFor(() => {
         expect(vi.mocked(window.goodvibes.getActiveSessions)).toHaveBeenCalled();
       });
@@ -362,7 +355,6 @@ describe('SessionsView', () => {
     it('shows outcome badge', async () => {
       render(<SessionsView />, { wrapper: createTestWrapper() });
 
-      // Wait for API to be called with mock data that includes outcome data
       await waitFor(() => {
         expect(vi.mocked(window.goodvibes.getActiveSessions)).toHaveBeenCalled();
       });
@@ -374,7 +366,6 @@ describe('SessionsView', () => {
     it('shows rating stars', async () => {
       render(<SessionsView />, { wrapper: createTestWrapper() });
 
-      // Wait for API to be called with mock data that includes ratings
       await waitFor(() => {
         expect(vi.mocked(window.goodvibes.getActiveSessions)).toHaveBeenCalled();
       });

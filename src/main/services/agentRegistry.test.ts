@@ -89,7 +89,7 @@ vi.mock('./logger.js', () => ({
 
 // Mock database primitives - both paths
 vi.mock('../../database/primitives.js', () => {
-  // Initialize if not exists (mocks are hoisted, so this might run first)
+  // mocks are hoisted, so this factory may run before the outer test setup
   const tg = globalThis as unknown as TestGlobalThis;
   if (!tg.__testAgentRecords) {
     tg.__testAgentRecords = new Map();
@@ -160,7 +160,7 @@ vi.mock('../../database/primitives.js', () => {
 });
 
 vi.mock('../database/primitives.js', () => {
-  // Initialize if not exists (mocks are hoisted, so this might run first)
+  // mocks are hoisted, so this factory may run before the outer test setup
   const tg = globalThis as unknown as TestGlobalThis;
   if (!tg.__testAgentRecords) {
     tg.__testAgentRecords = new Map();
@@ -564,7 +564,6 @@ describe('AgentRegistry Service', () => {
         const registry = initAgentRegistry();
         const agent = registry.spawn(createTestAgent());
 
-        // First call changes status
         registry.markActive(agent.id);
         vi.mocked(primitives.updateAgentStatus).mockClear();
 
@@ -617,7 +616,6 @@ describe('AgentRegistry Service', () => {
         registry.on('agent:completed', listener);
         const agent = registry.spawn(createTestAgent());
 
-        // Update mock to return completed status
         const record = mockAgentRecords.get(agent.id);
         if (record) record.status = 'completed';
 
@@ -632,7 +630,6 @@ describe('AgentRegistry Service', () => {
         registry.on('agent:error', errorListener);
         const agent = registry.spawn(createTestAgent());
 
-        // Update mock to return error status
         const record = mockAgentRecords.get(agent.id);
         if (record) record.status = 'error';
 
@@ -818,7 +815,6 @@ describe('AgentRegistry Service', () => {
       it('should build hierarchical tree structure', () => {
         const registry = initAgentRegistry();
 
-        // Create a parent and children
         const parent = registry.spawn(createTestAgent({ name: 'root' }));
         registry.spawn(createTestAgent({ name: 'child-1', parentId: parent.id }));
         registry.spawn(createTestAgent({ name: 'child-2', parentId: parent.id }));
@@ -1033,12 +1029,10 @@ describe('AgentRegistry Service', () => {
       it('should return aggregate statistics', () => {
         const registry = initAgentRegistry();
 
-        // Create agents with different statuses
         registry.spawn(createTestAgent({ name: 'spawning-agent' }));
         const agent2 = registry.spawn(createTestAgent({ name: 'active-agent' }));
         const agent3 = registry.spawn(createTestAgent({ name: 'completed-agent' }));
 
-        // Update statuses
         const record2 = mockAgentRecords.get(agent2.id);
         if (record2) record2.status = 'active';
 
@@ -1058,7 +1052,6 @@ describe('AgentRegistry Service', () => {
       it('should count active as spawning + ready + active', () => {
         const registry = initAgentRegistry();
 
-        // Create one spawning agent
         registry.spawn(createTestAgent({ name: 'agent-1' }));
 
         const stats = registry.getStats();
@@ -1144,7 +1137,6 @@ describe('AgentRegistry Service', () => {
         const handler = getHookHandler('session:start');
         if (handler) handler({ sessionId: 'session-test' });
 
-        // Remove agent from active list
         const record = mockAgentRecords.get(agent.id);
         if (record) record.status = 'terminated';
 
@@ -1166,11 +1158,9 @@ describe('AgentRegistry Service', () => {
       const registry = initAgentRegistry();
       const agent = registry.spawn(createTestAgent({ sessionPath: 'session-123' }));
 
-      // Get the session:start handler
       const handler = getHookHandler('session:start');
       expect(handler).toBeDefined();
 
-      // Call with session ID
       if (handler) {
         handler({ sessionId: 'session-123' });
       }
@@ -1184,11 +1174,9 @@ describe('AgentRegistry Service', () => {
       const registry = initAgentRegistry();
       registry.spawn(createTestAgent({ sessionPath: 'session-456' }));
 
-      // Get handlers
       const startHandler = getHookHandler('session:start');
       const endHandler = getHookHandler('session:end');
 
-      // Start then end session
       if (startHandler) startHandler({ sessionId: 'session-456' });
       if (endHandler) endHandler({ sessionId: 'session-456' });
 
@@ -1202,7 +1190,6 @@ describe('AgentRegistry Service', () => {
 
       registry.spawn(createTestAgent({ sessionPath: 'agent-session' }));
 
-      // Get the agent:start handler
       const handler = getHookHandler('agent:start');
 
       if (handler) {
@@ -1220,7 +1207,6 @@ describe('AgentRegistry Service', () => {
 
       registry.spawn(createTestAgent({ sessionPath: 'stopping-session' }));
 
-      // Get handlers
       const startHandler = getHookHandler('agent:start');
       const stopHandler = getHookHandler('agent:stop');
 

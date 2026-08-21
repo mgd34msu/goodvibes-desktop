@@ -18,7 +18,6 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 
-// Check if better-sqlite3 can be loaded
 let canLoadDatabase = true;
 try {
   require('better-sqlite3');
@@ -29,7 +28,6 @@ try {
 // Skip all tests if native module cannot be loaded
 const describeIfDb = canLoadDatabase ? describe : describe.skip;
 
-// Create a temporary directory for the test database
 const TEST_DIR = path.join(os.tmpdir(), 'agency-index-test-' + Date.now());
 
 // Mock electron and logger
@@ -113,7 +111,6 @@ type ClearSkillQueue = typeof import('./active.js').clearSkillQueue;
 type CreateAgencyIndexTables = typeof import('./index.js').createAgencyIndexTables;
 type GetIndexStats = typeof import('./index.js').getIndexStats;
 
-// Declare variables for dynamic imports
 let initDatabase: InitDatabase;
 let closeDatabase: CloseDatabase;
 let getDatabase: GetDatabase;
@@ -188,7 +185,6 @@ beforeAll(async () => {
     return;
   }
 
-  // Create test directory
   if (!fs.existsSync(TEST_DIR)) {
     fs.mkdirSync(TEST_DIR, { recursive: true });
   }
@@ -266,7 +262,6 @@ beforeAll(async () => {
   createAgencyIndexTables = indexModule.createAgencyIndexTables;
   getIndexStats = indexModule.getIndexStats;
 
-  // Initialize database
   await initDatabase(TEST_DIR);
 });
 
@@ -524,7 +519,6 @@ describeIfDb('Category Operations', () => {
 
 describeIfDb('Indexed Skill Operations', () => {
   beforeEach(() => {
-    // Create a category for skills
     createTestCategory({ path: 'test/category' });
   });
 

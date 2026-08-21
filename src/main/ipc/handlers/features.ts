@@ -108,7 +108,6 @@ function updateSettingsWithHook(
 ): void {
   const settingsPath = path.join(baseDir, 'settings.json');
 
-  // Read existing settings or create new
   let settings: Record<string, unknown> = {};
   if (fs.existsSync(settingsPath)) {
     try {
@@ -135,7 +134,6 @@ function updateSettingsWithHook(
   // Path is stored as-is - JSON.stringify handles escaping
   const scriptPath = fullScriptPath || path.join(baseDir, 'hooks', `${hookName}.sh`);
 
-  // Add hook configuration
   const hookConfig: Record<string, string> = {
     command: scriptPath,
   };
@@ -144,7 +142,6 @@ function updateSettingsWithHook(
     hookConfig.matcher = matcher;
   }
 
-  // Check if hook already exists (by command path or hook name)
   const existingIndex = hooks[eventType].findIndex((h) => {
     if (typeof h !== 'object' || h === null || !('command' in h)) return false;
     const cmd = (h as { command: string }).command;
@@ -153,16 +150,13 @@ function updateSettingsWithHook(
   });
 
   if (existingIndex >= 0) {
-    // Update existing hook
     hooks[eventType][existingIndex] = hookConfig;
     logger.debug('Updated existing hook in settings.json', { eventType, hookName });
   } else {
-    // Add new hook
     hooks[eventType].push(hookConfig);
     logger.debug('Added new hook to settings.json', { eventType, hookName });
   }
 
-  // Write updated settings
   ensureDir(path.dirname(settingsPath));
   fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), 'utf-8');
   logger.info('Updated settings.json with hook configuration', { settingsPath });
@@ -178,7 +172,6 @@ function removeHookFromSettings(
 ): void {
   const settingsPath = path.join(baseDir, 'settings.json');
 
-  // Read existing settings
   if (!fs.existsSync(settingsPath)) {
     logger.debug('settings.json does not exist, nothing to remove', { settingsPath });
     return;
@@ -193,7 +186,6 @@ function removeHookFromSettings(
     return;
   }
 
-  // Check if hooks object exists
   if (!settings.hooks || typeof settings.hooks !== 'object') {
     logger.debug('No hooks in settings.json', { settingsPath });
     return;
@@ -201,7 +193,6 @@ function removeHookFromSettings(
 
   const hooks = settings.hooks as Record<string, unknown[]>;
 
-  // Check if event type array exists
   if (!Array.isArray(hooks[eventType])) {
     logger.debug('Event type not found in settings.json', { eventType });
     return;
@@ -217,7 +208,6 @@ function removeHookFromSettings(
   hooks[eventType] = hooks[eventType].filter((h) => {
     if (typeof h !== 'object' || h === null || !('command' in h)) return true;
     const cmd = (h as { command: string }).command;
-    // Remove if matches full path, relative path, or ends with the hook filename
     return cmd !== fullScriptPath && cmd !== relativeScriptPath && !cmd.endsWith(`${hookName}.sh`);
   });
 
@@ -238,7 +228,6 @@ function removeHookFromSettings(
     logger.debug('Removed empty hooks object from settings.json');
   }
 
-  // Write updated settings
   fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), 'utf-8');
   logger.info('Removed hook from settings.json', { hookName, eventType, settingsPath });
 }
@@ -370,10 +359,8 @@ export function registerFeatureHandlers(): void {
       // Hook scripts are always bash scripts (.sh)
       const filePath = path.join(hooksDir, `${name}.sh`);
 
-      // Write hook script
       writeHookScript(filePath, script);
 
-      // Update settings.json with full path to hook script
       updateSettingsWithHook(baseDir, name, eventType, matcher, filePath);
 
       logger.info('Hook installed successfully', { name, eventType, scope, filePath });
@@ -494,10 +481,8 @@ export function registerFeatureHandlers(): void {
       // Hook scripts are always bash scripts (.sh)
       const filePath = path.join(hooksDir, `${name}.sh`);
 
-      // Delete hook script file
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 
-      // Remove hook from settings.json
       removeHookFromSettings(baseDir, name, eventType);
 
       logger.info('Hook uninstalled successfully', { name, eventType, scope, filePath });

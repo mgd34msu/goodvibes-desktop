@@ -224,13 +224,11 @@ function hasPricingChanged(
   oldPricing: Record<string, ModelPricing>,
   newPricing: Record<string, ModelPricing>
 ): boolean {
-  // Check for new models
   const oldModels = Object.keys(oldPricing);
   const newModels = Object.keys(newPricing);
   
   if (oldModels.length !== newModels.length) return true;
   
-  // Check each model's pricing
   for (const model of newModels) {
     const oldPrice = oldPricing[model];
     const newPrice = newPricing[model];
@@ -269,14 +267,11 @@ async function fetchAndUpdateCache(): Promise<PricingCache> {
     const markdown = await fetchPricingMarkdown();
     const newPricing = parsePricingTable(markdown);
     
-    // Get the most recent pricing from history
     const latestPricing = existingCache?.history?.[0]?.models;
     
-    // Check if pricing has changed
     const hasChanged = !latestPricing || hasPricingChanged(latestPricing, newPricing);
     
     if (hasChanged) {
-      // Create new history entry
       const newEntry: PricingEntry = {
         effectiveDate: now,
         models: newPricing,
@@ -306,12 +301,10 @@ async function fetchAndUpdateCache(): Promise<PricingCache> {
   } catch (error) {
     logger.error('Failed to fetch pricing from Anthropic', error);
     
-    // Return existing cache or create fallback
     if (existingCache && existingCache.history.length > 0) {
       return existingCache;
     }
     
-    // Create fallback cache with hardcoded pricing
     return {
       lastFetchedAt: now,
       history: [{
@@ -357,12 +350,10 @@ let cachedPricingData: PricingCache | null = null;
  * Fetches from Anthropic if cache is expired or missing.
  */
 async function ensureCacheLoaded(): Promise<PricingCache> {
-  // Load from disk if not in memory
   if (!cachedPricingData) {
     cachedPricingData = loadFullCache();
   }
   
-  // Fetch from Anthropic if missing or expired
   if (!cachedPricingData || isCacheExpired(cachedPricingData)) {
     cachedPricingData = await fetchAndUpdateCache();
   }
@@ -383,7 +374,6 @@ export async function getPricing(
 ): Promise<ModelPricing | undefined> {
   const cache = await ensureCacheLoaded();
   
-  // Get pricing for the specified date (or current if not specified)
   const pricing = getPricingForDate(cache, asOfDate || new Date());
   
   return pricing[model];

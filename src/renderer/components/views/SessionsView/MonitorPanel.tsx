@@ -48,7 +48,6 @@ export function MonitorPanel({ projectsRoot, onSessionClick, onActivityClick }: 
     refetchIntervalInBackground: false,
   });
 
-  // Get today's message count from analytics
   const todayMessageCount = analytics?.messagesToday ?? 0;
 
   return (
@@ -253,7 +252,6 @@ function CompactLiveSessionCard({ session, projectsRoot, onClick }: CompactLiveS
 // ============================================================================
 
 function CompactActivityItem({ entry, onClick }: CompactActivityItemProps) {
-  // Parse metadata to extract encoded project name if available
   let encodedProjectName: string | null = null;
   if (entry.metadata) {
     try {

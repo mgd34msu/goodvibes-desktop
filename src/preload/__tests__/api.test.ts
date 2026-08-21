@@ -19,7 +19,6 @@ vi.mock('electron', () => ({
   },
 }));
 
-// Import API modules
 import { terminalApi } from '../api/terminal.js';
 import { sessionsApi } from '../api/sessions.js';
 import { gitApi } from '../api/git.js';

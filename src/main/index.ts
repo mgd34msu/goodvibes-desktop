@@ -47,10 +47,8 @@ if (hasLock) {
   // APP LIFECYCLE SETUP
   // ============================================================================
 
-  // Set up activation handlers (macOS dock click, etc.)
   setupActivationHandlers();
 
-  // Set up shutdown handlers (window-all-closed, before-quit)
   setupShutdownHandlers();
 
   // App ready - initialize everything

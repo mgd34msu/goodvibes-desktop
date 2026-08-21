@@ -94,7 +94,6 @@ export function createDefaultHandlers(context: HandlerContext): Map<string, Hook
       logger.info(`[HIERARCHY] Session ${sessionId} pushed to stack for ${workingDirectory}`);
     }
 
-    // Create or update the ROOT agent for this session
     if (sessionId && workingDirectory) {
       try {
         const agent = upsertAgent({
@@ -137,7 +136,6 @@ export function createDefaultHandlers(context: HandlerContext): Map<string, Hook
 
     if (workingDirectory) {
       try {
-        // Get active agents for this project
         const activeAgents = getActiveAgentsForProject(workingDirectory);
         for (const activeAgent of activeAgents) {
           const agent = getIndexedAgent(activeAgent.agentId);
@@ -153,7 +151,6 @@ export function createDefaultHandlers(context: HandlerContext): Map<string, Hook
           }
         }
 
-        // Get pending skills for this project
         const pendingSkills = getPendingSkillsForProject(workingDirectory);
         for (const queuedSkill of pendingSkills) {
           const skill = getIndexedSkill(queuedSkill.skillId);
@@ -191,7 +188,6 @@ export function createDefaultHandlers(context: HandlerContext): Map<string, Hook
 
     logger.info(`[HOOKS] SessionEnd received`, { sessionId, workingDirectory });
 
-    // Remove this session from our hierarchy stack
     if (sessionId && workingDirectory) {
       context.popSession(workingDirectory, sessionId);
     }

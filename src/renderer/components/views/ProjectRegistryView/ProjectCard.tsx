@@ -53,7 +53,6 @@ export function ProjectCard({
   const [showTemplateMenu, setShowTemplateMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Close menu when clicking outside
   useEffect(() => {
     if (!showMenu) return;
 

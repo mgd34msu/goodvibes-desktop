@@ -199,7 +199,6 @@ export async function gitDetailedStatus(cwd: string, options?: { maxFiles?: numb
 
   for (const line of lines) {
     if (line.startsWith('##')) {
-      // Parse branch line: ## branch...origin/branch [ahead N, behind M]
       const branchMatch = line.match(/^## ([^.]+)/);
       if (branchMatch) {
         branch = branchMatch[1].replace('No commits yet on ', '');
@@ -332,7 +331,6 @@ export async function gitAheadBehind(cwd: string): Promise<{
     return { success: false, ahead: 0, behind: 0, hasRemote: false, hasUpstream: false, error: 'No working directory specified' };
   }
 
-  // First, check if any remote exists
   const remoteResult = await runGitCommand(cwd, ['remote']);
   const hasRemote = remoteResult.success && !!remoteResult.output?.trim();
 
@@ -341,7 +339,6 @@ export async function gitAheadBehind(cwd: string): Promise<{
     return { success: true, ahead: 0, behind: 0, hasRemote: false, hasUpstream: false };
   }
 
-  // Get current branch name
   const branchResult = await runGitCommand(cwd, ['branch', '--show-current']);
   if (!branchResult.success || !branchResult.output?.trim()) {
     // Detached HEAD or other issue

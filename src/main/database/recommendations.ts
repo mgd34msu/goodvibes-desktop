@@ -193,7 +193,6 @@ export function createRecommendationsTables(): void {
     )
   `);
 
-  // Create indexes
   createRecommendationsIndexes();
 
   logger.info('Recommendations tables created');

@@ -846,7 +846,6 @@ describe('AgentForm', () => {
       render(<AgentForm {...defaultProps} />);
     });
 
-    // Check for labels by text content
     expect(screen.getByText('Agent Name')).toBeInTheDocument();
     expect(screen.getByText('Scope')).toBeInTheDocument();
     expect(screen.getByText('Model')).toBeInTheDocument();
@@ -857,7 +856,6 @@ describe('AgentForm', () => {
     expect(screen.getByText(/Allowed Tools/)).toBeInTheDocument();
     expect(screen.getByText(/CLI Flags/)).toBeInTheDocument();
 
-    // Check for inputs by placeholder
     expect(screen.getByPlaceholderText('my-agent')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('What this agent does...')).toBeInTheDocument();
   });

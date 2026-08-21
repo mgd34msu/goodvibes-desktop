@@ -43,8 +43,6 @@ export async function gitBranches(cwd: string): Promise<{ success: boolean; bran
       // The asterisk indicates the current branch
       const isCurrent = trimmedLine.startsWith('*');
 
-      // Remove the leading "* " or "  " and any extra whitespace
-      // Handle cases like "* main" or "  feature-branch"
       const branchName = trimmedLine.replace(/^\*?\s*/, '').trim();
 
       logger.debug(`gitBranches: parsed line "${trimmedLine}" -> branch: "${branchName}", isCurrent: ${isCurrent}`);
@@ -67,7 +65,6 @@ export async function gitBranches(cwd: string): Promise<{ success: boolean; bran
 
   logger.debug(`gitBranches: found ${branches.length} local branches`);
 
-  // Get remote branches separately (optional enhancement, may fail in new repos)
   const remoteResult = await runGitCommand(cwd, ['branch', '-r']);
 
   if (remoteResult.success && remoteResult.output) {
@@ -213,7 +210,6 @@ export async function gitBranchesWithHierarchy(cwd: string): Promise<{
     return { success: false, branches: [], error: 'No working directory specified' };
   }
 
-  // First get all branches
   const branchesResult = await gitBranches(cwd);
   if (!branchesResult.success) {
     return { success: false, branches: [], error: branchesResult.error };
@@ -231,7 +227,6 @@ export async function gitBranchesWithHierarchy(cwd: string): Promise<{
     || localBranches.find(b => b.name === 'master')
     || localBranches[0];
 
-  // Get the commit hash for each branch (needed for comparison)
   const branchCommits = new Map<string, string>();
   for (const branch of localBranches) {
     const result = await runGitCommand(cwd, ['rev-parse', branch.name]);
@@ -273,7 +268,6 @@ export async function gitBranchesWithHierarchy(cwd: string): Promise<{
       const mergeBase = mergeBaseResult.output.trim();
       const otherBranchTip = branchCommits.get(otherBranch.name);
 
-      // Calculate distance from merge-base to the other branch's tip
       // If this is 0, the other branch's tip IS the merge-base (ideal parent)
       let distanceToParentTip = Infinity;
 
@@ -368,7 +362,6 @@ export async function gitMergeAbort(cwd: string): Promise<GitStatus> {
  */
 export async function gitMergeInProgress(cwd: string): Promise<boolean> {
   if (!cwd) return false;
-  // Check for MERGE_HEAD file which indicates a merge in progress
   const result = await runGitCommand(cwd, ['rev-parse', '-q', '--verify', 'MERGE_HEAD']);
   return result.success;
 }

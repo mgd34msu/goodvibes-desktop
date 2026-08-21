@@ -83,7 +83,6 @@ export class SessionManagerInstance {
 
     logger.info(`Found ${total} session files`);
 
-    // Process files in batches for better throughput
     const BATCH_SIZE = 10;
     for (let i = 0; i < files.length; i += BATCH_SIZE) {
       const batch = files.slice(i, i + BATCH_SIZE);
@@ -154,7 +153,6 @@ export class SessionManagerInstance {
 
     const { messages, tokenStats, costUSD, model, toolUsage, detailedToolUsage } = await parseSessionFileWithStats(filePath);
 
-    // Calculate session stats
     let startTime: string | null = null;
     let endTime: string | null = null;
 
@@ -165,7 +163,6 @@ export class SessionManagerInstance {
       }
     }
 
-    // Calculate total tokens
     const totalTokens = tokenStats.inputTokens + tokenStats.outputTokens +
       tokenStats.cacheWriteTokens + tokenStats.cacheReadTokens;
 
@@ -319,7 +316,6 @@ export class SessionManagerInstance {
 
     watchFile(filePath, { interval: SESSION_FILE_WATCH_INTERVAL_MS }, async () => {
       try {
-        // Check if file still exists
         if (!existsSync(filePath)) {
           logger.debug('Session file deleted, cleaning up watcher', { filePath, sessionId });
           unwatchFile(filePath);
@@ -428,7 +424,6 @@ export class SessionManagerInstance {
     if (!existsSync(this.claudeDir)) return { newCount: 0, updatedCount: 0 };
 
     try {
-      // Get known paths WITH mtimes (not just paths)
       const knownPathsWithMtime = getKnownSessionPathsWithMtime();
       
       // Find all session files in directory
@@ -453,14 +448,12 @@ export class SessionManagerInstance {
       let newCount = 0;
       let updatedCount = 0;
       
-      // Process new files
       for (const file of newFiles) {
         try {
           await this.processSessionFile(file.path, file.mtime);
           this.knownSessionFiles.add(file.path);
           newCount++;
           
-          // Start watching if recent
           const age = Date.now() - file.mtime;
           if (age < NEW_SESSION_THRESHOLD_MS) {
             this.notifyNewSession(file.path);
@@ -471,7 +464,6 @@ export class SessionManagerInstance {
         }
       }
       
-      // Process modified (resumed) files
       for (const file of modifiedFiles) {
         try {
           await this.processSessionFile(file.path, file.mtime);

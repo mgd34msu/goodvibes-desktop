@@ -5,11 +5,9 @@
 import { ipcRenderer } from 'electron';
 
 export const recommendationsApi = {
-  // Get recommendations for a prompt
   recommendationsGetForPrompt: (options: { prompt: string; sessionId?: string; projectPath?: string }) =>
     ipcRenderer.invoke('recommendations:getForPrompt', options),
 
-  // Get recommendations based on project context
   recommendationsGetForProject: (projectPath: string) =>
     ipcRenderer.invoke('recommendations:getForProject', projectPath),
 
@@ -37,23 +35,18 @@ export const recommendationsApi = {
   recommendationsIgnore: (recommendationId: number) =>
     ipcRenderer.invoke('recommendations:ignore', recommendationId),
 
-  // Get overall statistics
   recommendationsGetStats: () =>
     ipcRenderer.invoke('recommendations:getStats'),
 
-  // Get recommendations for a session
   recommendationsGetForSession: (options: { sessionId: string; limit?: number }) =>
     ipcRenderer.invoke('recommendations:getForSession', options),
 
-  // Get recommendations history for a project
   recommendationsGetHistoryForProject: (options: { projectPath: string; limit?: number }) =>
     ipcRenderer.invoke('recommendations:getHistoryForProject', options),
 
-  // Get pending recommendations
   recommendationsGetPending: (options?: { sessionId?: string; limit?: number }) =>
     ipcRenderer.invoke('recommendations:getPending', options),
 
-  // Get top performing items
   recommendationsGetTopPerforming: (options?: { type?: 'agent' | 'skill'; minRecommendations?: number; limit?: number }) =>
     ipcRenderer.invoke('recommendations:getTopPerforming', options),
 

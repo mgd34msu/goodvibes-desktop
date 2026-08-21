@@ -87,7 +87,6 @@ export const TagEffectPicker: React.FC<TagEffectPickerProps> = ({
   return (
     <div className="space-y-2">
       {EFFECT_OPTIONS.map(option => {
-        // Get animation class for this effect
         const effectClass = option.value
           ? {
               shimmer: 'animate-shimmer-slide',

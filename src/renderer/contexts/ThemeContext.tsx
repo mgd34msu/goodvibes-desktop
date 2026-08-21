@@ -25,7 +25,6 @@ import { createLogger } from '../../shared/logger';
 
 const logger = createLogger('ThemeContext');
 
-// Import all themes
 import { goodvibesClassic } from '../themes/goodvibes-classic';
 import { catppuccinLatte } from '../themes/catppuccin-latte';
 import { catppuccinFrappe } from '../themes/catppuccin-frappe';
@@ -135,9 +134,7 @@ export function ThemeProvider({ children }: ThemeProviderProps): React.JSX.Eleme
   const updateSetting = useSettingsStore((s) => s.updateSetting);
   const isLoaded = useSettingsStore((s) => s.isLoaded);
 
-  // Initialize with default theme, will sync with settings once loaded
   const [currentThemeId, setCurrentThemeId] = useState<ThemeId>(() => {
-    // Check if we're in a browser environment
     if (typeof window === 'undefined') {
       return DEFAULT_THEME_ID;
     }
@@ -152,7 +149,6 @@ export function ThemeProvider({ children }: ThemeProviderProps): React.JSX.Eleme
     }
   }, [isLoaded, settings.colorTheme, currentThemeId]);
 
-  // Get the current theme object
   const theme = useMemo(() => getThemeById(currentThemeId), [currentThemeId]);
 
   // Apply theme CSS whenever theme changes
@@ -184,7 +180,6 @@ export function ThemeProvider({ children }: ThemeProviderProps): React.JSX.Eleme
    */
   const setTheme = useCallback(
     (id: ThemeId) => {
-      // Update local state immediately for responsiveness
       setCurrentThemeId(id);
 
       // Persist to settings store (async, but we don't need to wait)

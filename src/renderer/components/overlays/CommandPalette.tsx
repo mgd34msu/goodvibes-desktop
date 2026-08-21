@@ -33,7 +33,6 @@ export function CommandPalette(): React.JSX.Element | null {
   const [search, setSearch] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // Define commands
   const commands = useMemo<CommandItem[]>(() => [
     // View commands
     ...VIEWS.map((view, i) => ({

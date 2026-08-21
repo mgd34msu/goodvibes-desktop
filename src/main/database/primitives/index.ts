@@ -191,7 +191,6 @@ export function createPrimitiveTables(): void {
     )
   `);
 
-  // Create indexes for performance
   createPrimitiveIndexes();
 
   logger.info('Primitive tables created successfully');

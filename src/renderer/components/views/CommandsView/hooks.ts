@@ -95,7 +95,6 @@ export function useCommands(): UseCommandsReturn {
         throw new Error('Command not found');
       }
 
-      // Delete from database
       await window.goodvibes.deleteSkill(id);
 
       // Uninstall from .claude/commands/ directory

@@ -66,7 +66,6 @@ function checkCommandExists(command: string): boolean {
  * @returns Array of editor information including name, command, and availability status
  */
 function detectAvailableEditors(): TextEditorInfo[] {
-  // Return cached result if available
   if (cachedEditors !== null) {
     return cachedEditors;
   }

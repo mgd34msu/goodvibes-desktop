@@ -74,7 +74,6 @@ export async function gitShowCommit(cwd: string, hash: string): Promise<{ succes
     return { success: false, error: validation.error };
   }
 
-  // Get commit info with body
   const commitResult = await runGitCommand(cwd, [
     'show',
     hash,
@@ -86,7 +85,6 @@ export async function gitShowCommit(cwd: string, hash: string): Promise<{ succes
     return { success: false, error: commitResult.error || 'Failed to get commit info' };
   }
 
-  // Parse commit info (first line is the format, rest might be body with newlines)
   const lines = commitResult.output.split('\n');
   const firstLine = lines[0];
   const parts = firstLine.split('|');
@@ -101,7 +99,6 @@ export async function gitShowCommit(cwd: string, hash: string): Promise<{ succes
   const bodyFromLines = lines.slice(1).join('\n');
   const body = (bodyFromParts + (bodyFromLines ? '\n' + bodyFromLines : '')).trim();
 
-  // Get file stats for the commit
   const statsResult = await runGitCommand(cwd, [
     'show',
     hash,
@@ -152,7 +149,6 @@ export async function gitShowCommit(cwd: string, hash: string): Promise<{ succes
     }
   }
 
-  // Get file statuses (added, modified, deleted, renamed)
   const nameStatusResult = await runGitCommand(cwd, [
     'show',
     hash,
@@ -269,7 +265,6 @@ export async function gitCherryPickContinue(cwd: string): Promise<GitStatus> {
  */
 export async function gitCherryPickInProgress(cwd: string): Promise<boolean> {
   if (!cwd) return false;
-  // Check for CHERRY_PICK_HEAD file which indicates a cherry-pick in progress
   const result = await runGitCommand(cwd, ['rev-parse', '-q', '--verify', 'CHERRY_PICK_HEAD']);
   return result.success;
 }
@@ -341,17 +336,14 @@ export async function gitShowFile(cwd: string, file: string, commit: string): Pr
 export async function gitCommitTemplate(cwd: string): Promise<{ success: boolean; template?: string; error?: string }> {
   if (!cwd) return { success: false, error: 'No working directory specified' };
 
-  // First check git config for commit.template
   const configResult = await runGitCommand(cwd, ['config', 'commit.template']);
 
   if (configResult.success && configResult.output?.trim()) {
     const templatePath = configResult.output.trim();
-    // Read the template file
     try {
       const fs = await import('fs/promises');
       const path = await import('path');
 
-      // Handle relative paths
       const fullPath = path.isAbsolute(templatePath)
         ? templatePath
         : path.join(cwd, templatePath);
@@ -363,7 +355,6 @@ export async function gitCommitTemplate(cwd: string): Promise<{ success: boolean
     }
   }
 
-  // Check for .gitmessage in project root
   try {
     const fs = await import('fs/promises');
     const path = await import('path');
@@ -385,7 +376,6 @@ export async function gitConventionalPrefixes(cwd: string): Promise<{ success: b
   // Standard conventional commit prefixes
   const standardPrefixes = ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'build', 'ci', 'chore', 'revert'];
 
-  // Get recent commit prefixes from the repo
   const result = await runGitCommand(cwd, ['log', '--oneline', '-100', '--format=%s']);
 
   if (!result.success) {

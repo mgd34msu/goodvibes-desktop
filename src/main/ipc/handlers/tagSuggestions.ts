@@ -74,7 +74,6 @@ export function registerTagSuggestionHandlers(): void {
       return ipcErr(`Invalid suggestion ID: ${parsed.error.message}`, null);
     }
     try {
-      // Get the suggestion first
       const suggestion = db.getSuggestion(parsed.data);
       if (!suggestion) {
         return ipcErr('Suggestion not found', null);
@@ -83,7 +82,6 @@ export function registerTagSuggestionHandlers(): void {
       // Accept the suggestion (this also creates tag and applies to session)
       db.acceptSuggestion(parsed.data);
 
-      // Get the tag that was created/used
       const tag = tags.getTagByName(suggestion.tagName);
 
       return ipcOk({ suggestion, tag });
@@ -361,7 +359,6 @@ export function registerTagSuggestionHandlers(): void {
     try {
       const counts = db.getScanCounts();
       // Note: Cost estimation removed since we're using Claude CLI (no API cost)
-      // Return estimated time only based on pending sessions
       const estimatedTimeMinutes = Math.ceil(counts.pending / 60); // Rough estimate
       return ipcOk({
         totalSessions: counts.pending,

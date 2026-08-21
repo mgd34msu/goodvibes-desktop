@@ -28,7 +28,6 @@ export function InstallCommandModal({
   onClose,
   onInstall,
 }: InstallCommandModalProps) {
-  // Format command name with / prefix if not already present
   const displayName = command.name.startsWith('/') ? command.name : `/${command.name}`;
 
   return (

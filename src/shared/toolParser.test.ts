@@ -363,9 +363,6 @@ describe('parseBashCommand', () => {
     });
   });
 
-  // --------------------------------------------------------------------------
-  // Build/Test Tools
-  // --------------------------------------------------------------------------
   describe('build and test tools', () => {
     it('parses vitest', () => {
       expect(parseBashCommand('vitest run')).toEqual(['vitest']);

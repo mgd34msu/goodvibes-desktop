@@ -14,7 +14,6 @@ import './styles/index.css';
 
 const logger = createLogger('Main');
 
-// Create React Query client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -31,7 +30,6 @@ function handleError(error: unknown, info: React.ErrorInfo) {
   logger.error('Error Info:', info);
 }
 
-// Render application
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error('Root element not found. Make sure there is a <div id="root"></div> in your HTML.');

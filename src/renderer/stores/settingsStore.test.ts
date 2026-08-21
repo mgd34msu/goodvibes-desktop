@@ -16,7 +16,6 @@ vi.mock('./toastStore', () => ({
   },
 }));
 
-// Import the mocked toast for verification
 import { toast } from './toastStore';
 
 describe('useSettingsStore', () => {
@@ -203,9 +202,7 @@ describe('useSettingsStore', () => {
     it('preserves other settings when updating one', async () => {
       const { updateSetting } = useSettingsStore.getState();
 
-      // Update theme
       await updateSetting('theme', 'light');
-      // Update fontSize
       await updateSetting('fontSize', 18);
 
       const { settings } = useSettingsStore.getState();
@@ -634,7 +631,6 @@ describe('useSettingsStore', () => {
 
   describe('resetSettings', () => {
     it('resets all settings to defaults', async () => {
-      // First modify a setting
       useSettingsStore.setState({
         settings: { ...DEFAULT_SETTINGS, theme: 'light', fontSize: 20 },
       });
@@ -850,7 +846,6 @@ describe('useSettingsStore', () => {
 
   describe('store integration', () => {
     it('maintains state consistency across multiple operations', async () => {
-      // Load settings
       vi.mocked(window.goodvibes.getAllSettings).mockResolvedValue({
         theme: 'light',
         settingsVersion: SETTINGS_VERSION,
@@ -859,7 +854,6 @@ describe('useSettingsStore', () => {
       const store = useSettingsStore.getState();
       await store.loadSettings();
 
-      // Update a setting
       await useSettingsStore.getState().updateSetting('fontSize', 18);
 
       // Verify both changes are present
@@ -871,7 +865,6 @@ describe('useSettingsStore', () => {
     it('handles concurrent updates correctly', async () => {
       const { updateSetting } = useSettingsStore.getState();
 
-      // Start multiple updates concurrently
       const updates = await Promise.all([
         updateSetting('theme', 'light'),
         updateSetting('fontSize', 18),

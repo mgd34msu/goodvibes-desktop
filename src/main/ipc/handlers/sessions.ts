@@ -71,13 +71,11 @@ function findMostRecentClaudeSession(): ClaudeSessionFile | null {
   let mostRecent: ClaudeSessionFile | null = null;
 
   try {
-    // Get all project directories
     const projectDirs = fs.readdirSync(claudeDir, { withFileTypes: true })
       .filter(d => d.isDirectory())
       .map(d => path.join(claudeDir, d.name));
 
     for (const projectDir of projectDirs) {
-      // Get all .jsonl files (session files) in the project directory
       const sessionFiles = fs.readdirSync(projectDir, { withFileTypes: true })
         .filter(f => f.isFile() && f.name.endsWith('.jsonl') && !f.name.startsWith('agent-'))
         .map(f => {
@@ -209,7 +207,6 @@ function getSessionsFromMainTable(projectPath: string, limit: number) {
 export function registerSessionHandlers(): void {
   // IPC handler to resolve encoded project paths
   ipcMain.handle('resolve-project-path', withContext('resolve-project-path', async (_, encodedName: unknown) => {
-    // Validate input
     if (!encodedName || typeof encodedName !== 'string') {
       return { path: null, error: 'Invalid input: expected string' };
     }
@@ -236,7 +233,6 @@ export function registerSessionHandlers(): void {
   }));
 
   ipcMain.handle('get-session', withContext('get-session', async (_, id: string) => {
-    // Validate session ID
     const result = sessionIdSchema.safeParse(id);
     if (!result.success) {
       logger.warn('get-session: Invalid session ID', { id, errors: result.error.issues });
@@ -248,7 +244,6 @@ export function registerSessionHandlers(): void {
   }));
 
   ipcMain.handle('get-session-messages', withContext('get-session-messages', async (_, id: string) => {
-    // Validate session ID
     const result = sessionIdSchema.safeParse(id);
     if (!result.success) {
       logger.warn('get-session-messages: Invalid session ID', { id, errors: result.error.issues });
@@ -272,7 +267,6 @@ export function registerSessionHandlers(): void {
   }));
 
   ipcMain.handle('toggle-favorite', withContext('toggle-favorite', async (_, id: string) => {
-    // Validate session ID
     const result = sessionIdSchema.safeParse(id);
     if (!result.success) {
       logger.warn('toggle-favorite: Invalid session ID', { id, errors: result.error.issues });
@@ -284,7 +278,6 @@ export function registerSessionHandlers(): void {
   }));
 
   ipcMain.handle('toggle-archive', withContext('toggle-archive', async (_, id: string) => {
-    // Validate session ID
     const result = sessionIdSchema.safeParse(id);
     if (!result.success) {
       logger.warn('toggle-archive: Invalid session ID', { id, errors: result.error.issues });
@@ -296,7 +289,6 @@ export function registerSessionHandlers(): void {
   }));
 
   ipcMain.handle('delete-session', withContext('delete-session', async (_, id: string) => {
-    // Validate session ID
     const result = sessionIdSchema.safeParse(id);
     if (!result.success) {
       logger.warn('delete-session: Invalid session ID', { id, errors: result.error.issues });
@@ -325,7 +317,6 @@ export function registerSessionHandlers(): void {
   }));
 
   ipcMain.handle('get-session-raw-entries', withContext('get-session-raw-entries', async (_, id: string, afterIndex?: number) => {
-    // Validate session ID
     const result = sessionIdSchema.safeParse(id);
     if (!result.success) {
       logger.warn('get-session-raw-entries: Invalid session ID', { id, errors: result.error.issues });
@@ -337,7 +328,6 @@ export function registerSessionHandlers(): void {
   }));
 
   ipcMain.handle('refresh-session', withContext('refresh-session', async (_, id: string) => {
-    // Validate session ID
     const result = sessionIdSchema.safeParse(id);
     if (!result.success) {
       logger.warn('refresh-session: Invalid session ID', { id, errors: result.error.issues });
@@ -349,7 +339,6 @@ export function registerSessionHandlers(): void {
   }));
 
   ipcMain.handle('watch-session', withContext('watch-session', async (_, id: string) => {
-    // Validate session ID
     const result = sessionIdSchema.safeParse(id);
     if (!result.success) {
       logger.warn('watch-session: Invalid session ID', { id, errors: result.error.issues });
@@ -361,7 +350,6 @@ export function registerSessionHandlers(): void {
   }));
 
   ipcMain.handle('is-session-live', withContext('is-session-live', async (_, id: string) => {
-    // Validate session ID
     const result = sessionIdSchema.safeParse(id);
     if (!result.success) {
       logger.warn('is-session-live: Invalid session ID', { id, errors: result.error.issues });
@@ -388,7 +376,6 @@ export function registerSessionHandlers(): void {
 
   // Session summary handlers (for approvalAgentApi)
   ipcMain.handle('session:get', withContext('session:get', async (_, sessionId: string) => {
-    // Validate session ID
     const result = sessionIdSchema.safeParse(sessionId);
     if (!result.success) {
       logger.warn('session:get: Invalid session ID', { sessionId, errors: result.error.issues });
@@ -399,7 +386,6 @@ export function registerSessionHandlers(): void {
   }));
 
   ipcMain.handle('session:getRecent', withContext('session:getRecent', async (_, limit?: number) => {
-    // Validate limit
     const result = sessionPaginationLimitSchema.safeParse(limit);
     if (!result.success) {
       logger.warn('session:getRecent: Invalid limit', { limit, errors: result.error.issues });
@@ -410,14 +396,12 @@ export function registerSessionHandlers(): void {
   }));
 
   ipcMain.handle('session:getForProject', withContext('session:getForProject', async (_, projectPath: string, limit?: number) => {
-    // Validate project path
     const pathResult = projectPathSchema.safeParse(projectPath);
     if (!pathResult.success) {
       logger.warn('session:getForProject: Invalid project path', { projectPath, errors: pathResult.error.issues });
       throw new Error(createValidationError(pathResult.error).error);
     }
 
-    // Validate limit
     const limitResult = sessionPaginationLimitSchema.safeParse(limit ?? 5);
     if (!limitResult.success) {
       logger.warn('session:getForProject: Invalid limit', { limit, errors: limitResult.error.issues });
@@ -427,7 +411,6 @@ export function registerSessionHandlers(): void {
     const validatedPath = pathResult.data;
     const validatedLimit = limitResult.data;
 
-    // First try session_summaries table
     try {
       const summaries = sessionSummaries.getRecentSessionsForProject(validatedPath, validatedLimit);
       if (summaries.length > 0) {
@@ -452,14 +435,12 @@ export function registerSessionHandlers(): void {
   }));
 
   ipcMain.handle('session:search', withContext('session:search', async (_, query: string, projectPath?: string, limit?: number) => {
-    // Validate search query
     const queryResult = sessionSearchQuerySchema.safeParse(query);
     if (!queryResult.success) {
       logger.warn('session:search: Invalid query', { query, errors: queryResult.error.issues });
       throw new Error(createValidationError(queryResult.error).error);
     }
 
-    // Validate optional project path
     let validatedProjectPath: string | undefined = undefined;
     if (projectPath !== undefined) {
       const pathResult = projectPathSchema.safeParse(projectPath);
@@ -470,7 +451,6 @@ export function registerSessionHandlers(): void {
       validatedProjectPath = pathResult.data;
     }
 
-    // Validate limit
     const limitResult = sessionPaginationLimitSchema.safeParse(limit ?? 20);
     if (!limitResult.success) {
       logger.warn('session:search: Invalid limit', { limit, errors: limitResult.error.issues });
@@ -480,7 +460,6 @@ export function registerSessionHandlers(): void {
     return sessionSummaries.searchSessions(queryResult.data, validatedProjectPath, limitResult.data);
   }));
 
-  // Get most recent session for quick restart
   // Scans the user's ~/.claude/projects/ directory for the most recently modified session file
   ipcMain.handle('session:getMostRecent', withContext('session:getMostRecent', async () => {
     // Scan the user's Claude sessions directory directly

@@ -90,7 +90,6 @@ class MessageInjectionService extends EventEmitter {
    * Process terminal output to detect ready state
    */
   processOutput(terminalId: number, data: string): void {
-    // Add to buffer
     const buffer = (this.outputBuffers.get(terminalId) || '') + data;
 
     // Keep buffer size manageable (last 10KB)
@@ -101,7 +100,6 @@ class MessageInjectionService extends EventEmitter {
 
     this.outputBuffers.set(terminalId, trimmedBuffer);
 
-    // Check for ready state
     const isReady = this.detectReadyState(trimmedBuffer);
 
     if (isReady && !this.readyTerminals.has(terminalId)) {
@@ -109,7 +107,6 @@ class MessageInjectionService extends EventEmitter {
       this.emit('terminal:ready', terminalId);
       logger.debug(`Terminal ${terminalId} is ready for input`);
 
-      // Process any pending injections
       this.processPendingInjections(terminalId);
     } else if (!isReady && this.readyTerminals.has(terminalId)) {
       // Terminal became busy
@@ -123,14 +120,12 @@ class MessageInjectionService extends EventEmitter {
    * Detect if Claude is ready for input based on output patterns
    */
   private detectReadyState(buffer: string): boolean {
-    // Check for negative patterns first (still processing)
     for (const pattern of this.readyPatterns.negative) {
       if (pattern.test(buffer.slice(-500))) { // Only check last 500 chars
         return false;
       }
     }
 
-    // Check for positive patterns
     for (const pattern of this.readyPatterns.positive) {
       if (pattern.test(buffer.slice(-500))) {
         return true;
@@ -209,10 +204,8 @@ class MessageInjectionService extends EventEmitter {
     writeToTerminal: (id: number, data: string) => void
   ): Promise<InjectionResult> {
     try {
-      // Add newline if not present
       const finalMessage = message.endsWith('\n') ? message : message + '\n';
 
-      // Write to terminal
       writeToTerminal(terminalId, finalMessage);
 
       // Mark terminal as busy
@@ -254,10 +247,8 @@ class MessageInjectionService extends EventEmitter {
     const pending = this.pendingInjections.get(terminalId);
     if (!pending || pending.length === 0) return;
 
-    // Get the first pending injection
     const injection = pending[0];
 
-    // Check if we need to wait for ready state
     if (injection.waitForReady && !this.isTerminalReady(terminalId)) {
       logger.debug(`Waiting for terminal ${terminalId} to be ready`);
       return;
@@ -292,7 +283,6 @@ class MessageInjectionService extends EventEmitter {
   private executeInjection(terminalId: number, injection: InjectionConfig): void {
     const pending = this.pendingInjections.get(terminalId) || [];
 
-    // Remove from pending
     const index = pending.indexOf(injection);
     if (index > -1) {
       pending.splice(index, 1);
@@ -308,7 +298,6 @@ class MessageInjectionService extends EventEmitter {
 
     logger.debug(`Executing injection for terminal ${terminalId}`);
 
-    // Update agent registry if agent ID provided
     if (injection.agentId) {
       const registry = getAgentRegistry();
       if (registry) {
@@ -320,9 +309,7 @@ class MessageInjectionService extends EventEmitter {
     this.readyTerminals.delete(terminalId);
     this.emit('terminal:busy', terminalId);
 
-    // Process next pending injection if any
     if (pending.length > 0) {
-      // Wait for next ready state
       // The processPendingInjections will be called when terminal becomes ready again
     }
   }
@@ -460,5 +447,4 @@ export function shutdownMessageInjection(): void {
   }
 }
 
-// Export the class for testing
 export { MessageInjectionService };

@@ -158,7 +158,6 @@ function loadShortcutsFromStorage(): Map<string, KeyBinding> {
     logger.warn('Error loading shortcuts:', result.error);
   }
 
-  // Validate each binding individually
   return validatePersistedBindings(result.data);
 }
 
@@ -247,7 +246,6 @@ export const useShortcutRegistry = create<ShortcutRegistryState>((set, get) => (
   resetAllBindings: () => {
     set({ customBindings: new Map() });
 
-    // Remove from localStorage with error handling
     const removed = removeFromLocalStorage(shortcutsStorageOptions);
     if (!removed) {
       logger.error('Failed to clear shortcuts from storage');
@@ -396,13 +394,11 @@ export function useKeyboardShortcuts(): void {
 
   const { register, shortcuts, customBindings, toggleHelp } = useShortcutRegistry();
 
-  // Load custom bindings from localStorage with error recovery
   useEffect(() => {
     const bindings = loadShortcutsFromStorage();
     useShortcutRegistry.setState({ customBindings: bindings });
   }, []);
 
-  // Register all shortcuts
   useEffect(() => {
     const shortcutsToRegister: ShortcutDefinition[] = [
       // Navigation
@@ -484,7 +480,6 @@ export function useKeyboardShortcuts(): void {
         global: true,
       },
 
-      // Close overlays
       {
         id: 'close-overlay',
         label: 'Close Overlay',
@@ -523,7 +518,6 @@ export function useKeyboardShortcuts(): void {
       }
     });
 
-    // Register all
     shortcutsToRegister.forEach(register);
 
     // Cleanup: unregister all shortcuts when dependencies change or hook unmounts
@@ -545,7 +539,6 @@ export function useKeyboardShortcuts(): void {
     setCurrentView,
   ]);
 
-  // Handle keydown events
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     // Skip if in input/textarea (unless shortcut is global)
     const target = e.target as HTMLElement;

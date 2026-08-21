@@ -64,13 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### GitHub Integration
-- **GitHub OAuth Device Flow authentication** - Secure, seamless login using GitHub's device authorization flow
-- **Custom OAuth App configuration** - Option to use your own GitHub OAuth App for maximum security
+- **GitHub OAuth Device Flow authentication** - Secure login using GitHub's device authorization flow
+- **Custom OAuth App configuration** - Option to use your own GitHub OAuth App for added security
 - **Authorization Code Flow support** - Alternative OAuth flow when device flow is disabled
 - **Full GitHub API integration** - PR management, issue tracking, repository operations
 
 #### Accessibility (WCAG 2.1 AA Compliance)
-- **ARIA labels** - Comprehensive screen reader support across all interactive elements
+- **ARIA labels** - Screen reader support across all interactive elements
 - **Keyboard navigation** - Full keyboard support for terminal, sidebar, and all UI components
 - **Focus management** - Proper focus trapping in modals and dialogs
 - **Screen reader announcements** - Live regions for dynamic content updates
@@ -97,7 +97,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Skills & Commands
 - **Separate Skills and Commands pages** - Agent skills separate from slash commands
 - **Install modals** - Easy installation with code preview
-- **Best practices** - Built-in skills follow enterprise-grade patterns
+- **Best practices** - Built-in skills follow established patterns
 
 #### CLAUDE.md Templates
 - **Scope-based organization** - Templates organized by user, project, and local scope

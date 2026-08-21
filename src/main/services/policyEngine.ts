@@ -158,14 +158,12 @@ class PolicyEngineClass extends EventEmitter {
    * Match a policy against a permission request
    */
   private matchPolicy(policy: ApprovalPolicy, request: PermissionRequest): PolicyMatchResult {
-    // Parse the matcher pattern
     const matcherResult = this.matchPattern(policy.matcher, request);
 
     if (!matcherResult) {
       return { matched: false, policy: null, action: 'queue', reason: 'Pattern did not match' };
     }
 
-    // Check additional conditions if present
     if (policy.conditions) {
       try {
         const conditions = JSON.parse(policy.conditions) as PolicyConditions;
@@ -202,7 +200,6 @@ class PolicyEngineClass extends EventEmitter {
       return true;
     }
 
-    // Check for tool match with optional path/command pattern
     const toolMatch = pattern.match(/^(\w+)(?:\((.+)\))?$/);
     if (toolMatch) {
       const [, toolName, subPattern] = toolMatch;
@@ -220,13 +217,11 @@ class PolicyEngineClass extends EventEmitter {
       return request.toolName === toolName;
     }
 
-    // Check for file pattern
     if (pattern.startsWith('file:')) {
       const filePattern = pattern.slice(5);
       return this.matchGlobPattern(filePattern, request.filePath || '');
     }
 
-    // Check for permission type match
     if (pattern.startsWith('permission:')) {
       const permType = pattern.slice(11);
       return request.permissionType === permType;
@@ -289,7 +284,6 @@ class PolicyEngineClass extends EventEmitter {
     conditions: PolicyConditions,
     request: PermissionRequest
   ): { passed: boolean; reason: string } {
-    // Check allowed paths
     if (conditions.allowedPaths && request.filePath) {
       const filePath = request.filePath;
       const allowed = conditions.allowedPaths.some(p =>
@@ -300,7 +294,6 @@ class PolicyEngineClass extends EventEmitter {
       }
     }
 
-    // Check blocked paths
     if (conditions.blockedPaths && request.filePath) {
       const filePath = request.filePath;
       const blocked = conditions.blockedPaths.some(p =>
@@ -311,7 +304,6 @@ class PolicyEngineClass extends EventEmitter {
       }
     }
 
-    // Check allowed commands
     if (conditions.allowedCommands && request.command) {
       const command = request.command;
       const allowed = conditions.allowedCommands.some(c =>
@@ -322,7 +314,6 @@ class PolicyEngineClass extends EventEmitter {
       }
     }
 
-    // Check blocked commands
     if (conditions.blockedCommands && request.command) {
       const command = request.command;
       const blocked = conditions.blockedCommands.some(c =>
@@ -333,21 +324,18 @@ class PolicyEngineClass extends EventEmitter {
       }
     }
 
-    // Check allowed tools
     if (conditions.allowedTools && request.toolName) {
       if (!conditions.allowedTools.includes(request.toolName)) {
         return { passed: false, reason: 'Tool not in allowed list' };
       }
     }
 
-    // Check blocked tools
     if (conditions.blockedTools && request.toolName) {
       if (conditions.blockedTools.includes(request.toolName)) {
         return { passed: false, reason: 'Tool is blocked' };
       }
     }
 
-    // Check time window
     if (conditions.timeWindow) {
       const now = new Date();
       const currentHour = now.getHours();
@@ -587,7 +575,6 @@ class PolicyEngineClass extends EventEmitter {
     ];
 
     for (const policy of defaults) {
-      // Check if policy with same name already exists
       const existing = this.getAllPolicies().find(p => p.name === policy.name);
       if (!existing) {
         this.createPolicy(policy);

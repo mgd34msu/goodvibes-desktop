@@ -115,12 +115,10 @@ export function transitionAgentToProject(
   agent.status = 'transitioning';
   agent.lastActivity = new Date();
 
-  // Save state for previous project
   if (previousProjectId !== null) {
     preserveAgentState(agentId, previousProjectId);
   }
 
-  // Update agent
   agent.currentProjectId = targetProjectId;
   agent.status = 'active';
 

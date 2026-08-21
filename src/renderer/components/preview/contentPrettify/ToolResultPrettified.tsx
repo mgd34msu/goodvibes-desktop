@@ -89,7 +89,6 @@ export function ToolResultPrettified({
     );
   }
 
-  // Check if content is Claude content block array (array of {type: "text", text: "..."})
   // This should be rendered as markdown, not as JSON
   const extractedMarkdown = extractClaudeContentBlocks(displayContent);
   if (extractedMarkdown !== null) {
@@ -143,7 +142,6 @@ export function ToolResultPrettified({
     );
   }
 
-  // Check if content is JSON - show as formatted key-value pairs, not JSON code block
   const parsedJson = parseJSONSafe(displayContent);
   if (parsedJson !== null) {
     return (

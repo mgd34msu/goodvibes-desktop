@@ -78,7 +78,6 @@ async function isValidShellPath(shellPath: string): Promise<boolean> {
       return false;
     }
 
-    // Check if the file exists and is executable
     try {
       const stats = await fs.promises.stat(shellPath);
       if (!stats.isFile()) {
@@ -124,7 +123,6 @@ async function isValidWorkingDirectory(cwd: string): Promise<boolean> {
     return false;
   }
 
-  // Check if directory exists
   try {
     const stats = await fs.promises.stat(cwd);
     if (!stats.isDirectory()) {
@@ -162,7 +160,6 @@ let terminalIdCounter = 0;
 // ============================================================================
 
 export function initTerminalManager(): void {
-  // Start periodic cleanup of stale entries in the stream analyzer
   const analyzer = getPTYStreamAnalyzer();
   analyzer.startPeriodicCleanup(() => getActiveTerminalIds());
 
@@ -200,9 +197,7 @@ function findClaudeExecutable(): string {
     '/usr/bin/claude',
   ];
 
-  // Check each path
   for (const checkPath of commonPaths) {
-    // Handle glob pattern for nvm
     if (checkPath.includes('*')) {
       try {
         const baseDir = checkPath.substring(0, checkPath.indexOf('*'));
@@ -245,17 +240,14 @@ export async function startTerminal(options: TerminalStartOptions): Promise<Term
     // Find claude executable path (checks common locations if not in PATH)
     const claudePath = findClaudeExecutable();
 
-    // Build arguments array
     const args: string[] = [];
 
-    // Check if we should skip permissions
     const skipPermissions = getSetting<boolean>('skipPermissions') !== false;
     logger.info(`Skip permissions setting: ${skipPermissions} (raw value: ${getSetting<boolean>('skipPermissions')})`);
     if (skipPermissions) {
       args.push('--dangerously-skip-permissions');
     }
 
-    // Add resume flag if resuming a session (with validation)
     if (options.resumeSessionId) {
       // Validate session ID to prevent command injection
       if (!isValidSessionId(options.resumeSessionId)) {
@@ -312,7 +304,6 @@ export async function startTerminal(options: TerminalStartOptions): Promise<Term
 
     terminals.set(terminalId, terminalInfo);
 
-    // Handle PTY data
     ptyProc.onData((data) => {
       sendToRenderer('terminal-data', { id: terminalId, data });
 
@@ -321,7 +312,6 @@ export async function startTerminal(options: TerminalStartOptions): Promise<Term
       analyzer.analyze(terminalId, data, options.resumeSessionId);
     });
 
-    // Handle PTY exit
     ptyProc.onExit(({ exitCode }) => {
       sendToRenderer('terminal-exit', { id: terminalId, exitCode });
 
@@ -346,7 +336,6 @@ export async function startTerminal(options: TerminalStartOptions): Promise<Term
       logger.info(`Terminal ${terminalId} exited with code ${exitCode}`);
     });
 
-    // Add to recent projects
     void addRecentProject(workingDir, name);
 
     // Log activity for terminal start
@@ -450,12 +439,10 @@ export async function startPlainTerminal(options: TerminalStartOptions): Promise
 
     terminals.set(terminalId, terminalInfo);
 
-    // Handle PTY data
     ptyProc.onData((data) => {
       sendToRenderer('terminal-data', { id: terminalId, data });
     });
 
-    // Handle PTY exit
     ptyProc.onExit(({ exitCode }) => {
       sendToRenderer('terminal-exit', { id: terminalId, exitCode });
 

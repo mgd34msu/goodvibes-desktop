@@ -63,7 +63,6 @@ export default function PullRequestList({
       if (isMountedRef.current) {
         if (result.success && result.data) {
           setPullRequests(result.data);
-          // Load CI status for each PR
           loadCIStatuses(result.data);
         } else {
           setError(result.error || 'Failed to load pull requests');
@@ -92,7 +91,6 @@ export default function PullRequestList({
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  // Check if current branch has an open PR
   const currentBranchPR = currentBranch
     ? pullRequests.find((pr) => pr.head.ref === currentBranch)
     : null;
@@ -180,7 +178,6 @@ interface PullRequestItemProps {
 }
 
 const PullRequestItem = memo(function PullRequestItem({ pr, checks, isCurrentBranch, onClick }: PullRequestItemProps) {
-  // Calculate overall CI status
   const getCIStatus = (): { status: 'queued' | 'in_progress' | 'completed'; conclusion: GitHubCheckConclusion | null } => {
     if (!checks || checks.length === 0) {
       return { status: 'completed', conclusion: null };

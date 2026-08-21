@@ -33,7 +33,6 @@ export function MessagesTab({ messages, loading }: MessagesTabProps): React.JSX.
   const { settings } = useSettingsStore();
   const [globalExpanded, setGlobalExpanded] = useState<boolean | null>(null);
 
-  // Get raw entries for this session
   const sessionId = messages.length > 0 ? messages[0]?.sessionId : null;
   const { data: rawEntries = [] } = useQuery({
     queryKey: ['session-raw-entries-modal', sessionId],
@@ -41,7 +40,6 @@ export function MessagesTab({ messages, loading }: MessagesTabProps): React.JSX.
     enabled: !!sessionId && !loading,
   });
 
-  // Parse all raw entries into structured data
   const { entries, counts } = useMemo(() => {
     return parseRawEntries(rawEntries as RawEntry[]);
   }, [rawEntries]);
@@ -174,7 +172,6 @@ function EntryCard({ entry, settings, globalExpanded }: { entry: ParsedEntry; se
 
   const preview = entry.content.length <= 100 ? entry.content : entry.content.slice(0, 100).trim() + '...';
 
-  // Get copyable content and label for this entry
   const { copyContent, copyLabel } = useMemo(() => {
     return getModalEntryCopyInfo(entry);
   }, [entry]);
@@ -261,7 +258,6 @@ function EntryCard({ entry, settings, globalExpanded }: { entry: ParsedEntry; se
   );
 }
 
-// Render entry content with prettification based on type
 function EntryContentRenderer({ entry }: { entry: ParsedEntry }) {
   switch (entry.type) {
     case 'user':

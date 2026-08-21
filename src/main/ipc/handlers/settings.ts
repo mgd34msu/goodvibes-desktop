@@ -34,7 +34,6 @@ class IPCValidationError extends Error {
 
 export function registerSettingsHandlers(): void {
   ipcMain.handle('get-setting', withContext('get-setting', async (_, key: unknown) => {
-    // Validate input using Zod schema
     const validation = validateInput(getSettingInputSchema, key);
     if (!validation.success) {
       logger.warn('get-setting validation failed', { error: validation.error, input: key });
@@ -45,7 +44,6 @@ export function registerSettingsHandlers(): void {
   }));
 
   ipcMain.handle('set-setting', withContext('set-setting', async (_, data: unknown) => {
-    // Validate input using Zod schema
     const validation = validateInput(setSettingInputSchema, data);
     if (!validation.success) {
       logger.warn('set-setting validation failed', { error: validation.error });
@@ -81,7 +79,6 @@ export function registerSettingsHandlers(): void {
   }));
 
   ipcMain.handle('get-app-path', withContext('get-app-path', async (_, name: unknown) => {
-    // Validate input using Zod schema
     const validation = validateInput(getAppPathInputSchema, name);
     if (!validation.success) {
       logger.warn('get-app-path validation failed', { error: validation.error, input: name });

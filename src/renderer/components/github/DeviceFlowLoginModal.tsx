@@ -36,7 +36,6 @@ export function DeviceFlowLoginModal({
   onAuthSuccess,
   onAuthError,
 }: DeviceFlowLoginModalProps) {
-  // Handle escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
@@ -65,7 +64,6 @@ export function DeviceFlowLoginModal({
 
   const handleAuthSuccess = (user: GitHubUser) => {
     onAuthSuccess?.(user);
-    // Close modal after a brief delay to show success state
     setTimeout(() => {
       onClose();
     }, 1500);

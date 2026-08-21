@@ -166,7 +166,6 @@ export { GitWatcherService };
 // PROCESS EXIT HANDLERS - Ensure cleanup on unexpected exit
 // ============================================================================
 
-// Handle graceful shutdown signals
 process.once('SIGTERM', () => {
   shutdownGitWatcher();
 });
@@ -175,7 +174,6 @@ process.once('SIGINT', () => {
   shutdownGitWatcher();
 });
 
-// Handle uncaught exceptions before exit
 process.once('beforeExit', () => {
   shutdownGitWatcher();
 });

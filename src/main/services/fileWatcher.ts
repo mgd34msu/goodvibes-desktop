@@ -148,7 +148,6 @@ class FileWatcherService extends EventEmitter {
       }
     }
 
-    // Remove the callback listener if one was registered for this watchId
     const listener = this.callbackListeners.get(watchId);
     if (listener) {
       this.removeListener('change', listener);
@@ -213,7 +212,6 @@ class FileWatcherService extends EventEmitter {
       return;
     }
 
-    // Get debounce key
     const debounceKey = `${watchId}:${fullPath}`;
 
     // Clear existing debounce timer
@@ -288,7 +286,6 @@ class FileWatcherService extends EventEmitter {
           };
         }
 
-        // Update cache
         this.addToFileCache(fullPath, {
           size: stats.size,
           mtime: stats.mtimeMs,
@@ -315,7 +312,7 @@ class FileWatcherService extends EventEmitter {
 
     if (!existsSync(claudeDir)) {
       logger.warn(`Claude directory not found: ${claudeDir}`);
-      // Create it so we can watch for future sessions
+      // Create it anyway so the watch below can pick up sessions once they start appearing
       fs.mkdir(claudeDir, { recursive: true }).catch((error) => {
         logger.error(`Failed to create Claude sessions directory: ${claudeDir}`, error);
       });
@@ -564,5 +561,4 @@ export function shutdownFileWatcher(): void {
   }
 }
 
-// Export the class for testing
 export { FileWatcherService };

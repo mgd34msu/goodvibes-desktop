@@ -171,7 +171,6 @@ export function validateAndRecover<T extends object>(
   let hasErrors = false;
   let errorMessage: string | undefined;
 
-  // Start with defaults
   const result = { ...schema.defaults };
 
   // If data isn't an object at all, return defaults
@@ -189,13 +188,11 @@ export function validateAndRecover<T extends object>(
 
   const inputData = data as Record<string, unknown>;
 
-  // Validate each field in the schema
   for (const key of Object.keys(schema.defaults) as (keyof T)[]) {
     const keyStr = String(key);
     const defaultValue = schema.defaults[key];
     const validator = schema.validators?.[key];
 
-    // Check if field exists in input
     if (!(keyStr in inputData)) {
       // Field is missing, use default
       recoveredFields.push(keyStr);
@@ -283,7 +280,6 @@ export function loadFromLocalStorage<T extends object>(
       };
     }
 
-    // Parse JSON
     const parsed = safeJsonParse<unknown>(raw, null);
 
     // If parse failed completely, return defaults
@@ -305,7 +301,6 @@ export function loadFromLocalStorage<T extends object>(
       };
     }
 
-    // Validate and recover
     return validateAndRecover(parsed, schema);
   } catch (error) {
     // Handle storage access errors (e.g., SecurityError, QuotaExceededError)
@@ -343,7 +338,6 @@ export function saveToLocalStorage<T extends object>(
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
 
-    // Check for quota exceeded
     if (error instanceof DOMException && error.name === 'QuotaExceededError') {
       logger.error(`${schema.name}: Storage quota exceeded`, {
         key: options.key,
@@ -515,7 +509,6 @@ export function attemptJsonRepair(corrupted: string): string | null {
 
   // Try common fixes
   const repairs = [
-    // Remove trailing commas before closing brackets
     () => corrupted.replace(/,(\s*[}\]])/g, '$1'),
     // Replace single quotes with double quotes
     () => corrupted.replace(/'/g, '"'),

@@ -70,7 +70,6 @@ export function prettifyToolUse(
  * Parse and render thinking blocks with XML-like tags styled nicely
  */
 export function prettifyThinking(content: string): React.ReactNode {
-  // Parse XML-like tags and render them with subtle styling
   const parts = parseXmlLikeTags(content);
 
   return (
@@ -82,7 +81,6 @@ export function prettifyThinking(content: string): React.ReactNode {
         iconOnly
       />
       {parts.map((part, index) => {
-        // Create stable key from part type, tag name (if present), and content hash
         const contentKey = `${part.type}-${part.tagName || 'text'}-${index}-${part.content.slice(0, 50)}`;
         if (part.type === 'tag') {
           return (

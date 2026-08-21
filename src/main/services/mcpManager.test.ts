@@ -88,7 +88,6 @@ vi.mock('os', async (importOriginal) => {
   };
 });
 
-// Import MCPServer type for test fixtures
 import type { MCPServer } from '../database/primitives.js';
 
 // Mock database primitives
@@ -226,7 +225,6 @@ import * as primitives from '../database/primitives.js';
 // TEST HELPERS
 // ============================================================================
 
-// Create a mock child process factory
 function createMockChildProcess() {
   return {
     stdout: new EventEmitter(),
@@ -248,7 +246,6 @@ function createMockServer(overrides: Partial<MCPServer> = {}): MCPServer {
 function resetMocks(): void {
   vi.clearAllMocks();
   mockChildProcess = createMockChildProcess();
-  // Set up spawn mock to return the fresh mockChildProcess
   vi.mocked(spawn).mockReturnValue(mockChildProcess as unknown as ChildProcess);
 }
 
@@ -547,7 +544,6 @@ describe('MCPManager Service', () => {
         const server = createMockServer({ id: 1 });
         vi.mocked(primitives.getMCPServer).mockReturnValue(server);
 
-        // First start - will trigger connection
         const startPromise = manager.startServer(1);
 
         // Simulate server output to mark as connected
@@ -674,7 +670,6 @@ describe('MCPManager Service', () => {
         const disconnectListener = vi.fn();
         manager.on('server:disconnected', disconnectListener);
 
-        // First connect the server
         const startPromise = manager.startServer(1);
 
         setTimeout(() => {
@@ -683,7 +678,6 @@ describe('MCPManager Service', () => {
 
         await startPromise;
 
-        // Then simulate close
         const mockOnHandler = mockChildProcess.on as Mock;
         const calls = mockOnHandler.mock.calls as Array<[string, (...args: unknown[]) => void]>;
         const closeCallback = calls.find((call) => call[0] === 'close')?.[1];
@@ -779,14 +773,12 @@ describe('MCPManager Service', () => {
         const disconnectListener = vi.fn();
         manager.on('server:disconnected', disconnectListener);
 
-        // Start server first
         const startPromise = manager.startServer(1);
         setTimeout(() => {
           mockChildProcess.stdout.emit('data', Buffer.from('Ready'));
         }, 10);
         await startPromise;
 
-        // Then stop
         manager.stopServer(1);
 
         expect(mockChildProcess.kill).toHaveBeenCalledWith('SIGTERM');
@@ -795,7 +787,6 @@ describe('MCPManager Service', () => {
       });
 
       it('should do nothing if server not running', () => {
-        // Create a new mock that hasn't been started
         const freshMock = createMockChildProcess();
         manager.stopServer(999);
 
@@ -811,24 +802,20 @@ describe('MCPManager Service', () => {
         const mockProcess1 = createMockChildProcess();
         const mockProcess2 = createMockChildProcess();
 
-        // Set up to return different processes for each start
         vi.mocked(spawn)
           .mockReturnValueOnce(mockProcess1 as unknown as ChildProcess)
           .mockReturnValueOnce(mockProcess2 as unknown as ChildProcess);
 
-        // Start first server
         vi.mocked(primitives.getMCPServer).mockReturnValue(server1);
         const start1 = manager.startServer(1);
         setTimeout(() => mockProcess1.stdout.emit('data', Buffer.from('Ready')), 10);
         await start1;
 
-        // Start second server
         vi.mocked(primitives.getMCPServer).mockReturnValue(server2);
         const start2 = manager.startServer(2);
         setTimeout(() => mockProcess2.stdout.emit('data', Buffer.from('Ready')), 10);
         await start2;
 
-        // Stop all
         manager.stopAllServers();
 
         expect(mockProcess1.kill).toHaveBeenCalled();
@@ -841,7 +828,6 @@ describe('MCPManager Service', () => {
         const server = createMockServer({ id: 1, command: 'npx' });
         vi.mocked(primitives.getMCPServer).mockReturnValue(server);
 
-        // First start
         const start1 = manager.startServer(1);
         setTimeout(() => {
           mockChildProcess.stdout.emit('data', Buffer.from('Ready'));
@@ -1212,7 +1198,6 @@ describe('MCPManager Service', () => {
       const server = createMockServer({ id: 1, command: 'npx' });
       vi.mocked(primitives.getMCPServer).mockReturnValue(server);
 
-      // Start server
       const startPromise = manager.startServer(1);
       setTimeout(() => {
         mockChildProcess.stdout.emit('data', Buffer.from('Ready'));
@@ -1512,7 +1497,6 @@ describe('Additional Edge Cases', () => {
         mockChildProcess.stderr.emit('data', Buffer.from('Warning: something'));
       }, 5);
 
-      // Then emit stdout to trigger connection
       setTimeout(() => {
         mockChildProcess.stdout.emit('data', Buffer.from('Ready'));
       }, 10);
@@ -1560,12 +1544,10 @@ describe('Additional Edge Cases', () => {
 
       const startPromise = manager.startServer(1);
 
-      // First emit partial JSON (should fail parse silently)
       setTimeout(() => {
         mockChildProcess.stdout.emit('data', Buffer.from('{"tools":'));
       }, 5);
 
-      // Then emit valid ready message
       setTimeout(() => {
         mockChildProcess.stdout.emit('data', Buffer.from('Server is ready'));
       }, 10);

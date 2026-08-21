@@ -119,10 +119,8 @@ export function createAgencyIndexTables(): void {
     )
   `);
 
-  // Create FTS5 virtual tables for full-text search
   createFTSTables();
 
-  // Create indexes
   createAgencyIndexIndexes();
 
   logger.info('Agency index tables created');
@@ -169,7 +167,6 @@ function createFTSTables(): void {
     logger.debug('Skill FTS table already exists or creation failed');
   }
 
-  // Create triggers to keep FTS tables in sync
   try {
     db.exec(`
       CREATE TRIGGER IF NOT EXISTS indexed_agents_ai AFTER INSERT ON indexed_agents BEGIN

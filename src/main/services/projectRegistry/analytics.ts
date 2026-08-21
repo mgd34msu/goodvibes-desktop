@@ -58,7 +58,6 @@ export function startProjectSession(
 ): CrossProjectSession {
   const session = recordCrossProjectSession(sessionId, projectId, agentSessionId, metadata);
 
-  // Update context if function provided
   if (updateContextFn) {
     updateContextFn(projectId, { activeSessionId: sessionId });
   }

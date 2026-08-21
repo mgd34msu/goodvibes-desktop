@@ -13,7 +13,6 @@ import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { Session } from '../types';
 
-// Import components under test
 import SessionsView from '../index';
 import { SessionFilters } from '../SessionFilters';
 import { SessionCard } from '../SessionCard';
@@ -102,7 +101,6 @@ let originalToggleArchive: typeof window.goodvibes.toggleArchive;
 beforeEach(() => {
   vi.clearAllMocks();
 
-  // Save original implementations
   originalGetActiveSessions = window.goodvibes.getActiveSessions;
   originalGetFavoriteSessions = window.goodvibes.getFavoriteSessions;
   originalGetArchivedSessions = window.goodvibes.getArchivedSessions;
@@ -630,7 +628,6 @@ describe('SessionsView Integration', () => {
 
       renderWithProviders(<SessionsView />);
 
-      // Wait for initial load
       await waitFor(() => {
         expect(window.goodvibes.getActiveSessions).toHaveBeenCalled();
       });
@@ -653,7 +650,6 @@ describe('SessionsView Integration', () => {
 
       renderWithProviders(<SessionsView />);
 
-      // Wait for initial load
       await waitFor(() => {
         expect(window.goodvibes.getActiveSessions).toHaveBeenCalled();
       });
@@ -682,7 +678,6 @@ describe('SessionsView Integration', () => {
 
       renderWithProviders(<SessionsView />);
 
-      // Wait for initial load - sessions exist but virtualizer doesn't show them
       await waitFor(() => {
         expect(window.goodvibes.getActiveSessions).toHaveBeenCalled();
       });

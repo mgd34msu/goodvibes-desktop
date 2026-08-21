@@ -31,7 +31,6 @@ const DANGEROUS_PATH_PATTERNS = [
  * 2. Path normalization comparison to detect sneaky traversal
  */
 function isPathSafe(inputPath: string): boolean {
-  // Check for dangerous patterns
   for (const pattern of DANGEROUS_PATH_PATTERNS) {
     if (pattern.test(inputPath)) {
       return false;
@@ -46,7 +45,6 @@ function isPathSafe(inputPath: string): boolean {
     if (normalized.includes('..')) {
       return false;
     }
-    // Check if normalization reveals hidden traversal
     // e.g., "foo/../../../bar" normalizes to "../../bar" which is dangerous
     if (normalized.startsWith('..')) {
       return false;
@@ -166,11 +164,8 @@ export const relativeFilePathSchema = z.string()
   .max(500, 'File path too long')
   .refine(
     (val) => {
-      // Check for Unix absolute paths
       if (path.isAbsolute(val)) return false;
-      // Check for Windows absolute paths (works cross-platform)
       if (/^[a-zA-Z]:[/\\]/.test(val)) return false;
-      // Check for UNC paths
       if (/^\\\\/.test(val)) return false;
       return true;
     },

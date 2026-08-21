@@ -140,16 +140,13 @@ export class TestMonitorService extends EventEmitter {
       return;
     }
 
-    // Check if this is a test command
     if (!this.isTestCommand(command)) {
       return;
     }
 
-    // Get the output from tool_response
     const toolResponse = payload.tool_response;
     const output = toolResponse?.content || '';
 
-    // Parse the test results
     const result = this.parseTestOutput(
       command,
       output,
@@ -158,7 +155,6 @@ export class TestMonitorService extends EventEmitter {
       durationMs
     );
 
-    // Add to results buffer
     this.addTestResult(result);
 
     // Emit event for real-time updates

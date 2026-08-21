@@ -63,7 +63,6 @@ export function ensureDir(dirPath: string): void {
  * - .claude-plugin/plugin.json - Anthropic official plugin format
  */
 export function readManifest(pluginDir: string): PluginManifest | null {
-  // Check both possible manifest locations
   const manifestPaths = [
     path.join(pluginDir, 'plugin.json'),                    // Simple format
     path.join(pluginDir, '.claude-plugin', 'plugin.json'),  // Anthropic official format
@@ -86,7 +85,6 @@ export function readManifest(pluginDir: string): PluginManifest | null {
     const content = fs.readFileSync(manifestPath, 'utf-8');
     const manifest = JSON.parse(content) as PluginManifest;
 
-    // Validate required fields (name and description are required, version is optional)
     if (!manifest.name || !manifest.description) {
       logger.error(`Invalid manifest in ${pluginDir}: missing required fields (name or description)`);
       return null;
@@ -172,7 +170,6 @@ export function scanPluginDirectory(baseDir: string): string[] {
       .filter(entry => entry.isDirectory() && !entry.name.startsWith('_'))  // Exclude temp dirs
       .map(entry => path.join(baseDir, entry.name))
       .filter(pluginDir => {
-        // Check for plugin.json in either location
         const rootManifest = path.join(pluginDir, 'plugin.json');
         const officialManifest = path.join(pluginDir, '.claude-plugin', 'plugin.json');
         return fs.existsSync(rootManifest) || fs.existsSync(officialManifest);
@@ -204,7 +201,6 @@ export function isGitRepository(url: string): boolean {
  */
 export function getRepoNameFromUrl(url: string): string | null {
   try {
-    // Check if this is a GitHub tree URL (monorepo subdirectory)
     const treeInfo = parseGitHubTreeUrl(url);
     if (treeInfo) {
       // For monorepo subdirectories, use the subdirectory name as the plugin name
@@ -212,7 +208,6 @@ export function getRepoNameFromUrl(url: string): string | null {
       return subParts[subParts.length - 1];
     }
 
-    // Handle various git URL formats
     const patterns = [
       /\/([^/]+?)(?:\.git)?$/,  // Extract last segment, optionally ending in .git
       /:([^/]+?)(?:\.git)?$/,   // Handle git@ format

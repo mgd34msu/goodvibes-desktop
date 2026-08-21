@@ -114,7 +114,6 @@ class AgentTreeServiceClass extends EventEmitter {
       parentSessionId: event.parentSessionId
     });
 
-    // Register the agent in the tree
     const node = registerAgent(
       event.sessionId,
       event.agentName,
@@ -146,7 +145,6 @@ class AgentTreeServiceClass extends EventEmitter {
 
     logger.info(`Agent stopped: ${event.sessionId}`, { success: event.success });
 
-    // Update status
     updateAgentStatus(
       event.sessionId,
       event.success ? 'completed' : 'failed'
@@ -231,7 +229,6 @@ class AgentTreeServiceClass extends EventEmitter {
     if (node) {
       this.emit('agent:cost-recorded', { sessionId, cost });
 
-      // Check if over budget
       if (node.spentBudgetUsd + cost >= node.allocatedBudgetUsd && node.allocatedBudgetUsd > 0) {
         this.emit('agent:budget-exceeded', { sessionId });
         this.notifyRenderer('agent:budget-exceeded', { sessionId });
@@ -330,10 +327,8 @@ class AgentTreeServiceClass extends EventEmitter {
     const nodes = getAgentTree(rootSessionId);
     if (nodes.length === 0) return null;
 
-    // Build a map for quick lookup
     const nodeMap = new Map<string, TreeVisualizationNode>();
 
-    // Create visualization nodes
     for (const node of nodes) {
       const now = Date.now();
       const startTime = new Date(node.startedAt).getTime();
@@ -356,7 +351,6 @@ class AgentTreeServiceClass extends EventEmitter {
       });
     }
 
-    // Build tree structure
     let root: TreeVisualizationNode | null = null;
 
     for (const node of nodes) {

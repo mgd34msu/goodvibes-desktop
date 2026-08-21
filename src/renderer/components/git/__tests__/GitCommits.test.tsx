@@ -56,7 +56,6 @@ describe('GitCommits', () => {
     Object.defineProperties(HTMLElement.prototype, {
       offsetHeight: {
         get() {
-          // Return non-zero height for scroll containers
           if (this.classList?.contains('max-h-48') || this.classList?.contains('overflow-y-auto')) {
             return 192; // 48 * 4px = 192px
           }

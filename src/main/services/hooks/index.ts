@@ -210,5 +210,4 @@ export function shutdownHooksService(): void {
   }
 }
 
-// Export the class for testing
 export { HooksService };

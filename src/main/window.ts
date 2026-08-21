@@ -21,7 +21,6 @@ let mainWindow: BrowserWindow | null = null;
  */
 function setupContentSecurityPolicy(): void {
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-    // Build CSP directives
     const cspDirectives = [
       // Only allow scripts from same origin and inline scripts (needed for Vite HMR in dev)
       process.env['ELECTRON_RENDERER_URL']
@@ -56,10 +55,8 @@ function setupContentSecurityPolicy(): void {
 }
 
 export function createWindow(): BrowserWindow {
-  // Setup CSP before creating window
   setupContentSecurityPolicy();
 
-  // Get icon path based on platform
   // In dev: resources folder is at project root
   // In prod: resources folder is at app root (same level as app.asar)
   const resourcesPath = app.isPackaged
@@ -97,7 +94,6 @@ export function createWindow(): BrowserWindow {
     show: false,
   });
 
-  // Load the app - electron-vite injects MAIN_WINDOW_VITE_DEV_SERVER_URL in dev mode
   if (process.env['ELECTRON_RENDERER_URL']) {
     // In dev mode, load from Vite dev server
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
@@ -112,12 +108,10 @@ export function createWindow(): BrowserWindow {
     mainWindow?.show();
   });
 
-  // Handle window closed
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 
-  // Open DevTools with command line flag
   if (process.argv.includes('--dev')) {
     mainWindow.webContents.openDevTools();
   }

@@ -10,7 +10,6 @@ import { useSettingsStore } from '../../stores/settingsStore';
 import SettingsView from './SettingsView/index';
 import { DEFAULT_SETTINGS } from '../../../shared/types';
 
-// Create test wrapper with QueryClientProvider
 function createTestWrapper() {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -36,7 +35,6 @@ async function renderSettingsView() {
 
   await act(async () => {
     result = render(<SettingsView />, { wrapper: createTestWrapper() });
-    // Wait for GitHubConnectionStatus useEffect async operations to complete
     await new Promise(resolve => setTimeout(resolve, 0));
   });
 
@@ -540,7 +538,6 @@ describe('SettingsView Store Integration', () => {
   });
 
   it('resets all settings to defaults', async () => {
-    // First change some settings
     await act(async () => {
       useSettingsStore.setState({
         settings: {

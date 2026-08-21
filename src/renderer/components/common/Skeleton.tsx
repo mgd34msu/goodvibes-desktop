@@ -86,7 +86,6 @@ function generateLineWidths(count: number): string[] {
       // Last line is shorter
       widths.push(`${40 + Math.random() * 30}%`);
     } else if (i === 0) {
-      // First line is longer
       widths.push(`${85 + Math.random() * 15}%`);
     } else {
       // Middle lines vary

@@ -155,7 +155,6 @@ const mockGoodVibesAPI = {
   pinProject: vi.fn().mockResolvedValue(true),
   clearRecentProjects: vi.fn().mockResolvedValue(true),
 
-  // Export
   exportSession: vi.fn().mockResolvedValue({ success: true }),
   bulkExport: vi.fn().mockResolvedValue({ success: true }),
 

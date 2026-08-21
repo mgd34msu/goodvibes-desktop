@@ -141,7 +141,6 @@ describe('ContextInjectionService', () => {
     vi.clearAllMocks();
     service = new ContextInjectionService();
 
-    // Create temporary directory for tests
     tempDir = await fs.promises.mkdtemp('/tmp/context-injection-test-');
   });
 
@@ -224,7 +223,6 @@ describe('ContextInjectionService', () => {
     it('should prevent concurrent injection', async () => {
       const context = createSessionContext({ workingDirectory: tempDir });
 
-      // Start first injection
       const promise1 = service.injectForSession(context);
 
       // Try to start second injection immediately
@@ -233,7 +231,6 @@ describe('ContextInjectionService', () => {
       expect(result2.success).toBe(false);
       expect(result2.errors).toContain('Injection already in progress');
 
-      // Wait for first injection to complete
       await promise1;
     });
 
@@ -262,7 +259,6 @@ describe('ContextInjectionService', () => {
     it('should deduplicate agents and skills', async () => {
       const mockAgent = createMockAgent(1, 'TestAgent');
 
-      // Return the same agent from both session and project
       mockAgencyIndex.getActiveAgentsForSession.mockReturnValue([
         createActiveAgent(1, 'test-session-123'),
       ]);

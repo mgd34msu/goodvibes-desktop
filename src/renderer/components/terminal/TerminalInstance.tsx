@@ -198,7 +198,6 @@ export function TerminalInstance({ id, zoomLevel, isActive, isPlainTerminal, cwd
     }
   }, [id, cwd, pasteImageToTerminal]);
 
-  // Handle context menu
   const handleContextMenu = useCallback(async (e: React.MouseEvent) => {
     e.preventDefault();
     const terminal = terminalRef.current;
@@ -223,7 +222,6 @@ export function TerminalInstance({ id, zoomLevel, isActive, isPlainTerminal, cwd
     // 'copy' action is handled by the main process directly
   }, [id, cwd, pasteToTerminal, pasteImageToTerminal]);
 
-  // Initialize terminal
   useEffect(() => {
     if (!containerRef.current || terminalRef.current) return;
 
@@ -251,12 +249,10 @@ export function TerminalInstance({ id, zoomLevel, isActive, isPlainTerminal, cwd
     terminal.open(containerRef.current);
     fitAddon.fit();
 
-    // Handle terminal input
     terminal.onData((data) => {
       handleTerminalInput(id, data);
     });
 
-    // Handle terminal resize
     terminal.onResize(({ cols, rows }) => {
       handleTerminalResize(id, cols, rows);
     });
@@ -289,13 +285,11 @@ export function TerminalInstance({ id, zoomLevel, isActive, isPlainTerminal, cwd
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  // Handle keyboard shortcuts for copy/paste in terminal
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Check for Ctrl+C (copy) when there's a selection
       if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
         const terminal = terminalRef.current;
         if (terminal?.hasSelection()) {
@@ -307,7 +301,6 @@ export function TerminalInstance({ id, zoomLevel, isActive, isPlainTerminal, cwd
         // If no selection, let Ctrl+C pass through as SIGINT
       }
 
-      // Check for Ctrl+V (paste)
       if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
         e.preventDefault();
         e.stopPropagation();
@@ -315,7 +308,6 @@ export function TerminalInstance({ id, zoomLevel, isActive, isPlainTerminal, cwd
         return;
       }
 
-      // Check for Ctrl+Shift+C (copy - alternative)
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
         e.preventDefault();
         e.stopPropagation();
@@ -323,7 +315,6 @@ export function TerminalInstance({ id, zoomLevel, isActive, isPlainTerminal, cwd
         return;
       }
 
-      // Check for Ctrl+Shift+V (paste - alternative)
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'V') {
         e.preventDefault();
         e.stopPropagation();
@@ -338,7 +329,6 @@ export function TerminalInstance({ id, zoomLevel, isActive, isPlainTerminal, cwd
     };
   }, [copySelection, pasteToTerminal]);
 
-  // Handle terminal data from main process
   useEffect(() => {
     const handleData = (data: { id: number; data: string }) => {
       if (data.id === id && terminalRef.current) {
@@ -404,7 +394,6 @@ export function TerminalInstance({ id, zoomLevel, isActive, isPlainTerminal, cwd
     return undefined;
   }, [zoomLevel]);
 
-  // Handle theme change
   useEffect(() => {
     if (terminalRef.current) {
       terminalRef.current.options.theme = xtermTheme;

@@ -255,7 +255,6 @@ export class ErrorRecovery extends Component<ErrorRecoveryProps, ErrorRecoverySt
     const categorizer = this.props.categorizeError || categorizeError;
     const categorizedError = categorizer(error);
 
-    // Add custom recovery actions
     if (this.props.recoveryActions?.[categorizedError.category]) {
       categorizedError.recoveryActions = [
         ...categorizedError.recoveryActions,
@@ -323,7 +322,6 @@ export class ErrorRecovery extends Component<ErrorRecoveryProps, ErrorRecoverySt
       retryIn: Math.ceil(delay / 1000),
     });
 
-    // Start countdown
     this.countdownIntervalId = setInterval(() => {
       this.setState((s) => {
         const newRetryIn = s.retryIn !== null ? s.retryIn - 1 : null;

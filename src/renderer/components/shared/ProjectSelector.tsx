@@ -367,6 +367,5 @@ export default function ProjectSelector({
   );
 }
 
-// Export the modal separately for reuse
 export { AddProjectModal };
 export type { RegisteredProject, ProjectSelectorProps };

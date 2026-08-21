@@ -61,7 +61,6 @@ export function createSessionSummariesTables(): void {
     )
   `);
 
-  // Create FTS5 table for full-text search
   try {
     db.exec(`
       CREATE VIRTUAL TABLE IF NOT EXISTS session_summaries_fts USING fts5(
@@ -88,7 +87,6 @@ export function createSessionSummariesTables(): void {
     }
   }
 
-  // Create triggers for FTS
   try {
     db.exec(`
       CREATE TRIGGER IF NOT EXISTS session_summaries_ai AFTER INSERT ON session_summaries BEGIN
@@ -126,7 +124,6 @@ export function createSessionSummariesTables(): void {
     }
   }
 
-  // Create indexes
   createSessionSummariesIndexes();
 
   logger.info('Session summaries tables created');

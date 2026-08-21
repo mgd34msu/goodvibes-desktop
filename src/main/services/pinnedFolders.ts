@@ -39,14 +39,12 @@ export function getPinnedFolders(): PinnedFolder[] {
 }
 
 export function addPinnedFolder(path: string, name: string): PinnedFolder[] {
-  // Check if already pinned
   const existingIndex = pinnedFolders.findIndex(f => f.path === path);
   if (existingIndex !== -1) {
     logger.debug(`Folder already pinned: ${path}`);
     return getPinnedFolders();
   }
 
-  // Add to pinned folders
   pinnedFolders.push({ path, name });
   savePinnedFolders();
   logger.debug(`Pinned folder: ${path}`);

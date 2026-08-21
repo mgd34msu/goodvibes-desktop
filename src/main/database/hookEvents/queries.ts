@@ -94,7 +94,6 @@ export function getBudgetForScope(
 ): BudgetRecord | null {
   const db = getDatabase();
 
-  // First try to find session-specific budget
   if (sessionId) {
     const sessionBudget = db.prepare(
       'SELECT * FROM budgets WHERE session_id = ?'
@@ -102,7 +101,6 @@ export function getBudgetForScope(
     if (sessionBudget) return mapRowToBudget(sessionBudget);
   }
 
-  // Then try project-specific budget
   if (projectPath) {
     const projectBudget = db.prepare(
       'SELECT * FROM budgets WHERE project_path = ? AND session_id IS NULL'
@@ -110,7 +108,6 @@ export function getBudgetForScope(
     if (projectBudget) return mapRowToBudget(projectBudget);
   }
 
-  // Finally try global budget
   const globalBudget = db.prepare(
     'SELECT * FROM budgets WHERE project_path IS NULL AND session_id IS NULL'
   ).get() as BudgetRow | undefined;

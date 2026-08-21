@@ -49,12 +49,10 @@ export function CollapsibleSection({
     }
   }, [isExpanded]);
 
-  // Update height when expanded state changes
   useEffect(() => {
     updateHeight();
   }, [updateHeight]);
 
-  // Handle window resize to recalculate height
   useEffect(() => {
     if (!isExpanded) return;
 

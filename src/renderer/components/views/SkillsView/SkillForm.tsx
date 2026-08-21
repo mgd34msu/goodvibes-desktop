@@ -93,10 +93,8 @@ Describe expected output format.
     );
   };
 
-  // Update frontmatter when name changes
   const handleNameChange = (newName: string) => {
     setName(newName);
-    // Update frontmatter in content if it exists
     if (content.startsWith('---')) {
       const updatedContent = content.replace(
         /^---\nname:\s*.*/m,

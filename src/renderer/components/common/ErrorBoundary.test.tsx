@@ -1026,7 +1026,6 @@ describe('ErrorBoundary', () => {
         </ErrorBoundary>
       );
 
-      // Wait for componentDidCatch to update state with errorInfo
       await waitFor(() => {
         expect(screen.getByText('Component Stack')).toBeInTheDocument();
       });

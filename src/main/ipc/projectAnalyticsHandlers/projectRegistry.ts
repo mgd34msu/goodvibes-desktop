@@ -17,7 +17,6 @@ import type {
 export function registerProjectHandlers(): void {
   const registry = getProjectRegistry();
 
-  // Register a new project
   ipcMain.handle('project:register', async (_event, options: {
     path: string;
     name?: string;
@@ -32,7 +31,6 @@ export function registerProjectHandlers(): void {
     );
   });
 
-  // Update project
   ipcMain.handle('project:update', async (_event, projectId: number, updates: {
     name?: string;
     description?: string | null;
@@ -41,23 +39,19 @@ export function registerProjectHandlers(): void {
     return registry.updateProject(projectId, updates);
   });
 
-  // Remove project
   ipcMain.handle('project:remove', async (_event, projectId: number) => {
     registry.removeProject(projectId);
     return true;
   });
 
-  // Get all projects
   ipcMain.handle('project:getAll', async () => {
     return registry.getAllProjects();
   });
 
-  // Get single project
   ipcMain.handle('project:get', async (_event, projectId: number) => {
     return registry.getProject(projectId);
   });
 
-  // Get project by path
   ipcMain.handle('project:getByPath', async (_event, path: string) => {
     return registry.getProjectByPath(path);
   });
@@ -67,12 +61,10 @@ export function registerProjectHandlers(): void {
     return registry.findProjects(query);
   });
 
-  // Get project settings
   ipcMain.handle('project:getSettings', async (_event, projectId: number) => {
     return registry.getProjectSettings(projectId);
   });
 
-  // Update project settings
   ipcMain.handle('project:updateSettings', async (_event, projectId: number, settings: ProjectSettings) => {
     return registry.updateProjectSettings(projectId, settings);
   });
@@ -82,12 +74,10 @@ export function registerProjectHandlers(): void {
     return registry.switchProject(projectId);
   });
 
-  // Get current project
   ipcMain.handle('project:getCurrent', async () => {
     return registry.getCurrentProject();
   });
 
-  // Get project context
   ipcMain.handle('project:getContext', async (_event, projectId: number) => {
     return registry.getProjectContext(projectId);
   });
@@ -107,12 +97,10 @@ export function registerProjectHandlers(): void {
     );
   });
 
-  // Get project agents
   ipcMain.handle('project:getAgents', async (_event, projectId: number) => {
     return registry.getAgentsForProject(projectId);
   });
 
-  // Update project agent
   ipcMain.handle('project:updateAgent', async (_event, agentAssignmentId: number, updates: {
     priority?: number;
     settings?: ProjectAgentSettings;
@@ -120,13 +108,11 @@ export function registerProjectHandlers(): void {
     return registry.updateAgentConfig(agentAssignmentId, updates);
   });
 
-  // Remove agent from project
   ipcMain.handle('project:removeAgent', async (_event, projectId: number, agentId: number) => {
     registry.removeAgentFromProjectConfig(projectId, agentId);
     return true;
   });
 
-  // Get auto-activate agents
   ipcMain.handle('project:getAutoActivateAgents', async (_event, projectId: number) => {
     return registry.getAutoActivateAgents(projectId);
   });
@@ -139,7 +125,6 @@ export function registerProjectHandlers(): void {
 export function registerTemplateHandlers(): void {
   const registry = getProjectRegistry();
 
-  // Create template
   ipcMain.handle('template:create', async (_event, options: {
     name: string;
     description?: string;
@@ -154,22 +139,18 @@ export function registerTemplateHandlers(): void {
     );
   });
 
-  // Get template by ID
   ipcMain.handle('template:get', async (_event, templateId: number) => {
     return registry.getTemplate(templateId);
   });
 
-  // Get template by name
   ipcMain.handle('template:getByName', async (_event, name: string) => {
     return registry.getTemplateByName(name);
   });
 
-  // Get all templates
   ipcMain.handle('template:getAll', async () => {
     return registry.getAllTemplates();
   });
 
-  // Update template
   ipcMain.handle('template:update', async (_event, templateId: number, updates: {
     name?: string;
     description?: string | null;
@@ -179,7 +160,6 @@ export function registerTemplateHandlers(): void {
     return registry.updateTemplate(templateId, updates);
   });
 
-  // Delete template
   ipcMain.handle('template:delete', async (_event, templateId: number) => {
     registry.removeTemplate(templateId);
     return true;
@@ -190,7 +170,6 @@ export function registerTemplateHandlers(): void {
     return registry.applyTemplate(projectId, templateId);
   });
 
-  // Create template from project
   ipcMain.handle('template:createFromProject', async (_event, options: {
     projectId: number;
     templateName: string;
@@ -211,7 +190,6 @@ export function registerTemplateHandlers(): void {
 export function registerCoordinationHandlers(): void {
   const coordinator = getProjectCoordinator();
 
-  // Register cross-project agent
   ipcMain.handle('coordinator:registerAgent', async (_event, options: {
     agentId: number;
     agentName: string;
@@ -230,17 +208,14 @@ export function registerCoordinationHandlers(): void {
     return true;
   });
 
-  // Get cross-project agent
   ipcMain.handle('coordinator:getAgent', async (_event, agentId: number) => {
     return coordinator.getCrossProjectAgent(agentId);
   });
 
-  // Get all cross-project agents
   ipcMain.handle('coordinator:getAllAgents', async () => {
     return coordinator.getAllCrossProjectAgents();
   });
 
-  // Get agents for project
   ipcMain.handle('coordinator:getAgentsForProject', async (_event, projectId: number) => {
     return coordinator.getAgentsForProject(projectId);
   });
@@ -250,7 +225,6 @@ export function registerCoordinationHandlers(): void {
     return coordinator.transitionAgentToProject(agentId, targetProjectId);
   });
 
-  // Update agent status
   ipcMain.handle('coordinator:updateAgentStatus', async (_event, agentId: number, status: 'idle' | 'active' | 'transitioning') => {
     coordinator.updateAgentStatus(agentId, status);
     return true;
@@ -277,22 +251,18 @@ export function registerCoordinationHandlers(): void {
     return true;
   });
 
-  // Get shared skill config
   ipcMain.handle('coordinator:getSharedSkill', async (_event, skillId: number) => {
     return coordinator.getSharedSkillConfig(skillId);
   });
 
-  // Get all shared skills
   ipcMain.handle('coordinator:getAllSharedSkills', async () => {
     return coordinator.getAllSharedSkillConfigs();
   });
 
-  // Get shared skills for project
   ipcMain.handle('coordinator:getSharedSkillsForProject', async (_event, projectId: number) => {
     return coordinator.getSharedSkillsForProject(projectId);
   });
 
-  // Update shared skill settings
   ipcMain.handle('coordinator:updateSharedSkillSettings', async (_event, skillId: number, settings: Record<string, unknown>) => {
     return coordinator.updateSharedSkillSettings(skillId, settings);
   });
@@ -303,12 +273,10 @@ export function registerCoordinationHandlers(): void {
     return true;
   });
 
-  // Get project state
   ipcMain.handle('coordinator:getProjectState', async (_event, projectId: number) => {
     return coordinator.getProjectState(projectId);
   });
 
-  // Update project state
   ipcMain.handle('coordinator:updateProjectState', async (_event, projectId: number, updates: {
     activeAgents?: number[];
     pendingSkills?: number[];
@@ -323,7 +291,6 @@ export function registerCoordinationHandlers(): void {
     return true;
   });
 
-  // Get all project states
   ipcMain.handle('coordinator:getAllStates', async () => {
     return coordinator.getAllProjectStates();
   });
@@ -356,7 +323,6 @@ export function registerCoordinationHandlers(): void {
     );
   });
 
-  // Get pending events for project
   ipcMain.handle('coordinator:getPendingEvents', async (_event, projectId: number) => {
     return coordinator.getPendingEventsForProject(projectId);
   });
@@ -367,7 +333,6 @@ export function registerCoordinationHandlers(): void {
     return true;
   });
 
-  // Get coordination status
   ipcMain.handle('coordinator:getStatus', async () => {
     return coordinator.getStatus();
   });

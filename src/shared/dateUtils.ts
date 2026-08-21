@@ -31,7 +31,7 @@ export function formatTimestamp(): string {
 export function getISODateString(date?: Date): string {
   const d = date ?? new Date();
   const isoString = d.toISOString();
-  // Format is always YYYY-MM-DDTHH:mm:ss.sssZ, so split is safe
+  // toISOString's format is always YYYY-MM-DDTHH:mm:ss.sssZ, so this slice is safe
   return isoString.slice(0, 10);
 }
 

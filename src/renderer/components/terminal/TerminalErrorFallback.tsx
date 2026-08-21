@@ -50,7 +50,6 @@ export function TerminalErrorFallback({
     closeTerminal(terminalId);
   };
 
-  // Check if we're in development mode for showing detailed error info
   const isDevelopment = process.env.NODE_ENV !== 'production';
 
   return (

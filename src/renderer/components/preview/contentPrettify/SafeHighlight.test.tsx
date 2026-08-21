@@ -158,7 +158,6 @@ describe('SafeHighlight XSS Prevention', () => {
 
       expect(lines).toHaveLength(3);
 
-      // Render each line and verify
       lines.forEach((lineElements, i) => {
         const { container } = render(<>{lineElements}</>);
         expect(container.textContent).toBe(`line${i + 1}`);

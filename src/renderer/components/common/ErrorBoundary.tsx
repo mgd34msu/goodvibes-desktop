@@ -8,7 +8,6 @@ import { createLogger } from '../../../shared/logger';
 
 const logger = createLogger('ErrorBoundary');
 
-// Check if we're in development mode for showing detailed error info
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // ============================================================================
@@ -74,7 +73,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     // Store errorInfo for detailed display
     this.setState({ errorInfo });
 
-    // Call optional error callback for external error reporting
     // This allows integration with error reporting services (e.g., Sentry)
     this.props.onError?.(error, errorInfo);
     

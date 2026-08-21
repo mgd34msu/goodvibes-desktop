@@ -1250,7 +1250,6 @@ describe('IPC Flow Integration', () => {
   it('simulates create folder and add to recent projects flow', async () => {
     const newFolderPath = '/home/user/brand-new-project';
 
-    // Create folder
     vi.mocked(dialog.showSaveDialog).mockResolvedValue({
       canceled: false,
       filePath: newFolderPath,
@@ -1261,7 +1260,6 @@ describe('IPC Flow Integration', () => {
     expect(createdPath).toBe(newFolderPath);
     expect(fs.mkdir).toHaveBeenCalledWith(newFolderPath, { recursive: true });
 
-    // Add to recent
     const addRecent = handlers['add-recent-project'];
     await addRecent!(mockEvent, { path: newFolderPath });
     expect(recentProjectsService.addRecentProject).toHaveBeenCalledWith(newFolderPath, undefined);
@@ -1270,7 +1268,6 @@ describe('IPC Flow Integration', () => {
   it('simulates remove and clear recent projects flow', async () => {
     const projectPath = '/home/user/old-project';
 
-    // Remove specific project
     const removeRecent = handlers['remove-recent-project'];
     await removeRecent!(mockEvent, projectPath);
     expect(recentProjectsService.removeRecentProject).toHaveBeenCalledWith(projectPath);

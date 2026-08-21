@@ -78,7 +78,6 @@ export function cleanupOldHookEvents(maxAgeHours = 24): number {
 export function upsertBudget(budget: Omit<BudgetRecord, 'id' | 'createdAt' | 'updatedAt'>): BudgetRecord {
   const db = getDatabase();
 
-  // Check if budget exists for this project/session
   const existing = db.prepare(`
     SELECT id FROM budgets
     WHERE (project_path = ? OR (project_path IS NULL AND ? IS NULL))

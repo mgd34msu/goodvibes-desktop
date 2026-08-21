@@ -54,7 +54,6 @@ export function GitHubOAuthConfigModal({
   // Validation state
   const [errors, setErrors] = useState<{ clientId?: string; clientSecret?: string }>({});
 
-  // Initialize form when status loads or modal opens
   useEffect(() => {
     if (isOpen && oauthStatus) {
       if (oauthStatus.source === 'custom' && oauthStatus.clientId) {
@@ -78,7 +77,6 @@ export function GitHubOAuthConfigModal({
     }
   }, [isOpen, refresh]);
 
-  // Handle escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;

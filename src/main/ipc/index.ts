@@ -65,7 +65,6 @@ export function registerAllIpcHandlers(): void {
   // Tag suggestions (AI-powered tagging)
   registerTagSuggestionHandlers();
 
-  // Export functionality
   registerExportHandlers();
 
   // ============================================================================
@@ -115,11 +114,9 @@ export function registerAllIpcHandlers(): void {
   // ADVANCED FEATURE HANDLERS
   // ============================================================================
 
-  // Initialize project registry and coordinator services
   initProjectRegistry();
   initProjectCoordinator();
 
-  // Register approval, agent, and project analytics handlers
   registerApprovalAgentHandlers();
   registerProjectAnalyticsHandlers();
 

@@ -17,7 +17,6 @@ import { existsSync } from 'fs';
 import { spawnSync } from 'child_process';
 import { tmpdir } from 'os';
 
-// Import all git functions
 import {
   gitStatus,
   gitBranch,
@@ -63,7 +62,6 @@ import {
   gitConventionalPrefixes,
 } from './git/index.js';
 
-// Get absolute path to test git directory - use a unique temp directory
 const TEST_GIT_DIR = path.join(tmpdir(), `goodvibes-git-test-${process.pid}`);
 
 /**
@@ -112,17 +110,14 @@ function ensureClean(cwd: string): void {
  * This ensures tests don't depend on external filesystem state.
  */
 async function createTestRepository(): Promise<void> {
-  // Create the test directory
   await fs.mkdir(TEST_GIT_DIR, { recursive: true });
 
-  // Initialize git repo
   runGit(TEST_GIT_DIR, ['init', '-b', 'main']);
 
   // Configure git user for commits (required for commits to work)
   runGit(TEST_GIT_DIR, ['config', 'user.email', 'test@goodvibes.test']);
   runGit(TEST_GIT_DIR, ['config', 'user.name', 'GoodVibes Test']);
 
-  // Create initial test file
   const testFilePath = path.join(TEST_GIT_DIR, 'test-git-enhancements.txt');
   await fs.writeFile(testFilePath, 'Initial content for git enhancement tests\n');
 
@@ -130,7 +125,6 @@ async function createTestRepository(): Promise<void> {
   runGit(TEST_GIT_DIR, ['add', 'test-git-enhancements.txt']);
   runGit(TEST_GIT_DIR, ['commit', '-m', 'Initial commit for git tests']);
 
-  // Add a few more commits to have history for testing
   await fs.appendFile(testFilePath, 'Second line added\n');
   runGit(TEST_GIT_DIR, ['add', 'test-git-enhancements.txt']);
   runGit(TEST_GIT_DIR, ['commit', '-m', 'feat: add second line']);
@@ -145,7 +139,6 @@ async function createTestRepository(): Promise<void> {
  */
 async function removeTestRepository(): Promise<void> {
   if (existsSync(TEST_GIT_DIR)) {
-    // Remove the directory recursively
     await fs.rm(TEST_GIT_DIR, { recursive: true, force: true });
   }
 }
@@ -172,7 +165,6 @@ describe('Git Service - Basic Operations', () => {
   });
 
   it('gitIsRepo returns false for non-git directory', async () => {
-    // Create a temp directory and explicitly ensure it's not a git repo
     // by checking that git rev-parse fails
     const tempDir = path.join(tmpdir(), `goodvibes-non-git-test-${process.pid}-${Date.now()}`);
     await fs.mkdir(tempDir, { recursive: true });
@@ -263,7 +255,6 @@ describe('Git Service - Branch Operations', () => {
   });
 
   it('gitCheckout switches branches', async () => {
-    // Create a test branch first using the gitCreateBranch function
     const testBranch = `checkout-test-${Date.now()}`;
     const createResult = await gitCreateBranch(TEST_GIT_DIR, testBranch, false);
 
@@ -293,7 +284,6 @@ describe('Git Service - Branch Operations', () => {
 
   it('gitDeleteBranch deletes a local branch', async () => {
     const testBranch = `delete-test-${Date.now()}`;
-    // Create branch using gitCreateBranch
     const createResult = await gitCreateBranch(TEST_GIT_DIR, testBranch, false);
 
     // gitCreateBranch should return a result object
@@ -318,7 +308,6 @@ describe('Git Service - Branch Operations', () => {
   });
 
   it('gitDeleteBranch prevents deleting current branch', async () => {
-    // Get the current branch first
     const branchResult = await gitBranch(TEST_GIT_DIR);
     const currentBranch = branchResult.output || 'main';
 
@@ -363,10 +352,8 @@ describe('Git Service - Staging Operations', () => {
 
   it('gitUnstage unstages files', async () => {
     const fileName = path.basename(testFile);
-    // First stage the file
     await gitStage(TEST_GIT_DIR, [fileName]);
 
-    // Then unstage
     const result = await gitUnstage(TEST_GIT_DIR, [fileName]);
     expect(result.success).toBe(true);
 
@@ -379,7 +366,6 @@ describe('Git Service - Staging Operations', () => {
     // Modify an existing tracked file
     const existingFile = path.join(TEST_GIT_DIR, 'test-git-enhancements.txt');
 
-    // Read the original content - this file should exist from test setup
     const originalContent = await fs.readFile(existingFile, 'utf-8');
     expect(originalContent).toBeDefined();
     expect(originalContent.length).toBeGreaterThan(0);
@@ -477,7 +463,6 @@ describe('Git Service - Commit Operations', () => {
   });
 
   it('gitShowCommit returns detailed commit info', async () => {
-    // Get the latest commit hash
     const log = await gitLogDetailed(TEST_GIT_DIR, 1);
     expect(log.commits.length).toBeGreaterThan(0);
     const hash = log.commits[0].hash;
@@ -531,10 +516,8 @@ describe('Git Service - Tag Operations', () => {
   });
 
   it('gitDeleteTag deletes a tag', async () => {
-    // First create a tag
     await gitCreateTag(TEST_GIT_DIR, testTag);
 
-    // Then delete it
     const result = await gitDeleteTag(TEST_GIT_DIR, testTag);
     expect(result.success).toBe(true);
 

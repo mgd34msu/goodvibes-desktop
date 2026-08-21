@@ -141,7 +141,6 @@ describe('GitPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Setup default mock implementations for useGitState hook
     vi.mocked(window.goodvibes.gitIsRepo).mockResolvedValue(true);
     vi.mocked(window.goodvibes.gitDetailedStatus).mockResolvedValue(mockGitDetailedStatusResponse);
     vi.mocked(window.goodvibes.gitBranches).mockResolvedValue(mockGitBranchesResponse);
@@ -362,7 +361,6 @@ describe('GitPanel', () => {
 
       render(<GitPanel cwd="/test/path" position="left" />);
 
-      // Wait for loading to finish and error to display
       await waitFor(() => {
         expect(screen.queryByText('Git command failed')).toBeInTheDocument();
       }, { timeout: 5000 });

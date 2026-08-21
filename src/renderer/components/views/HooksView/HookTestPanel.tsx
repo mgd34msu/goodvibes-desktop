@@ -46,7 +46,6 @@ function generateSampleInput(
     return {};
   }
 
-  // Start with the event type's input schema example
   const baseInput = { ...eventMetadata.inputSchemaExample };
 
   // Override with realistic test values
@@ -64,7 +63,6 @@ function generateSampleInput(
     sampleOverrides.tool_name = 'Bash';
   }
 
-  // Add event-specific sample data
   switch (eventType) {
     case 'PreToolUse':
     case 'PostToolUse':
@@ -166,7 +164,6 @@ export function HookTestPanel({
       return;
     }
 
-    // Validate JSON input
     let parsedInput: Record<string, unknown>;
     try {
       parsedInput = JSON.parse(sampleInput);
@@ -180,7 +177,6 @@ export function HookTestPanel({
     setError(null);
 
     try {
-      // Check if testHook API exists
       if (!window.goodvibes?.testHook) {
         setError('Hook testing API not available. Please ensure the hook server is running.');
         setIsRunning(false);
@@ -207,7 +203,6 @@ export function HookTestPanel({
     }
   }, [command, sampleInput]);
 
-  // Get exit code badge styling
   const getExitCodeBadge = (exitCode: number) => {
     if (exitCode === 0) {
       return 'bg-green-500/20 text-green-400 border-green-500/30';
@@ -217,7 +212,6 @@ export function HookTestPanel({
     return 'bg-red-500/20 text-red-400 border-red-500/30';
   };
 
-  // Render prompt type message
   if (hookType === 'prompt') {
     return (
       <CollapsibleSection

@@ -51,7 +51,6 @@ function checkRateLimit(): boolean {
     rateLimiter.lastRefill = now;
   }
 
-  // Check if we have tokens available
   if (rateLimiter.tokens >= RATE_LIMIT_CONFIG.tokensPerRequest) {
     rateLimiter.tokens -= RATE_LIMIT_CONFIG.tokensPerRequest;
     return true;

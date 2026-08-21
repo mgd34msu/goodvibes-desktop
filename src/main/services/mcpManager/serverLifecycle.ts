@@ -140,7 +140,6 @@ export async function startStdioServer(
 
     runningServers.set(server.id, serverInfo);
 
-    // Wait for server to be ready
     return new Promise((resolve) => {
       const timeout = setTimeout(() => {
         if (!serverInfo.connected) {
@@ -277,7 +276,6 @@ export async function startServer(
     return false;
   }
 
-  // Check if already running
   if (runningServers.has(id)) {
     logger.debug(`MCP server already running: ${server.name}`);
     return true;

@@ -1,6 +1,5 @@
 // ============================================================================
 // WELCOME STEP
-// First step of onboarding - welcome and overview
 // ============================================================================
 
 import { Sparkles, Terminal, FolderOpen, Settings, Zap } from 'lucide-react';

@@ -236,7 +236,6 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
     });
   },
 
-  // Remove a terminal from state without calling kill (used when terminal exits on its own)
   removeTerminal: (id) => {
     const terminal = get().terminals.get(id);
     if (!terminal) {

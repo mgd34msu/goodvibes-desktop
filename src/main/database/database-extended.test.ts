@@ -20,7 +20,6 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 
-// Check if better-sqlite3 can be loaded
 let canLoadDatabase = true;
 try {
   require('better-sqlite3');
@@ -31,7 +30,6 @@ try {
 // Skip all tests if native module cannot be loaded
 const describeIfDb = canLoadDatabase ? describe : describe.skip;
 
-// Create a temporary directory for the test database
 const TEST_DIR = path.join(os.tmpdir(), 'goodvibes-extended-test-' + Date.now());
 
 // Mock electron and logger
@@ -236,12 +234,10 @@ async function setupDatabase(): Promise<void> {
   // Messages
   storeMessages = messagesModule.storeMessages;
 
-  // Create test directory
   if (!fs.existsSync(TEST_DIR)) {
     fs.mkdirSync(TEST_DIR, { recursive: true });
   }
 
-  // Initialize database
   await initDatabase(TEST_DIR);
 }
 
@@ -478,7 +474,6 @@ describeIfDb('Smart Collection Operations', () => {
 
   describe('getSessionsForSmartCollection', () => {
     beforeEach(() => {
-      // Create test sessions
       upsertSession({ id: 'session-1', projectName: 'ProjectA', cost: 0.10 });
       upsertSession({ id: 'session-2', projectName: 'ProjectB', cost: 0.50 });
       upsertSession({ id: 'session-3', projectName: 'ProjectA', cost: 1.00 });
@@ -1176,7 +1171,6 @@ describeIfDb('Knowledge Operations', () => {
 
 describeIfDb('Search Operations', () => {
   beforeEach(() => {
-    // Create test sessions
     upsertSession({ id: 'session-1', projectName: 'ProjectA', cost: 0.10, startTime: '2024-01-15T10:00:00Z' });
     upsertSession({ id: 'session-2', projectName: 'ProjectB', cost: 0.50, startTime: '2024-01-16T10:00:00Z' });
     upsertSession({ id: 'session-3', projectName: 'ProjectA', cost: 1.00, startTime: '2024-01-17T10:00:00Z' });
@@ -1350,7 +1344,6 @@ describeIfDb('Connection Module', () => {
 
   describe('getDatabase throws when not initialized', () => {
     it('should throw when database is cleared', () => {
-      // Save the current instance
       const db = getDatabase();
 
       // Clear it
@@ -1408,7 +1401,6 @@ describeIfDb('Migration Operations', () => {
     it('should return pending migrations', () => {
       const db = getDatabase();
 
-      // Create test migrations
       const testMigrations = [
         { version: 1000, description: 'Test migration 1', up: () => {} },
         { version: 1001, description: 'Test migration 2', up: () => {} },
@@ -1426,7 +1418,6 @@ describeIfDb('Migration Operations', () => {
       const db = getDatabase();
       const currentVersion = getCurrentVersion(db);
 
-      // Create a test migration with a very high version
       let migrationRan = false;
       const testMigrations = [
         {
@@ -1489,7 +1480,6 @@ describeIfDb('Migration Operations', () => {
       const db = getDatabase();
       const currentVersion = getCurrentVersion(db);
 
-      // First apply a migration
       let tableCreated = false;
       let tableDropped = false;
       const testMigrations = [
@@ -1508,7 +1498,6 @@ describeIfDb('Migration Operations', () => {
       runMigrations(db, testMigrations);
       expect(tableCreated).toBe(true);
 
-      // Now rollback
       const rolledBack = rollbackMigrations(db, testMigrations, currentVersion);
 
       expect(rolledBack).toBe(1);

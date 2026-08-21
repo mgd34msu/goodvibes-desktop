@@ -52,7 +52,6 @@ export default function CreatePullRequestModal({
     }
   }, [owner, repo]);
 
-  // Load available branches
   useEffect(() => {
     isMountedRef.current = true;
     if (isOpen) {
@@ -93,7 +92,6 @@ export default function CreatePullRequestModal({
       if (result.success && result.data) {
         onCreated?.(result.data.number, result.data.html_url);
         onClose();
-        // Open the PR in browser
         window.open(result.data.html_url, '_blank', 'noopener,noreferrer');
       } else {
         setError(result.error || 'Failed to create pull request');

@@ -681,7 +681,6 @@ describe('Terminal IPC Handlers', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     registeredHandlers.clear();
-    // Register handlers for each test
     registerTerminalHandlers();
   });
 
@@ -1400,7 +1399,6 @@ describe('Terminal IPC Handlers', () => {
       expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBeGreaterThan(0);
 
-      // Check that result includes expected editors
       const nvim = result.find((e: { name: string }) => e.name === 'Neovim');
       expect(nvim).toBeDefined();
     });

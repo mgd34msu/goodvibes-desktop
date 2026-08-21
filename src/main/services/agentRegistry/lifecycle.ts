@@ -56,7 +56,6 @@ export function setAgentPid(agentId: string, pid: number): void {
     return;
   }
 
-  // Update in database
   const db = require('../../database/index.js').getDatabase();
   db.prepare('UPDATE agent_registry SET pid = ? WHERE id = ?').run(pid, agentId);
 

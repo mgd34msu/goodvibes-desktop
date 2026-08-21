@@ -157,7 +157,6 @@ describe('ConfigManager', () => {
 
   describe('initialize', () => {
     it('should initialize successfully when no user config exists', async () => {
-      // Import fresh module
       const { config } = await import('./config.js');
 
       // No config file exists
@@ -324,7 +323,6 @@ describe('ConfigManager', () => {
 
       await config.initialize();
 
-      // Save should throw error (not swallow it)
       await expect(config.saveConfig()).rejects.toThrow('ENOSPC');
 
       // Should log error before throwing
@@ -891,7 +889,6 @@ describe('ConfigManager', () => {
       // Simulate directory already exists when checking in saveConfig
       let existsSyncCalled = false;
       fsMockState.existsSyncResult = (filePath: string) => {
-        // Check if this is the saveConfig call checking for directory
         if (filePath === mockUserDataPath) {
           existsSyncCalled = true;
           return true; // Directory exists, so mkdir should be skipped
@@ -989,7 +986,6 @@ describe('ConfigManager', () => {
       // Config file exists
       fsMockState.existsSyncResult = (filePath: string) => filePath.includes('config.json');
 
-      // Return valid JSON but one that will cause an error during merge
       // This tests the error handling path where the error might not be an Error instance
       fsMockState.readFileResult = '{}'; // Valid JSON that won't cause issues
 

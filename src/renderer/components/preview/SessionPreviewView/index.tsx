@@ -20,7 +20,6 @@ export function SessionPreviewView({ sessionId, sessionName, hideHeader }: Sessi
   const [autoScroll, setAutoScroll] = useState(true);
   const [globalExpanded, setGlobalExpanded] = useState<boolean | null>(null);
 
-  // Validate sessionId early - explicit boolean type
   const validSessionId = Boolean(sessionId && typeof sessionId === 'string' && sessionId.trim().length > 0);
 
   // Query for live status (for display purposes)
@@ -41,7 +40,6 @@ export function SessionPreviewView({ sessionId, sessionName, hideHeader }: Sessi
     staleTime: isLive ? 1000 : Infinity, // Cache forever for archived sessions
   });
 
-  // Parse entries into structured messages
   const { entries, counts } = useMemo(() => {
     return parseAllEntries(rawEntries as RawEntry[]);
   }, [rawEntries]);
@@ -81,7 +79,6 @@ export function SessionPreviewView({ sessionId, sessionName, hideHeader }: Sessi
     }
   }, [visibleEntries.length, autoScroll, virtualizer]);
 
-  // Handle scroll to detect if user scrolled up
   const handleScroll = useCallback(() => {
     if (containerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
@@ -94,7 +91,6 @@ export function SessionPreviewView({ sessionId, sessionName, hideHeader }: Sessi
   const handleCollapseAll = () => setGlobalExpanded(false);
   const handleResetExpand = () => setGlobalExpanded(null);
 
-  // Handle invalid sessionId
   if (!validSessionId) {
     return (
       <div className="flex items-center justify-center h-full bg-surface-900">

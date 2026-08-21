@@ -169,10 +169,8 @@ export class PTYStreamAnalyzerService extends EventEmitter {
     const events: StreamEvent[] = [];
     const timestamp = Date.now();
 
-    // Update output buffer
     this.appendToBuffer(terminalId, data);
 
-    // Initialize or update metrics
     this.updateMetrics(terminalId, sessionId, data);
 
     // Strip ANSI escape codes for pattern matching

@@ -56,7 +56,6 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps): React.JSX.
         p: ({ children, ...props }) => {
           // react-markdown passes node prop with hast element info
           const node = (props as { node?: { children?: Array<{ tagName?: string; properties?: { className?: string[] } }> } }).node;
-          // Check if paragraph contains block-level elements (like code blocks)
           // If so, render as div to avoid invalid HTML nesting (<pre> cannot be inside <p>)
           const hasBlockChild = node?.children?.some(
             (child) =>

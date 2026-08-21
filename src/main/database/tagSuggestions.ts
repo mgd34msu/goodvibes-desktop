@@ -110,13 +110,11 @@ export function acceptSuggestion(id: number): void {
 
   try {
     database.transaction(() => {
-      // Get the suggestion
       const suggestion = getSuggestion(id);
       if (!suggestion) {
         throw new Error(`Suggestion ${id} not found`);
       }
 
-      // Check if tag exists, create if not
       const existingTag = database.prepare(`
         SELECT id FROM tags WHERE name = ?
       `).get(suggestion.tagName) as { id: number } | undefined;
@@ -125,7 +123,6 @@ export function acceptSuggestion(id: number): void {
       if (existingTag) {
         tagId = existingTag.id;
       } else {
-        // Create tag with default color (ai-suggested tags get a distinct color)
         const newTag = createTag({
           name: suggestion.tagName,
           color: '#9333ea',
@@ -134,13 +131,11 @@ export function acceptSuggestion(id: number): void {
         logger.debug(`Created new tag: ${suggestion.tagName} (id: ${tagId})`);
       }
 
-      // Add tag to session
       const added = addTagToSession(suggestion.sessionId, tagId);
       if (!added) {
         logger.debug(`Tag ${suggestion.tagName} already applied to session ${suggestion.sessionId}`);
       }
 
-      // Update suggestion status
       updateSuggestionStatus(id, 'accepted');
 
       // Record positive feedback
@@ -262,7 +257,6 @@ export function recordSuggestionFeedback(
 
   try {
     database.transaction(() => {
-      // Check if feedback entry exists
       const existing = database.prepare(`
         SELECT id, accepted_count, rejected_count
         FROM suggestion_feedback
@@ -270,7 +264,6 @@ export function recordSuggestionFeedback(
       `).get(tagName, contextHash) as { id: number; accepted_count: number; rejected_count: number } | undefined;
 
       if (existing) {
-        // Update existing feedback
         if (accepted) {
           database.prepare(`
             UPDATE suggestion_feedback
@@ -285,7 +278,6 @@ export function recordSuggestionFeedback(
           `).run(existing.id);
         }
       } else {
-        // Create new feedback entry
         database.prepare(`
           INSERT INTO suggestion_feedback (
             tag_name, context_hash, accepted_count, rejected_count, last_feedback_at
@@ -356,7 +348,6 @@ export function updateSessionScanStatus(
 ): void {
   const database = getDatabase();
 
-  // Check if session exists first
   const sessionExists = database.prepare(`
     SELECT 1 FROM sessions WHERE id = ?
   `).get(sessionId);

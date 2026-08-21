@@ -137,7 +137,6 @@ const infoScale: ColorScale = {
   950: '#003f6f',
 };
 
-// Create semantic color set with glows and gradients
 function createSemanticColorSet(scale: ColorScale, baseHex: string): SemanticColorSet {
   return {
     ...scale,

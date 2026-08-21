@@ -48,7 +48,6 @@ export function PreviousSessionsModal({
     try {
       const result = await window.goodvibes?.getProjectSessions?.(project.path, 5);
 
-      // Check if aborted before updating state
       if (signal.aborted) return;
 
       if (result && Array.isArray(result)) {
@@ -91,12 +90,10 @@ export function PreviousSessionsModal({
     }
   }, [project.path]);
 
-  // Load sessions on mount and when project changes
   useEffect(() => {
     // Abort any previous request
     abortControllerRef.current?.abort();
 
-    // Create new abort controller for this request
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
@@ -112,7 +109,6 @@ export function PreviousSessionsModal({
     // Abort any previous request
     abortControllerRef.current?.abort();
 
-    // Create new abort controller for retry
     const controller = new AbortController();
     abortControllerRef.current = controller;
 

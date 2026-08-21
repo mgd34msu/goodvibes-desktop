@@ -13,7 +13,6 @@ import { mapRowToMessage, type MessageRow } from './mappers.js';
 export function storeMessages(sessionId: string, messages: Partial<SessionMessage>[]): void {
   const database = getDatabase();
 
-  // Delete existing messages
   database.prepare('DELETE FROM messages WHERE session_id = ?').run(sessionId);
 
   // Insert new messages

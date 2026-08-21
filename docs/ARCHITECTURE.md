@@ -1,10 +1,10 @@
-# GoodVibes Architecture Documentation
+# GoodVibes architecture documentation
 
 ## Overview
 
 GoodVibes is an Electron-based desktop application that provides an enhanced interface for Claude CLI with session management, analytics, and Git integration. The application follows a standard Electron architecture with separate main and renderer processes.
 
-## High-Level Architecture
+## High-level architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -32,7 +32,7 @@ GoodVibes is an Electron-based desktop application that provides an enhanced int
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Directory Structure
+## Directory structure
 
 ```
 goodvibes/
@@ -98,43 +98,43 @@ goodvibes/
 └── release/                     # Packaged application
 ```
 
-## Component Architecture
+## Component architecture
 
-### Main Process Components
+### Main process components
 
-#### 1. Terminal Manager (`terminalManager.ts`)
+#### 1. Terminal manager (`terminalManager.ts`)
 - Manages PTY (pseudo-terminal) instances using `node-pty`
 - Handles terminal creation, input/output, and cleanup
 - Provides resize functionality for terminal dimensions
 - Tracks active terminal sessions
 
-#### 2. Session Manager (`sessionManager.ts`)
+#### 2. Session manager (`sessionManager.ts`)
 - Scans Claude session directories for JSONL files
 - Parses session metadata and messages
 - Tracks session changes using file modification times
 - Provides session search and filtering
 
-#### 3. Database Layer (`database/`)
+#### 3. Database layer (`database/`)
 - Uses `better-sqlite3` for SQLite database
 - WAL mode for better concurrent access
 - Stores sessions, messages, settings, tags, collections, etc.
 - Provides analytics aggregation queries
 
-#### 4. Git Service (`git.ts`)
+#### 4. Git service (`git.ts`)
 - Executes Git commands via child processes
 - Provides Git status, branch, log, diff operations
 - Supports staging, committing, pushing, pulling
 - Handles merge conflicts and stash operations
 
-#### 5. GitHub Service (`github.ts`)
+#### 5. GitHub service (`github.ts`)
 - OAuth authentication flow with custom protocol
 - Manages access tokens with secure storage
 - Provides GitHub API operations (repos, PRs, issues)
 - Supports CI/CD status checking
 
-### Renderer Process Components
+### Renderer process components
 
-#### 1. View Components
+#### 1. View components
 - **TerminalView**: xterm.js terminal with tabs
 - **SessionsView**: Virtual scrolling session list
 - **SettingsView**: Application settings UI
@@ -143,20 +143,20 @@ goodvibes/
 - **KnowledgeView**: Knowledge base articles
 - **MonitorView**: Real-time session monitoring
 
-#### 2. State Management (Zustand)
+#### 2. State management (Zustand)
 - **appStore**: Current view, modals, global state
 - **terminalStore**: Terminal instances, active tab
 - **settingsStore**: User preferences with persistence
 - **toastStore**: Toast notification queue
 
-#### 3. Data Fetching (React Query)
+#### 3. Data fetching (React Query)
 - Manages server state for sessions, analytics
 - Provides caching and background refetching
 - Handles loading and error states
 
-## IPC Communication
+## IPC communication
 
-### Preload Script (`preload.ts`)
+### Preload script (`preload.ts`)
 The preload script creates a secure bridge between main and renderer processes:
 
 ```typescript
@@ -181,25 +181,25 @@ window.goodvibes = {
 - All main process access goes through preload script
 - Sensitive data (tokens) stored in encrypted electron-store
 
-## Data Flow
+## Data flow
 
-### Terminal Data Flow
+### Terminal data flow
 ```
 User Input → Renderer → IPC → Main Process → PTY → Claude CLI
                                                      ↓
 Display ← Renderer ← IPC ← Main Process ← PTY ← Claude CLI
 ```
 
-### Session Data Flow
+### Session data flow
 ```
 Claude CLI → JSONL Files → Session Scanner → Database
                                               ↓
 UI Display ← React Query ← IPC ← Database Query
 ```
 
-## Database Schema
+## Database schema
 
-### Core Tables
+### Core tables
 - `sessions`: Session metadata
 - `messages`: Session messages
 - `tags`: User-defined tags
@@ -214,7 +214,7 @@ UI Display ← React Query ← IPC ← Database Query
 - `tool_usage`: Tool usage statistics
 - `activity_log`: User activity log
 
-## Build System
+## Build system
 
 ### Development
 - Vite for renderer process (hot reload)
@@ -226,66 +226,66 @@ UI Display ← React Query ← IPC ← Database Query
 - TypeScript compiles to ESM modules
 - `electron-builder` packages application
 
-## Testing Strategy
+## Testing strategy
 
-### Unit Tests (Vitest)
+### Unit tests (Vitest)
 - Store tests for state management
 - Service tests for business logic
 - Component tests for UI behavior
 
-### E2E Tests (Playwright)
+### E2E tests (Playwright)
 - Application launch and navigation
 - Terminal operations
 - Settings persistence
 - GitHub integration flow
 
-### Database Tests
+### Database tests
 - Uses in-memory SQLite for isolation
 - Tests all CRUD operations
 - Verifies foreign key constraints
 
-## Performance Considerations
+## Performance considerations
 
-### Virtual Scrolling
+### Virtual scrolling
 - Session list uses `@tanstack/react-virtual`
 - Only renders visible items
 - Handles thousands of sessions efficiently
 
-### Database Optimization
+### Database optimization
 - WAL mode for concurrent reads
 - Indexes on frequently queried columns
 - Prepared statements for repeated queries
 
-### Memory Management
+### Memory management
 - Terminal instances cleaned up on close
 - React Query cache limits
 - Proper event listener cleanup
 
-## Error Handling
+## Error handling
 
-### Main Process
+### Main process
 - Centralized logging service
 - Graceful error recovery
 - Error events sent to renderer
 
-### Renderer Process
+### Renderer process
 - Error boundaries for component failures
 - Toast notifications for user feedback
 - React Query error states
 
-## Security Model
+## Security model
 
-### OAuth Security
+### OAuth security
 - State parameter for CSRF protection
 - Custom protocol callback (goodvibes://)
 - Token encryption in electron-store
 
-### Process Isolation
+### Process isolation
 - Context isolation enabled
 - No direct Node.js access in renderer
 - All IPC calls validated
 
-### Data Protection
+### Data protection
 - Encrypted storage for credentials
 - No sensitive data in logs
 - Secure session handling

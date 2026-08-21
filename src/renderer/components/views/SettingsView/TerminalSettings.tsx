@@ -159,11 +159,9 @@ export function TerminalSettings({ settings, onChange }: TerminalSettingsProps):
   const [availableEditors, setAvailableEditors] = useState<TextEditorInfo[]>([]);
 
   useEffect(() => {
-    // Get the platform from preload
     const detectedPlatform = window.goodvibes.getPlatform();
     setPlatform(detectedPlatform);
 
-    // Get available text editors
     window.goodvibes.getAvailableEditors().then(editors => {
       setAvailableEditors(editors);
     }).catch(() => {
@@ -173,7 +171,6 @@ export function TerminalSettings({ settings, onChange }: TerminalSettingsProps):
 
   const isWindows = platform === 'win32';
 
-  // Get the default shells based on platform
   const defaultShells = isWindows ? WINDOWS_DEFAULT_SHELLS : UNIX_DEFAULT_SHELLS;
 
   // Combine default shells with custom shells
@@ -186,7 +183,6 @@ export function TerminalSettings({ settings, onChange }: TerminalSettingsProps):
     })),
   ];
 
-  // Handle shell selection change
   const handleShellChange = (value: string) => {
     if (value === ADD_CUSTOM_VALUE) {
       setIsModalOpen(true);
@@ -198,9 +194,7 @@ export function TerminalSettings({ settings, onChange }: TerminalSettingsProps):
     }
   };
 
-  // Handle adding a custom shell
   const handleAddCustomShell = (shellPath: string) => {
-    // Add to custom shells list if not already there
     const currentCustomShells = settings.customShells || [];
     const allExistingShells = [
       ...defaultShells.map((s) => s.value),
@@ -220,7 +214,6 @@ export function TerminalSettings({ settings, onChange }: TerminalSettingsProps):
     setIsModalOpen(false);
   };
 
-  // Get the platform-specific description
   const shellDescription = isWindows
     ? 'Shell used for new terminal windows (uses COMSPEC if not set)'
     : 'Shell used for new terminal windows (uses SHELL if not set)';
@@ -235,7 +228,6 @@ export function TerminalSettings({ settings, onChange }: TerminalSettingsProps):
     }
   };
 
-  // Get the available editors for the dropdown
   const editorOptions = availableEditors.filter(e => e.available);
 
   return (

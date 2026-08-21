@@ -75,7 +75,6 @@ export function ScanProgressModal({
       if (countsRes.success && countsRes.data) {
         setScanCounts(countsRes.data);
         
-        // Check if scan completed (when no pending sessions)
         if (countsRes.data.pending === 0 && progressRes.data?.current === progressRes.data?.total && progressRes.data.total > 0) {
           setIsComplete(true);
           if (pollIntervalRef.current) {
@@ -175,7 +174,6 @@ export function ScanProgressModal({
   useEffect(() => {
     if (!isOpen) return;
 
-    // Start the background scan
     window.goodvibes.startBackgroundScan()
       .then((result) => {
         if (!result.success) {

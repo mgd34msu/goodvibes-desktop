@@ -178,7 +178,6 @@ export function useRepoSelector(cwd: string, loadRepoInfo: () => Promise<void>) 
   const loadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const requestIdRef = useRef(0);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -202,7 +201,6 @@ export function useRepoSelector(cwd: string, loadRepoInfo: () => Promise<void>) 
   const loadUserRepos = async () => {
     if (reposLoading) return;
 
-    // Check cache (5 minute TTL)
     const now = Date.now();
     if (reposCacheRef.current && (now - reposCacheRef.current.timestamp) < 300000) {
       setRepos(reposCacheRef.current.repos);

@@ -32,7 +32,6 @@ export function InstallSkillModal({
   onClose,
   onInstall,
 }: InstallSkillModalProps) {
-  // Format skill invocation for display
   const invocationText = `Skill skill: "${skill.name}"`;
 
   return (

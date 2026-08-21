@@ -77,7 +77,6 @@ describe('useResolvedProjectName', () => {
       { wrapper: createWrapper() }
     );
 
-    // Wait for query to resolve
     await vi.waitFor(() => {
       expect(result.current).toBe('goodvibes-plugin');
     });
@@ -145,7 +144,6 @@ describe('useResolvedProjectName', () => {
       { wrapper }
     );
 
-    // Wait for query to resolve
     await vi.waitFor(() => {
       expect(result.current).toBe('my-app');
     });
@@ -164,7 +162,6 @@ describe('useResolvedProjectName', () => {
       { wrapper: createWrapper() }
     );
 
-    // Wait for query to resolve
     await vi.waitFor(() => {
       expect(result.current).toBe('~');
     });

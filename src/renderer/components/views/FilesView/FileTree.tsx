@@ -53,7 +53,6 @@ function TreeItem({ node, level, currentPath, onNavigate, onLoadChildren, onPinF
   const [showContextMenu, setShowContextMenu] = useState<{ x: number; y: number } | null>(null);
   const itemRef = useRef<HTMLDivElement>(null);
 
-  // Register this item's ref for scrolling
   useEffect(() => {
     registerRef(node.id, itemRef.current);
     return () => registerRef(node.id, null);
@@ -82,7 +81,6 @@ function TreeItem({ node, level, currentPath, onNavigate, onLoadChildren, onPinF
   const isSelected = currentPath === node.id;
   const indent = level * 12 + 8;
 
-  // Load children when expanded (if not already loaded)
   useEffect(() => {
     const loadChildrenIfNeeded = async () => {
       if (isExpanded && !children) {
@@ -217,7 +215,6 @@ export function FileTree({ rootPath, currentPath, onNavigate, onLoadChildren, pi
   const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const isDragging = useRef(false);
 
-  // Register/unregister tree item refs for scrolling
   const registerItemRef = useCallback((path: string, el: HTMLDivElement | null) => {
     if (el) {
       itemRefs.current.set(path, el);
@@ -239,14 +236,11 @@ export function FileTree({ rootPath, currentPath, onNavigate, onLoadChildren, pi
     });
   }, []);
 
-  // Get all ancestor paths for a given path (relative to rootPath)
   const getAncestorPaths = useCallback((targetPath: string): string[] => {
     const paths: string[] = [];
-    // Build path from root to target
     const targetParts = targetPath.split('/').filter(Boolean);
     const rootParts = rootPath.split('/').filter(Boolean);
     
-    // Start from one level after root
     let currentPath = rootPath;
     for (let i = rootParts.length; i < targetParts.length; i++) {
       currentPath = currentPath + '/' + targetParts[i];
@@ -285,11 +279,9 @@ export function FileTree({ rootPath, currentPath, onNavigate, onLoadChildren, pi
       }
     };
     
-    // Start trying after initial delay for state update
     setTimeout(tryScroll, 50);
   }, []);
 
-  // Handle pinned folder click: collapse all, expand to path, scroll
   const handlePinnedFolderClick = useCallback((folderPath: string) => {
     onNavigate(folderPath);
     expandToPath(folderPath);

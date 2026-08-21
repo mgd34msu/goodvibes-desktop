@@ -264,7 +264,6 @@ describe('DeviceFlowLogin', () => {
 
       render(<DeviceFlowLogin />);
 
-      // First attempt fails
       fireEvent.click(screen.getByRole('button', { name: /login with github/i }));
       await waitFor(() => {
         expect(screen.getByText(/first error/i)).toBeInTheDocument();

@@ -43,7 +43,6 @@ export function registerEnhancedHookHandlers(): void {
     hookServer.clearHandlers(eventType);
   }
 
-  // Register enhanced handlers
   hookServer.registerHandler('PreToolUse', handlePreToolUse);
   hookServer.registerHandler('PostToolUse', handlePostToolUse);
   hookServer.registerHandler('SessionStart', handleSessionStart);
@@ -175,7 +174,6 @@ async function handleSubagentStop(payload: HookPayload): Promise<HookResponse> {
 async function handlePermissionRequest(payload: HookPayload): Promise<HookResponse> {
   const policyEngine = getPolicyEngine();
 
-  // Parse permission details
   let toolName: string | undefined;
   let filePath: string | undefined;
   let command: string | undefined;
@@ -199,7 +197,6 @@ async function handlePermissionRequest(payload: HookPayload): Promise<HookRespon
     }
   }
 
-  // Process through policy engine
   const decision = await policyEngine.processPermissionRequest({
     sessionId: payload.session_id || 'unknown',
     permissionType: payload.permission_type || 'unknown',
@@ -248,14 +245,12 @@ async function handleUserPromptSubmit(_payload: HookPayload): Promise<HookRespon
  * Initialize all services and register handlers
  */
 export function initializeHookHandlers(): void {
-  // Initialize services
   getPolicyEngine();
   getAgentTreeService().initialize();
 
   // Install default policies
   getPolicyEngine().installDefaultPolicies();
 
-  // Register enhanced handlers
   registerEnhancedHookHandlers();
 
   logger.info('Hook handlers initialized');

@@ -182,7 +182,6 @@ export function generateThemeCSS(theme: Theme): string {
   const rules: string[] = [];
   const { colors } = theme;
 
-  // Add theme metadata as CSS comment
   rules.push(`/* Theme: ${theme.name} (${theme.id}) */`);
   rules.push(`/* Variant: ${theme.variant} */`);
   if (theme.author) {
@@ -278,13 +277,11 @@ export function applyTheme(theme: Theme): void {
     document.head.appendChild(styleEl);
   }
 
-  // Update the CSS content
   styleEl.textContent = css;
 
   // Set color scheme on documentElement
   document.documentElement.style.colorScheme = theme.variant;
 
-  // Update light/dark class on documentElement
   const htmlEl = document.documentElement;
   if (theme.variant === 'light') {
     htmlEl.classList.add('light');

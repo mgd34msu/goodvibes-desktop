@@ -93,7 +93,6 @@ export function TagsSection({ sessionId, onTagsChange }: TagsSectionProps): Reac
 
   const handleCreateAndAdd = async (name: string, color: string, effect: import('../../../../shared/types/tag-types').TagEffect | null) => {
     try {
-      // Create the tag with color and effect
       const createResult = await window.goodvibes.createTag({ 
         name, 
         color, 
@@ -105,7 +104,6 @@ export function TagsSection({ sessionId, onTagsChange }: TagsSectionProps): Reac
         return;
       }
 
-      // Add it to the session
       const addResult = await window.goodvibes.addTagToSession(sessionId, createResult.data.id);
       if (addResult.success) {
         await loadData();
@@ -328,7 +326,6 @@ export function TagsSection({ sessionId, onTagsChange }: TagsSectionProps): Reac
           <div className="flex flex-wrap gap-2">
             {suggestions.map(suggestion => {
               const isProcessing = processingIds.has(suggestion.id);
-              // Create a temporary tag object for TagChip
               const tempTag: Tag = {
                 id: 0,
                 name: suggestion.tagName,

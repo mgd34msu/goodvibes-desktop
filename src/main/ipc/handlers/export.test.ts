@@ -43,7 +43,6 @@ vi.mock('fs/promises', () => {
   };
 });
 
-// Create mock stream and archive for testing
 const mockArchiveInstance = {
   pipe: vi.fn(),
   append: vi.fn(),
@@ -877,7 +876,6 @@ describe('Export IPC Handlers', () => {
           filePath,
         });
 
-        // First session exists, second doesn't
         vi.mocked(db.getSession)
           .mockReturnValueOnce(createMockSession() as never)
           .mockReturnValueOnce(null as never);
@@ -1261,7 +1259,6 @@ describe('IPC Flow Integration', () => {
     const mockSession = createMockSession({ id: sessionId });
     const mockMessages = createMockMessages();
 
-    // Setup mocks
     vi.mocked(db.getSession).mockReturnValue(mockSession as never);
     vi.mocked(db.getSessionMessages).mockReturnValue(mockMessages as never);
     vi.mocked(dialog.showSaveDialog).mockResolvedValue({
@@ -1329,7 +1326,6 @@ describe('IPC Flow Integration', () => {
       '550e8400-e29b-41d4-a716-446655440002',
     ];
 
-    // First and third exist, second doesn't
     vi.mocked(db.getSession)
       .mockReturnValueOnce(createMockSession({ id: sessionIds[0] }) as never)
       .mockReturnValueOnce(null as never)

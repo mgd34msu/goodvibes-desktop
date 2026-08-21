@@ -104,7 +104,6 @@ class ConfigManager {
     if (this.initialized) return;
 
     try {
-      // Set up paths
       const userData = app.getPath('userData');
       this.configPath = path.join(userData, 'config.json');
 
@@ -115,7 +114,6 @@ class ConfigManager {
         sessions: this.getSessionsPath(),
       };
 
-      // Load user config if exists
       const loadResult = await this.loadConfig();
 
       // Apply environment overrides
@@ -145,7 +143,6 @@ class ConfigManager {
   private getSessionsPath(): string {
     const homeDir = process.env.HOME || process.env.USERPROFILE || '';
 
-    // Check common locations for Claude sessions
     const possiblePaths = [
       path.join(homeDir, '.claude', 'projects'),
       path.join(homeDir, 'AppData', 'Roaming', 'Claude', 'projects'),

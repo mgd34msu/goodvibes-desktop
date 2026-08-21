@@ -64,7 +64,6 @@ async function readBackupMetadata(): Promise<BackupMetadata | null> {
     const content = await fs.readFile(metadataPath, 'utf-8');
     const data = JSON.parse(content) as BackupMetadata;
     
-    // Validate the structure
     if (typeof data.lastBackupTimestamp !== 'number' || typeof data.version !== 'number') {
       logger.debug('Invalid metadata structure, treating as first run');
       return null;
@@ -181,7 +180,6 @@ function backupSessionFile(sourcePath: string, backupDir: string, cutoffTime: nu
     const relativePath = getRelativePath(sourcePath);
     const backupPath = path.join(backupDir, relativePath);
 
-    // Check if backup is needed
     if (!shouldBackup(sourcePath, backupPath, cutoffTime)) {
       return false;
     }
@@ -227,10 +225,8 @@ export async function backupSessions(): Promise<{ backed: number; total: number 
     logger.info(`Created backup directory: ${backupDir}`);
   }
 
-  // Read backup metadata
   const metadata = await readBackupMetadata();
   
-  // Calculate cutoff time with 1-hour buffer
   // If no metadata (first run), cutoff is null which means backup everything
   const cutoffTime = metadata ? metadata.lastBackupTimestamp - ONE_HOUR_MS : null;
   
@@ -256,7 +252,6 @@ export async function backupSessions(): Promise<{ backed: number; total: number 
     }
   }
 
-  // Write updated metadata
   const newMetadata: BackupMetadata = {
     lastBackupTimestamp: backupStartTime,
     version: 1

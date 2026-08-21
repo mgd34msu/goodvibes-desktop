@@ -339,7 +339,6 @@ export function GitPanel({ cwd, position }: GitPanelProps): React.JSX.Element {
     });
   }, [cwd, fetchGitInfo, setState, showConfirm, closeConfirm]);
 
-  // Initialize repo
   const handleInitRepo = useCallback(async () => { await window.goodvibes.gitInit(cwd); fetchGitInfo(); }, [cwd, fetchGitInfo]);
 
   return (

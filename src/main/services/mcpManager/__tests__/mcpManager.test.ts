@@ -316,7 +316,6 @@ describe('MCPManagerService', () => {
     fsMockState.writeFileResult = undefined;
     fsMockState.mkdirResult = undefined;
 
-    // Create fresh service instance
     service = new MCPManagerService();
   });
 

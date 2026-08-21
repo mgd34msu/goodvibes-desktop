@@ -59,7 +59,6 @@ export default function CommandsView() {
   };
 
   const handleOpenInstallModal = (command: BuiltInCommand & { isBuiltIn: true }) => {
-    // Remove isBuiltIn flag when storing in state
     const { isBuiltIn, ...commandData } = command;
     setInstallCommand(commandData);
   };

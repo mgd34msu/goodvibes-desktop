@@ -19,22 +19,18 @@ import {
 export function registerAnalyticsHandlers(): void {
   const registry = getProjectRegistry();
 
-  // Get project analytics
   ipcMain.handle('project:getAnalytics', async (_event, projectId: number) => {
     return registry.getAnalyticsForProject(projectId);
   });
 
-  // Get global analytics
   ipcMain.handle('project:getGlobalAnalytics', async () => {
     return registry.getGlobalProjectAnalytics();
   });
 
-  // Get agent usage stats
   ipcMain.handle('project:getAgentUsageStats', async () => {
     return registry.getAgentUsageStats();
   });
 
-  // Get session distribution
   ipcMain.handle('project:getSessionDistribution', async () => {
     return registry.getSessionDistributionStats();
   });
@@ -44,22 +40,18 @@ export function registerAnalyticsHandlers(): void {
     return registry.compareProjectAnalytics(projectIds);
   });
 
-  // Get total cost across projects
   ipcMain.handle('project:getTotalCost', async () => {
     return registry.getTotalCostAcrossProjects();
   });
 
-  // Get project sessions
   ipcMain.handle('project:getSessions', async (_event, projectId: number, limit?: number) => {
     return registry.getSessionsForProject(projectId, limit);
   });
 
-  // Get active sessions across projects
   ipcMain.handle('project:getActiveSessions', async () => {
     return registry.getActiveSessionsAcrossProjects();
   });
 
-  // Start project session
   ipcMain.handle('project:startSession', async (_event, options: {
     sessionId: string;
     projectId: number;
@@ -80,13 +72,11 @@ export function registerAnalyticsHandlers(): void {
     return true;
   });
 
-  // Update session usage
   ipcMain.handle('project:updateSessionUsage', async (_event, sessionId: string, tokens: number, cost: number) => {
     registry.updateSessionUsage(sessionId, tokens, cost);
     return true;
   });
 
-  // Get registry status
   ipcMain.handle('project:getStatus', async () => {
     return registry.getStatus();
   });
@@ -104,24 +94,20 @@ export function registerAnalyticsHandlers(): void {
 export function registerTestMonitorHandlers(): void {
   const testMonitor = getTestMonitor();
 
-  // Start the test monitor
   ipcMain.handle('test-monitor:start', async () => {
     startTestMonitor();
     return testMonitor.getStatus();
   });
 
-  // Stop the test monitor
   ipcMain.handle('test-monitor:stop', async () => {
     stopTestMonitor();
     return { listening: false, resultCount: 0 };
   });
 
-  // Get monitor status
   ipcMain.handle('test-monitor:status', async () => {
     return testMonitor.getStatus();
   });
 
-  // Get recent test results
   ipcMain.handle('test-monitor:getRecentResults', async (
     _event,
     options?: { limit?: number; sessionId?: string }
@@ -132,7 +118,6 @@ export function registerTestMonitorHandlers(): void {
     );
   });
 
-  // Get a specific test result by ID
   ipcMain.handle('test-monitor:getResult', async (
     _event,
     id: string
@@ -140,7 +125,6 @@ export function registerTestMonitorHandlers(): void {
     return testMonitor.getResult(id);
   });
 
-  // Get test statistics
   ipcMain.handle('test-monitor:getStats', async (
     _event,
     sessionId?: string

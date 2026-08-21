@@ -103,25 +103,21 @@ export class ContextInjectionService extends EventEmitter {
     };
 
     try {
-      // Get active agents for this session/project
       const activeAgents = [
         ...getActiveAgentsForSession(context.sessionId),
         ...getActiveAgentsForProject(context.projectPath),
       ];
 
-      // Get pending skills for this session/project
       const pendingSkills = [
         ...getPendingSkillsForSession(context.sessionId),
         ...getPendingSkillsForProject(context.projectPath),
       ];
 
-      // Remove duplicates
       const uniqueAgents = this.deduplicateAgents(activeAgents);
       const uniqueSkills = this.deduplicateSkills(pendingSkills);
 
       logger.info(`Injecting ${uniqueAgents.length} agents and ${uniqueSkills.length} skills`);
 
-      // Load agent and skill content
       const agentContents: Array<{ agent: IndexedAgent; content: string }> = [];
       const skillContents: Array<{ skill: IndexedSkill; content: string; queuedId: number }> = [];
 

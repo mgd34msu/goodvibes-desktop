@@ -65,14 +65,12 @@ function computeEntryHash(messageId: string | null, requestId: string | null): s
 function extractMessageId(entry: unknown): string | null {
   if (!isObject(entry)) return null;
   
-  // Check entry.message?.id
   const message = getObject(entry, 'message');
   if (message) {
     const messageId = getString(message, 'id');
     if (messageId) return messageId;
   }
   
-  // Check entry.id
   const entryId = getString(entry, 'id');
   if (entryId) return entryId;
   
@@ -85,11 +83,9 @@ function extractMessageId(entry: unknown): string | null {
 function extractRequestId(entry: unknown): string | null {
   if (!isObject(entry)) return null;
   
-  // Check entry.requestId
   const requestId = getString(entry, 'requestId');
   if (requestId) return requestId;
   
-  // Check entry.request_id
   const requestIdSnake = getString(entry, 'request_id');
   if (requestIdSnake) return requestIdSnake;
   
@@ -119,7 +115,6 @@ export async function parseSessionFileWithStats(filePath: string): Promise<Parse
   try {
     const content = await fs.readFile(filePath, 'utf-8');
 
-    // Parse messages line by line
     const lines = content.trim().split('\n').filter(l => l.trim());
     for (const line of lines) {
       try {
@@ -142,7 +137,6 @@ export async function parseSessionFileWithStats(filePath: string): Promise<Parse
       }
     }
 
-    // Compute aggregated token stats from detailed tool usage (deduplicated)
     const seenHashesForTotals = new Set<string>();
     const uniqueEntries = detailedToolUsage.filter(entry => {
       if (seenHashesForTotals.has(entry.entryHash)) return false;
@@ -160,7 +154,6 @@ export async function parseSessionFileWithStats(filePath: string): Promise<Parse
       { inputTokens: 0, outputTokens: 0, cacheWriteTokens: 0, cacheReadTokens: 0 }
     );
 
-    // Compute aggregated cost from unique entries
     costUSD = uniqueEntries.reduce((acc, entry) => acc + entry.costUsd, 0);
 
     // Extract model from first entry with model data
@@ -204,7 +197,6 @@ export function parseEntry(entry: unknown): Partial<SessionMessage> | null {
   const message = entry['message'];
   const entryContent = entry['content'];
 
-  // Handle different entry types
   if (entryType === 'thinking' || thinking !== undefined) {
     role = 'thinking';
     content = typeof thinking === 'string' ? thinking : (typeof entryContent === 'string' ? entryContent : '');
@@ -293,7 +285,6 @@ async function extractDetailedToolUsage(
   const model = (message ? getString(message, 'model') : getString(entry, 'model')) ?? null;
   const timestamp = getString(entry, 'timestamp') ?? null;
 
-  // Calculate cost using the same logic as the main cost calculation
   const tokenStats: TokenStats = {
     inputTokens,
     outputTokens,
@@ -397,7 +388,6 @@ export function extractToolUsage(entry: unknown, toolUsage: Map<string, number>)
   const entryType = getString(entry, 'type');
   const toolUse = getObject(entry, 'tool_use');
 
-  // Check for direct tool_use entry
   if (entryType === 'tool_use' || toolUse) {
     const tool = toolUse || entry;
     const toolName = isObject(tool) ? getString(tool, 'name') : undefined;
@@ -412,7 +402,6 @@ export function extractToolUsage(entry: unknown, toolUsage: Map<string, number>)
     }
   }
 
-  // Check for tool_use in message.content array
   const message = getObject(entry, 'message');
   const messageContent = message ? message['content'] : undefined;
   if (messageContent && Array.isArray(messageContent)) {

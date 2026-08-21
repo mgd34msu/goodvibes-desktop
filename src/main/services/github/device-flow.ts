@@ -248,7 +248,6 @@ async function pollForToken(
 
     const data = (await response.json()) as TokenPollResponse;
 
-    // Handle various error states
     if (data.error) {
       switch (data.error) {
         case 'authorization_pending':
@@ -403,7 +402,6 @@ function startPolling(clientId: string, flow: ActiveDeviceFlow): void {
       return;
     }
 
-    // Handle slow_down response
     if (result.newInterval) {
       currentInterval = Math.min(result.newInterval, DEVICE_FLOW_MAX_BACKOFF_MS);
       backoffMultiplier = 1;
@@ -423,7 +421,6 @@ function startPolling(clientId: string, flow: ActiveDeviceFlow): void {
     flow.pollTimeoutId = setTimeout(poll, nextInterval);
   };
 
-  // Start polling after initial interval
   flow.pollTimeoutId = setTimeout(poll, currentInterval);
 }
 
@@ -476,7 +473,6 @@ export async function startDeviceFlow(options?: {
     expiresIn: deviceCodeResponse.expires_in,
   });
 
-  // Create the auth result promise (stored in activeFlow.resolve for later access)
   new Promise<GitHubAuthResult>((resolve) => {
     activeFlow = {
       deviceCode: deviceCodeResponse.device_code,
@@ -489,7 +485,6 @@ export async function startDeviceFlow(options?: {
       resolve,
     };
 
-    // Start polling
     startPolling(clientId, activeFlow);
   });
 
@@ -526,7 +521,6 @@ export async function waitForDeviceFlowCompletion(): Promise<GitHubAuthResult> {
     };
   }
 
-  // Create a new promise that will resolve when the flow completes
   return new Promise<GitHubAuthResult>((resolve) => {
     if (!activeFlow) {
       resolve({

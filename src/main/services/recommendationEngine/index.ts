@@ -28,7 +28,6 @@ import {
   type RecommendationStats,
 } from '../../database/recommendations.js';
 
-// Import types
 import type {
   Recommendation,
   PromptAnalysis,
@@ -36,14 +35,12 @@ import type {
   RecommendationEngineConfig,
 } from './types.js';
 
-// Import generators
 import {
   analyzePrompt as analyzePromptFn,
   analyzeProjectContext as analyzeProjectContextFn,
   getRecommendationsForProject as getRecommendationsForProjectFn,
 } from './generators.js';
 
-// Import scorers
 import {
   searchAgentsForPrompt,
   searchSkillsForPrompt,
@@ -154,13 +151,11 @@ class RecommendationEngineClass extends EventEmitter {
       return [];
     }
 
-    // Get project context if available
     let projectContext: ProjectContext | null = null;
     if (projectPath) {
       projectContext = await this.analyzeProjectContext(projectPath);
     }
 
-    // Get historical success data
     const topAgents = getTopPerformingItems('agent', 2, 20);
     const topSkills = getTopPerformingItems('skill', 2, 20);
     const historicalBoosts = new Map<string, number>();

@@ -33,7 +33,6 @@ export function MatcherSuggestions({
     );
   }
 
-  // Build suggestions array with wildcard first
   const suggestions = ['*', ...eventMetadata.matcherExamples.filter((e) => e !== '*')];
 
   const isToolMatcher = eventMetadata.matcherType === 'tool';

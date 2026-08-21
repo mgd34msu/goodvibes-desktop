@@ -93,7 +93,6 @@ export class ClaudeSettingsManager {
       settings.hooks[eventType] = [];
     }
 
-    // Check if hook already exists
     const eventHooks = settings.hooks[eventType];
     if (!eventHooks) return;
 
@@ -154,7 +153,6 @@ export class ClaudeSettingsManager {
       projectSettings.hooks = {};
     }
 
-    // Add hooks from database
     for (const hook of hooks) {
       if (!hook.enabled) continue;
 
@@ -181,7 +179,6 @@ export class ClaudeSettingsManager {
       }
     }
 
-    // Write settings
     await this.writeClaudeSettings(userSettings, 'user');
     if (projectPath && Object.keys(projectSettings.hooks || {}).length > 0) {
       await this.writeClaudeSettings(projectSettings, 'project', projectPath);

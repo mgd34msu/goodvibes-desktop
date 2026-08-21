@@ -52,7 +52,6 @@ export * from './hooks.js';
 // Agents & primitives
 export * from './agents.js';
 
-// Export
 export * from './export.js';
 
 // Clipboard - canonical source for clipboard schemas

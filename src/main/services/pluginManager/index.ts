@@ -85,18 +85,15 @@ export async function getInstalledPlugins(
     }
   }
 
-  // Fetch CLI-installed plugins
   const cliPlugins = await getCLIInstalledPlugins();
 
   // Merge plugins, avoiding duplicates (prefer directory-scanned over CLI if both exist)
   const pluginMap = new Map<string, InstalledPlugin>();
 
-  // Add directory-scanned plugins first
   for (const plugin of plugins) {
     pluginMap.set(plugin.id, plugin);
   }
 
-  // Add CLI plugins if not already present
   for (const cliPlugin of cliPlugins) {
     if (!pluginMap.has(cliPlugin.id)) {
       pluginMap.set(cliPlugin.id, cliPlugin);
@@ -137,7 +134,6 @@ async function getCLIInstalledPlugins(): Promise<InstalledPlugin[]> {
           // Extract plugin name from key format: "pluginName@marketplace"
           const pluginName = pluginKey.split('@')[0];
 
-          // Read manifest from installPath
           const manifest = readManifest(entry.installPath);
 
           if (!manifest) {
@@ -212,21 +208,17 @@ export async function installPlugin(
   scope: 'user' | 'project',
   projectPath?: string
 ): Promise<InstalledPlugin> {
-  // Validate scope and project path
   if (scope === 'project' && !projectPath) {
     throw new Error('Project path is required for project-scope installation');
   }
 
-  // Check if this is a GitHub tree URL (monorepo subdirectory)
   const treeInfo = parseGitHubTreeUrl(repository);
 
-  // Validate repository URL (either direct repo or the base repo from tree URL)
   const repoToValidate = treeInfo ? treeInfo.repoUrl : repository;
   if (!isGitRepository(repoToValidate)) {
     throw new Error(`Invalid git repository URL: ${repository}`);
   }
 
-  // Get plugins directory
   const pluginsDir = getPluginsDir(scope, projectPath);
   ensureDir(pluginsDir);
 
@@ -238,7 +230,6 @@ export async function installPlugin(
 
   const tempPluginDir = path.join(pluginsDir, repoName);
 
-  // Check if already installed
   if (await isPluginInstalled(repoName, scope, projectPath)) {
     throw new Error(`Plugin ${repoName} is already installed in ${scope} scope`);
   }
@@ -281,7 +272,6 @@ export async function installPlugin(
 
       logger.debug(`Cloned base repo to ${tempCloneDir}`);
 
-      // Check that the subdirectory exists
       const subdirPath = path.join(tempCloneDir!, treeInfo.subdirectory);
       if (!fs.existsSync(subdirPath)) {
         throw new Error(`Subdirectory not found in repository: ${treeInfo.subdirectory}`);
@@ -322,7 +312,6 @@ export async function installPlugin(
       }
     }
 
-    // Read and validate manifest
     const manifest = readManifest(tempPluginDir);
     if (!manifest) {
       throw new Error('Plugin manifest (plugin.json) not found or invalid');
@@ -403,7 +392,6 @@ export async function uninstallPlugin(
   const pluginsDir = getPluginsDir(scope, projectPath);
   const pluginDir = `${pluginsDir}/${pluginId}`;
 
-  // Check if plugin exists
   if (!(await isPluginInstalled(pluginId, scope, projectPath))) {
     throw new Error(`Plugin ${pluginId} is not installed in ${scope} scope`);
   }
@@ -411,10 +399,8 @@ export async function uninstallPlugin(
   logger.info(`Uninstalling plugin: ${pluginId}`, { scope });
 
   try {
-    // Remove plugin directory
     removeDirectory(pluginDir);
 
-    // Remove from enabled plugins config
     await removeFromConfig(pluginId, scope, projectPath);
 
     logger.info(`Successfully uninstalled plugin: ${pluginId}`);
@@ -471,7 +457,6 @@ export async function enablePlugin(
     throw new Error(`Plugin ${pluginId} is not installed in ${scope} scope`);
   }
 
-  // Update enabled state in config
   await setPluginEnabledState(pluginId, enabled, scope, projectPath);
 
   logger.info(`${enabled ? 'Enabled' : 'Disabled'} plugin: ${pluginId}`, { scope });

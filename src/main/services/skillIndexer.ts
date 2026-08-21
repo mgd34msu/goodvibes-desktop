@@ -124,7 +124,6 @@ export class SkillIndexer extends EventEmitter {
       // Clear existing skills (full reindex)
       clearIndexedSkills();
 
-      // Parse and index each skill
       const categoryCache = new Map<string, AgencyCategory>();
       let indexed = 0;
 
@@ -264,7 +263,6 @@ export class SkillIndexer extends EventEmitter {
         .join(' ');
     }
 
-    // Calculate category path from directory structure
     // The SKILL.md file is in a directory named after the skill
     const relativePath = path.relative(skillsPath, path.dirname(filePath));
     const categoryPath = relativePath.replace(/\\/g, '/');
@@ -290,7 +288,6 @@ export class SkillIndexer extends EventEmitter {
   private parseFrontmatter(content: string): SkillFrontmatter {
     const result: SkillFrontmatter = { name: '' };
 
-    // Check for YAML frontmatter
     const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
     if (!frontmatterMatch) {
       // Try to extract name from first heading
@@ -358,7 +355,6 @@ export class SkillIndexer extends EventEmitter {
   private extractTriggers(content: string, frontmatter: SkillFrontmatter): string[] {
     const triggers: Set<string> = new Set();
 
-    // Add from description if it mentions triggers
     const description = frontmatter.description || '';
     const triggerMatch = description.match(/triggers?\s+on\s+(.+?)(?:\.|$)/i);
     if (triggerMatch) {
@@ -390,7 +386,6 @@ export class SkillIndexer extends EventEmitter {
       }
     }
 
-    // Add the skill name itself as a trigger
     if (frontmatter.name) {
       triggers.add(frontmatter.name.toLowerCase());
     }
@@ -446,7 +441,7 @@ export class SkillIndexer extends EventEmitter {
     // The parent directory might indicate the agent
     const parts = categoryPath.split('/');
     if (parts.length >= 1) {
-      // First part is usually the category (e.g., "ai-ml", "backend")
+      // parts[0] is usually the category (e.g., "ai-ml", "backend")
       // This could be used to suggest a related agent
       return parts[0];
     }
@@ -460,20 +455,17 @@ export class SkillIndexer extends EventEmitter {
     categoryPath: string,
     cache: Map<string, AgencyCategory>
   ): Promise<AgencyCategory> {
-    // Check cache first
     const cached = cache.get(categoryPath);
     if (cached) {
       return cached;
     }
 
-    // Check database
     const existing = getCategoryByPath(`skill:${categoryPath}`);
     if (existing) {
       cache.set(categoryPath, existing);
       return existing;
     }
 
-    // Create category and parent categories
     const parts = categoryPath.split('/').filter(p => p.length > 0);
     let parentId: number | null = null;
     let currentPath = '';

@@ -145,7 +145,6 @@ function formatResponseForClaude(serverResponse) {
     case 'Stop':
     default:
       // Schema: { continue: boolean, stopReason? }
-      // Stop hooks use "continue" to indicate whether to proceed
       const stopResponse = {
         continue: !blocked,
       };
@@ -177,7 +176,6 @@ function getDefaultAllowResponse() {
   }
 }
 
-// Read JSON from stdin (how Claude passes hook data)
 let input = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', (chunk) => {
@@ -188,7 +186,6 @@ process.stdin.on('end', async () => {
   try {
     logToFile('Received input: ' + input.substring(0, 500));
 
-    // Parse the input from Claude
     const hookData = input.trim() ? JSON.parse(input) : {};
     logToFile('Parsed hook data, keys: ' + Object.keys(hookData).join(', '));
 
@@ -201,7 +198,6 @@ process.stdin.on('end', async () => {
     });
     logToFile('GoodVibes response: ' + JSON.stringify(response));
 
-    // Format and output the response in Claude's expected format
     const claudeResponse = formatResponseForClaude(response);
     logToFile('Sending to Claude: ' + JSON.stringify(claudeResponse));
     console.log(JSON.stringify(claudeResponse));
@@ -222,7 +218,6 @@ process.stdin.on('end', async () => {
   }
 });
 
-// Handle stdin errors
 process.stdin.on('error', (err) => {
   console.error('[GoodVibes] stdin error:', err.message);
   console.log(JSON.stringify(getDefaultAllowResponse()));

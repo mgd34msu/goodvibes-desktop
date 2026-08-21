@@ -46,7 +46,6 @@ export async function performGracefulShutdown(): Promise<void> {
 
   const startTime = Date.now();
 
-  // Wait for terminals to close, but with a timeout
   const waitForTerminals = async (): Promise<void> => {
     const checkInterval = 100; // Check every 100ms
     while (getTerminalCount() > 0 && Date.now() - startTime < GRACEFUL_SHUTDOWN_TIMEOUT_MS) {
@@ -59,7 +58,6 @@ export async function performGracefulShutdown(): Promise<void> {
   };
 
   try {
-    // Stop session manager watching
     const sessionManager = getSessionManager();
     if (sessionManager) {
       sessionManager.stopWatching();
@@ -73,7 +71,6 @@ export async function performGracefulShutdown(): Promise<void> {
     shutdownPTYStreamAnalyzer();
     logger.info('PTY stream analyzer shut down');
 
-    // Stop hook server
     await stopHookServer();
     logger.info('Hook server stopped');
 
@@ -89,7 +86,6 @@ export async function performGracefulShutdown(): Promise<void> {
     shutdownDeviceFlow();
     logger.info('GitHub device flow shut down');
 
-    // Close all terminals
     closeAllTerminals();
     await waitForTerminals();
     logger.info('All terminals closed');
@@ -98,7 +94,6 @@ export async function performGracefulShutdown(): Promise<void> {
     tmuxService.cleanup();
     logger.info('Tmux sessions cleaned up');
 
-    // Close database
     closeDatabase();
     logger.info('Database closed');
 

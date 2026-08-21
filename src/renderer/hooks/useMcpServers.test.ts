@@ -1029,7 +1029,6 @@ describe('useMcpServers', () => {
         wrapper: createWrapper(),
       });
 
-      // Update multiple servers concurrently
       const results = await act(async () => {
         const update1 = result.current.updateServer(1, { name: 'Updated 1' });
         const update2 = result.current.updateServer(2, { name: 'Updated 2' });
@@ -1063,7 +1062,6 @@ describe('useMcpServers', () => {
     });
 
     it('clears previous error on successful fetch', async () => {
-      // First fetch fails
       vi.mocked(window.goodvibes.getMCPServers).mockRejectedValueOnce(new Error('Initial error'));
 
       const { result } = renderHook(() => useMcpServers({ autoFetch: false }), {

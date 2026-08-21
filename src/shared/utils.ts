@@ -123,7 +123,6 @@ export function decodeProjectName(name: string | null | undefined, projectsRoot?
     // Reconstruct full path to check if it's home directory
     const fullPath = pathParts[0] + ':/' + pathParts.slice(1).join('/');
 
-    // Check if this is the home directory itself
     if (homeDir && fullPath.replace(/\\/g, '/') === homeDir.replace(/\\/g, '/')) {
       return '~';
     }
@@ -149,7 +148,6 @@ export function decodeProjectName(name: string | null | undefined, projectsRoot?
         }
       }
 
-      // Return relative path from projects root
       if (matchEnd > 0 && matchEnd < pathParts.length) {
         const relativePath = pathParts.slice(matchEnd).join('/');
         return applyExtensionLogic(relativePath);
@@ -184,14 +182,12 @@ export function formatProjectDisplayName(resolvedPath: string, projectsRoot?: st
   // Normalize backslashes to forward slashes (Windows compat)
   const normalized = resolvedPath.replace(/\\/g, '/').replace(/\/+$/, '');
 
-  // Get home directory for ~ shorthand
   const homeDir = typeof process !== 'undefined' && process.env?.HOME
     ? process.env.HOME.replace(/\\/g, '/').replace(/\/+$/, '')
     : typeof process !== 'undefined' && process.env?.USERPROFILE
     ? process.env.USERPROFILE.replace(/\\/g, '/').replace(/\/+$/, '')
     : null;
 
-  // Check if path is exactly the home directory
   if (homeDir && normalized === homeDir) {
     return '~';
   }
@@ -421,7 +417,6 @@ export function decodeProjectPath(name: string | null | undefined): string | nul
       }
     });
 
-    // Return full path (using forward slashes for cross-platform compatibility)
     return pathParts.join('/');
   }
 

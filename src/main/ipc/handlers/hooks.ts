@@ -234,7 +234,6 @@ export function registerHooksHandlers(): void {
           stderr += data.toString();
         });
 
-        // Write input JSON to stdin
         child.stdin.write(inputJson);
         child.stdin.end();
 

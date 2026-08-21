@@ -183,7 +183,6 @@ export function DeviceFlowLogin({
     };
   }, [onAuthError]);
 
-  // Handle code expiration
   // Note: secondsRemaining === -1 means countdown hasn't started yet, 0 means actually expired
   useEffect(() => {
     if (flowState.step === 'code_display' || flowState.step === 'polling') {
@@ -239,7 +238,6 @@ export function DeviceFlowLogin({
         error: null,
       });
 
-      // Start polling for completion
       await pollForCompletion();
     } catch (err) {
       if (!isMountedRef.current) return;
@@ -276,7 +274,6 @@ export function DeviceFlowLogin({
         }));
         onAuthSuccess?.(result.user);
       } else if (result.error) {
-        // Handle specific error cases
         if (result.error.includes('expired')) {
           setFlowState((prev) => ({
             ...prev,

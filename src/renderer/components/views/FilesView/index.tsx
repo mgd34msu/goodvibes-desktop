@@ -90,13 +90,11 @@ export default function FilesView() {
     }
   };
 
-  // Load home directory, pinned folders, and initial directory
   useEffect(() => {
     const init = async () => {
       const home = await window.goodvibes.getHomeDirectory() || '/';
       setHomeDir(home);
       
-      // Load pinned folders from database
       try {
         const pinned = await window.goodvibes.getPinnedFolders();
         setPinnedFolders(pinned);
@@ -112,12 +110,10 @@ export default function FilesView() {
   const loadDirectory = async (path?: string) => {
     try {
       setIsLoading(true);
-      // Get current project directory or home directory
       const targetPath = path || currentPath || await getInitialPath();
       const tree = await buildFileTree(targetPath);
       setFileTree(tree);
       setCurrentPath(targetPath);
-      // Load sessions for new directory
       await loadSessions(targetPath);
     } catch (error) {
       logger.error('Failed to load directory:', error);

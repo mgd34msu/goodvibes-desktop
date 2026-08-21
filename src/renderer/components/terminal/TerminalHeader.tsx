@@ -38,7 +38,6 @@ export function TerminalHeader({ showGitPanel, onToggleGitPanel, hasActiveSessio
   const [recentSession, setRecentSession] = useState<RecentSession | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -49,7 +48,6 @@ export function TerminalHeader({ showGitPanel, onToggleGitPanel, hasActiveSessio
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Load most recent session for quick restart
   useEffect(() => {
     window.goodvibes.getMostRecentSession().then(session => {
       if (session) {

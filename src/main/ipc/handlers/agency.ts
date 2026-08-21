@@ -54,10 +54,8 @@ export function registerAgencyHandlers(): void {
     }
 
     try {
-      // Create tables
       agencyIndex.createAgencyIndexTables();
 
-      // Initialize indexers
       initializeAgentIndexer({
         agencyPath: result.data.agencyPath,
         agentSubpath: '.claude/agents/webdev',
@@ -68,7 +66,6 @@ export function registerAgencyHandlers(): void {
         skillSubpath: '.claude/skills/webdev',
       });
 
-      // Initialize context injection service
       initializeContextInjectionService();
 
       return { success: true };

@@ -71,7 +71,6 @@ export function GitHubConnectionStatus({ oauthStatus }: GitHubConnectionStatusPr
   };
 
   const handleLogin = async () => {
-    // Check if custom credentials are configured to NOT use device flow
     if (oauthStatus && oauthStatus.source === 'custom' && !oauthStatus.useDeviceFlow) {
       // Use Authorization Code Flow
       setIsLoading(true);

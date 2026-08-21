@@ -16,7 +16,6 @@ export function useGitUI(
 ): UseGitUIReturn {
   const branchDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (branchDropdownRef.current && !branchDropdownRef.current.contains(event.target as Node)) {

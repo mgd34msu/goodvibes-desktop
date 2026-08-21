@@ -39,7 +39,6 @@ function sanitizeEnvValue(value: string | undefined, maxLength: number = 65536):
     logger.warn('Environment value truncated due to length', { originalLength: value.length, maxLength });
   }
 
-  // Remove null bytes which can cause issues in C-based programs
   sanitized = sanitized.replace(/\0/g, '');
 
   return sanitized;
@@ -122,7 +121,6 @@ export class HookExecutor {
 
     logger.debug(`Executing hook: ${hook.name}`, { eventType: hook.eventType });
 
-    // Validate hook command before execution
     const commandValidation = validateHookCommand(hook.command);
     if (!commandValidation.valid) {
       logger.error(`Hook command validation failed: ${hook.name}`, {
@@ -141,7 +139,6 @@ export class HookExecutor {
       };
     }
 
-    // Validate cwd path if provided
     const cwdPath = context.projectPath || process.cwd();
     const cwdValidation = validatePath(cwdPath);
     if (!cwdValidation.valid) {
@@ -195,7 +192,6 @@ export class HookExecutor {
 
       this.runningProcesses.set(hook.id, child);
 
-      // Set up timeout
       const timeoutId = setTimeout(() => {
         if (!resolved) {
           resolved = true;
@@ -225,7 +221,6 @@ export class HookExecutor {
         stderr += data.toString();
       });
 
-      // Handle completion
       child.on('close', (exitCode) => {
         if (!resolved) {
           resolved = true;
@@ -245,7 +240,6 @@ export class HookExecutor {
         }
       });
 
-      // Handle errors
       child.on('error', (error) => {
         if (!resolved) {
           resolved = true;
@@ -279,17 +273,14 @@ export class HookExecutor {
     if (context.toolName) {
       const pattern = hook.matcher;
 
-      // Handle patterns like "Bash(*)" or "Edit(src/*)"
       const match = pattern.match(/^(\w+)\((.*)\)$/);
       if (match) {
         const [, toolPattern, argPattern] = match;
 
-        // Check tool name
         if (toolPattern !== '*' && toolPattern !== context.toolName) {
           return false;
         }
 
-        // Check argument pattern (simplified glob matching)
         if (argPattern !== '*' && context.toolInput) {
           const inputStr = JSON.stringify(context.toolInput);
           

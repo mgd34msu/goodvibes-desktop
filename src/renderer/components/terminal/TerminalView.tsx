@@ -47,7 +47,6 @@ export default function TerminalView() {
   // Default to showing git panel when there's an active terminal session
   const [showGitPanel, setShowGitPanel] = useState(true);
 
-  // Load most recent session for quick restart
   useEffect(() => {
     window.goodvibes.getMostRecentSession().then(session => {
       if (session) {
@@ -62,7 +61,6 @@ export default function TerminalView() {
     });
   }, []);
 
-  // Handle focus management on mount
   // On mount: if terminals exist but none is active, activate the first one
   useEffect(() => {
     // On mount: activate first terminal if none is active

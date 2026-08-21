@@ -631,7 +631,6 @@ describe('PullRequestList', () => {
 
       unmount();
 
-      // Wait for the promise to resolve
       await new Promise((resolve) => setTimeout(resolve, 150));
 
       // If this doesn't throw a warning about updating unmounted component, test passes

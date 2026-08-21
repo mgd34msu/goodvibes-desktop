@@ -115,19 +115,16 @@ export function KeyboardShortcutsPanel(): React.JSX.Element | null {
     });
   }, []);
 
-  // Check if shortcut has a custom binding
   const hasCustomBinding = useCallback(
     (id: string) => customBindings.has(id),
     [customBindings]
   );
 
-  // Check if shortcut has a conflict
   const hasConflict = useCallback(
     (id: string) => conflicts.some((c) => c.shortcutId === id || c.conflictingId === id),
     [conflicts]
   );
 
-  // Handle reset all
   const handleResetAll = useCallback(async () => {
     const confirmed = await confirmReset();
     if (confirmed) {
@@ -388,7 +385,6 @@ function ShortcutRow({
     }
   }, [isEditing]);
 
-  // Handle key capture
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       e.preventDefault();

@@ -87,7 +87,6 @@ export async function searchAgentsForPrompt(
 ): Promise<Recommendation[]> {
   const recommendations: Recommendation[] = [];
 
-  // Build search query from analysis
   const searchTerms = [
     ...analysis.keywords,
     ...analysis.technologies,
@@ -110,7 +109,6 @@ export async function searchAgentsForPrompt(
 
       if (matchedKeywords.length === 0) continue;
 
-      // Calculate base score from search rank and keyword matches
       let confidenceScore = Math.min(0.9, (1 / (1 + Math.abs(result.score))) * 0.5 + matchedKeywords.length * 0.1);
 
       // Boost from project context match
@@ -227,7 +225,6 @@ export async function searchSkillsForPrompt(
 
       if (matchedKeywords.length === 0) continue;
 
-      // Calculate score
       let confidenceScore = Math.min(0.9, (1 / (1 + Math.abs(result.score))) * 0.5 + matchedKeywords.length * 0.1);
 
       // Boost from trigger match (skills with matching triggers get higher scores)

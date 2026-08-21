@@ -25,7 +25,6 @@ export function useHooks(): UseHooksReturn {
   const [hooks, setHooks] = useState<Hook[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load hooks
   const loadHooks = useCallback(async () => {
     setLoading(true);
     try {
@@ -118,7 +117,6 @@ export function useHooks(): UseHooksReturn {
       setHooks((prev) => prev.filter((h) => h.id !== id));
 
       try {
-        // Delete from database
         await window.goodvibes.deleteHook(id);
 
         // Uninstall from .claude/hooks/ directory and remove from settings.json

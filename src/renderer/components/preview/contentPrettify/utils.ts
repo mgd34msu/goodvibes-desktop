@@ -74,7 +74,7 @@ export function extractClaudeContentBlocks(content: string): string | null {
  * Detect programming language from content and optional hints
  */
 export function detectLanguage(content: string, hint?: string): string | null {
-  // Check hint first (e.g., tool name like "Read" often returns file content)
+  // The hint is checked first since a tool name like "Read" often signals file content
   if (hint) {
     const hintLower = hint.toLowerCase();
     if (hintLower.includes('read') || hintLower.includes('write')) {
@@ -92,7 +92,6 @@ export function detectLanguageFromContent(content: string): string | null {
   // File path hints in first line (e.g., "1 -> export function...")
   const firstLine = trimmed.split('\n')[0];
 
-  // Check for common file content patterns
 
   // TypeScript/JavaScript
   if (/^(import|export|const|let|var|function|class|interface|type)\s/.test(trimmed) ||
@@ -201,7 +200,6 @@ export function getCopyLabel(content: string, detectedLanguage: string | null): 
     return getLanguageDisplayLabel(detectedLanguage);
   }
 
-  // Check if content is JSON
   const trimmed = content.trim();
   if ((trimmed.startsWith('{') && trimmed.endsWith('}')) ||
       (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
@@ -229,7 +227,6 @@ export function parseXmlLikeTags(content: string): ParsedPart[] {
   let match;
 
   while ((match = tagRegex.exec(content)) !== null) {
-    // Add text before the tag
     if (match.index > lastIndex) {
       const textBefore = content.slice(lastIndex, match.index).trim();
       if (textBefore) {
@@ -237,7 +234,6 @@ export function parseXmlLikeTags(content: string): ParsedPart[] {
       }
     }
 
-    // Add the tag content
     parts.push({
       type: 'tag',
       tagName: match[1] || '',
@@ -247,7 +243,6 @@ export function parseXmlLikeTags(content: string): ParsedPart[] {
     lastIndex = match.index + match[0].length;
   }
 
-  // Add remaining text
   if (lastIndex < content.length) {
     const remaining = content.slice(lastIndex).trim();
     if (remaining) {

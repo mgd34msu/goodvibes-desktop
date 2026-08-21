@@ -108,7 +108,6 @@ export function TagFilterModal({
 
   useEffect(() => {
     if (isOpen && initialExpression) {
-      // Parse initial expression to FilterState
       const parsed = parseExpressionToGroups(initialExpression);
       setFilterState(parsed);
     } else if (isOpen) {
@@ -131,7 +130,6 @@ export function TagFilterModal({
   // ============================================================================
 
   const handleApply = useCallback(() => {
-    // Check if any valid tags are selected
     const hasValidTags = filterState.groups.some(group =>
       group.conditions.some(c => c.tagId !== null)
     );
@@ -143,7 +141,6 @@ export function TagFilterModal({
       return;
     }
 
-    // Build expression from filter state
     const expression = buildExpressionFromGroups(filterState);
     onApply(expression);
     onClose();
@@ -547,7 +544,6 @@ function buildExpressionFromGroups(state: FilterState): TagFilterExpression {
     throw new Error('Cannot build expression with no tags');
   }
 
-  // Build expressions for each group
   const groupExpressions = validGroups.map(group => {
     const validConditions = group.conditions
       .filter((c): c is FilterCondition & { tagId: number } => c.tagId !== null);
@@ -601,7 +597,6 @@ function parseExpressionToGroups(expression: TagFilterExpression): FilterState {
   const groups: FilterGroup[] = [];
   let groupLogic: FilterLogic = 'AND';
 
-  // Check if top-level is AND/OR with multiple children
   if ((expression.type === 'and' || expression.type === 'or') && expression.children) {
     groupLogic = expression.type.toUpperCase() as FilterLogic;
     
@@ -640,7 +635,6 @@ function parseExpressionToGroup(expression: TagFilterExpression): FilterGroup | 
   let negated = false;
   let expr = expression;
 
-  // Check for NOT wrapper
   if (expr.type === 'not' && expr.children && expr.children[0]) {
     negated = true;
     expr = expr.children[0];

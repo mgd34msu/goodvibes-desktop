@@ -122,7 +122,6 @@ export function addProject(
 ): RegisteredProject {
   const projectName = name || path.basename(projectPath);
 
-  // Check if already registered
   const existing = getRegisteredProjectByPath(projectPath);
   if (existing) {
     logger.debug(`Project already registered: ${projectPath}`);
@@ -236,7 +235,6 @@ export function switchProject(projectId: number): ProjectContext | null {
   currentProjectId = projectId;
   touchProject(projectId);
 
-  // Get or create context
   let context = projectContexts.get(projectId);
   if (!context) {
     context = {

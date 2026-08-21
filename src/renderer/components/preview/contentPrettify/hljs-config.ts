@@ -1,8 +1,4 @@
-// ============================================================================
-// HIGHLIGHT.JS CONFIGURATION
-// Import and register only the languages we need to reduce bundle size
-// ============================================================================
-
+// Only these languages are registered, to keep the highlight.js bundle small
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
 import typescript from 'highlight.js/lib/languages/typescript';
@@ -17,7 +13,6 @@ import json from 'highlight.js/lib/languages/json';
 import yaml from 'highlight.js/lib/languages/yaml';
 import markdown from 'highlight.js/lib/languages/markdown';
 
-// Register languages
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('typescript', typescript);
 hljs.registerLanguage('python', python);

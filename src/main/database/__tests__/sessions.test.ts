@@ -23,7 +23,6 @@ import type Database from 'better-sqlite3';
 // Mock in-memory session storage
 const sessions = new Map<string, any>();
 
-// Create mock database with SQLite-like API
 function createMockStatement(sql: string) {
   return {
     run: vi.fn((...params: any[]) => {
@@ -259,7 +258,6 @@ describe('Session Database Operations', () => {
 
   describe('upsertSession - update existing session', () => {
     beforeEach(() => {
-      // Create initial session
       sessions.set('session-1', {
         id: 'session-1',
         project_name: 'Original Project',
@@ -339,7 +337,6 @@ describe('Session Database Operations', () => {
 
   describe('getAllSessions', () => {
     beforeEach(() => {
-      // Create multiple sessions
       sessions.set('session-1', {
         id: 'session-1',
         project_name: 'Project 1',
@@ -766,20 +763,16 @@ describe('Session Database Operations', () => {
     });
 
     it('handles create, read, update, delete sequence', () => {
-      // Create
       upsertSession({ id: 'seq-1', projectName: 'Original' });
       expect(sessions.has('seq-1')).toBe(true);
 
-      // Read
       const read = getSession('seq-1');
       expect(read?.projectName).toBe('Original');
 
-      // Update
       upsertSession({ id: 'seq-1', projectName: 'Updated' });
       const updated = sessions.get('seq-1');
       expect(updated.project_name).toBe('Updated');
 
-      // Delete
       deleteSession('seq-1');
       expect(sessions.has('seq-1')).toBe(false);
     });

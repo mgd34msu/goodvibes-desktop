@@ -82,7 +82,6 @@ export function TagChip({
       }[tag.effect]
     : '';
 
-  // Parse tag color for background tint (~15% opacity)
   const getColorStyle = (): React.CSSProperties => {
     if (!tag.color) return {};
     

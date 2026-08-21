@@ -171,7 +171,6 @@ describe('CommandPalette', () => {
       await user.type(input, 'test query');
       expect(input).toHaveValue('test query');
 
-      // Close
       setupAppStore(false);
       rerender(<CommandPalette />);
 
@@ -305,7 +304,6 @@ describe('CommandPalette', () => {
         btn.classList.contains('modal-list-item-premium')
       );
 
-      // First command should be selected by default
       expect(commands[0]).toHaveClass('selected');
       
       // Arrow down should select next item
@@ -398,7 +396,6 @@ describe('CommandPalette', () => {
         const commands = screen.getAllByRole('button').filter(btn => 
           btn.classList.contains('modal-list-item-premium')
         );
-        // First command should be selected again
         expect(commands[0]).toHaveClass('selected');
       });
     });
@@ -419,7 +416,6 @@ describe('CommandPalette', () => {
         fireEvent.keyDown(input, { key: 'Enter' });
       });
 
-      // First command is a navigation command
       await waitFor(() => {
         expect(mockSetCurrentView).toHaveBeenCalled();
         expect(mockCloseCommandPalette).toHaveBeenCalled();

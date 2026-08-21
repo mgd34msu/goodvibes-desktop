@@ -103,7 +103,6 @@ function escapeHtml(str: string): string {
 
 export function registerExportHandlers(): void {
   ipcMain.handle('export-session', withContext('export-session', async (_, data: unknown) => {
-    // Validate input using Zod schema
     const validation = validateInput(exportSessionSchema, data);
     if (!validation.success) {
       logger.warn('export-session validation failed', { error: validation.error });
@@ -141,7 +140,6 @@ export function registerExportHandlers(): void {
   }));
 
   ipcMain.handle('bulk-export', withContext('bulk-export', async (_, sessionIds: unknown) => {
-    // Validate input using Zod schema
     const validation = validateInput(bulkExportSchema, sessionIds);
     if (!validation.success) {
       logger.warn('bulk-export validation failed', { error: validation.error });
@@ -166,7 +164,6 @@ export function registerExportHandlers(): void {
       const output = createWriteStream(filePath);
       const archive = archiver('zip', { zlib: { level: 9 } });
 
-      // Handle stream events
       output.on('close', () => {
         resolve({ success: true, path: filePath });
       });

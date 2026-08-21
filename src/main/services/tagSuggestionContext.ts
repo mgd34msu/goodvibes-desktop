@@ -264,16 +264,13 @@ function filterKeyAssistantMessages(
  */
 export function gatherQuickContext(sessionId: string): SessionContext | null {
   try {
-    // Get session metadata
     const session = getSession(sessionId);
     if (!session) {
       return null;
     }
     
-    // Get messages
     const messages = getSessionMessages(sessionId);
     
-    // Get existing tags
     const tags = getSessionTags(sessionId);
     
     // Extract context
@@ -312,16 +309,13 @@ export function gatherQuickContext(sessionId: string): SessionContext | null {
  */
 export function gatherFullContext(sessionId: string): SessionContext | null {
   try {
-    // Get session metadata
     const session = getSession(sessionId);
     if (!session) {
       return null;
     }
     
-    // Get messages
     const messages = getSessionMessages(sessionId);
     
-    // Get existing tags
     const tags = getSessionTags(sessionId);
     
     // Extract context

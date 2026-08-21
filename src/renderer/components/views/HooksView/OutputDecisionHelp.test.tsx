@@ -68,10 +68,8 @@ describe('OutputDecisionHelp XSS Prevention', () => {
   it('does not use dangerouslySetInnerHTML', () => {
     const { container } = render(<OutputDecisionHelp eventType="PreToolUse" />);
 
-    // Check that there are no inline onclick handlers or similar XSS vectors
     const allElements = container.querySelectorAll('*');
     allElements.forEach((el) => {
-      // Check for event handler attributes
       expect(el.getAttribute('onclick')).toBeNull();
       expect(el.getAttribute('onerror')).toBeNull();
       expect(el.getAttribute('onload')).toBeNull();
@@ -83,7 +81,6 @@ describe('OutputDecisionHelp XSS Prevention', () => {
     const { container } = render(<OutputDecisionHelp eventType="PreToolUse" />);
 
     // String values in JSON should be quoted
-    // Check that our JSON renderer properly displays strings
     expect(container.textContent).toContain('"allow"');
     expect(container.textContent).toContain('"PreToolUse"');
   });

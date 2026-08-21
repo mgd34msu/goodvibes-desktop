@@ -211,7 +211,6 @@ export function useMcpServers(options: UseMcpServersOptions = {}): UseMcpServers
 
       logger.debug('MCP server status update:', data);
 
-      // Update the local state with the new status
       setServers((prevServers) =>
         prevServers.map((server) => {
           if (String(server.id) === data.id) {
@@ -254,7 +253,6 @@ export function useMcpServers(options: UseMcpServersOptions = {}): UseMcpServers
       pollingIntervalRef.current = null;
     }
 
-    // Set up new polling interval
     pollingIntervalRef.current = setInterval(() => {
       if (isMountedRef.current) {
         fetchServers();

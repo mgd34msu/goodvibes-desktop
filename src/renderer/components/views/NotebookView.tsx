@@ -85,7 +85,6 @@ export default function NotebookView() {
     createTaskMutation.mutate(taskContent);
   };
 
-  // Get unique categories
   const categories = [...new Set(entries.map((e) => e.category).filter(Boolean))];
 
   // Filter by category

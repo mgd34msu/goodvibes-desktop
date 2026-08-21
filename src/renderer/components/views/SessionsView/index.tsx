@@ -84,10 +84,8 @@ export default function SessionsView() {
     return () => clearInterval(interval);
   }, []);
 
-  // Handle clicking activity items - fetch the session by ID and open modal
   const handleActivityClick = useCallback(async (sessionId: string) => {
     try {
-      // First try direct lookup
       let session = await window.goodvibes.getSession(sessionId);
 
       // If not found, search in currently loaded sessions (includes agents)

@@ -10,7 +10,6 @@
 import { EventEmitter } from 'events';
 import { Logger } from '../logger.js';
 
-// Import from sub-modules
 import type {
   AgentSpawnOptions,
   AgentTreeNode,
@@ -96,7 +95,6 @@ class AgentRegistryService extends EventEmitter {
     // FIRST: Clean up garbage entries from previous runs
     performGarbageCleanup();
 
-    // Start all background intervals
     this.intervalHandles = startIntervals({
       onCleanup: () => performCleanup(),
       onActivityCheck: () => this.checkAgentActivity(),
@@ -123,7 +121,6 @@ class AgentRegistryService extends EventEmitter {
   shutdown(): void {
     logger.info('Shutting down Agent Registry Service');
 
-    // Stop all intervals
     stopIntervals(this.intervalHandles);
     this.intervalHandles = {
       cleanupInterval: null,
@@ -339,7 +336,6 @@ class AgentRegistryService extends EventEmitter {
    * Get agent by session ID
    */
   getAgentBySession(sessionId: string): AgentRecord | null {
-    // First check local cache
     const agentId = getAgentIdFromSession(sessionId);
     if (agentId) {
       return getAgentById(agentId);

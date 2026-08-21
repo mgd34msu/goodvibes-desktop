@@ -12,16 +12,12 @@ import type {
   MarketplaceMCPServer,
 } from './types.js';
 
-// Import server management operations
 import * as serverManagement from './serverManagement.js';
 
-// Import server lifecycle operations
 import * as serverLifecycle from './serverLifecycle.js';
 
-// Import Claude config operations
 import * as claudeConfig from './claudeConfig.js';
 
-// Import marketplace operations
 import * as marketplace from './marketplace.js';
 
 const logger = new Logger('MCPManager');
@@ -146,7 +142,6 @@ export class MCPManagerService extends EventEmitter {
       return null;
     }
 
-    // Validate required env vars
     const missingEnv = marketplace.validateRequiredEnv(marketplaceServer, env);
     if (missingEnv) {
       logger.error(`Missing required environment variable: ${missingEnv}`);
@@ -160,7 +155,6 @@ export class MCPManagerService extends EventEmitter {
       // For now, we assume npx will handle it
     }
 
-    // Create server entry
     const server = this.addServer({
       name: marketplaceServer.name,
       description: marketplaceServer.description,

@@ -24,7 +24,6 @@ export async function validateHookScript(filePath: string): Promise<HookScriptVa
   try {
     const content = await fs.readFile(filePath, 'utf-8');
 
-    // Check for required elements
     if (!content.includes('#!/usr/bin/env node')) {
       return { valid: false, error: 'Missing shebang' };
     }

@@ -1125,7 +1125,6 @@ describe('MCP Handler Flow Integration', () => {
   });
 
   it('simulates server error flow', async () => {
-    // Create server
     const server = {
       name: 'Error Test Server',
       transport: 'stdio' as const,
@@ -1634,7 +1633,6 @@ describe('Agent Template IPC Handlers', () => {
 
       const handler = handlers['create-agent-template'];
 
-      // Create multiple templates
       await handler(mockEvent, template);
       await handler(mockEvent, template);
       await handler(mockEvent, template);

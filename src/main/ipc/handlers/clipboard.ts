@@ -33,7 +33,6 @@ export function registerClipboardHandlers(): void {
   }));
 
   ipcMain.handle('clipboard-write', withContext('clipboard-write', async (_, text: unknown) => {
-    // Validate input with Zod
     const validation = clipboardWriteSchema.safeParse(text);
     if (!validation.success) {
       logger.warn('clipboard-write validation failed', { error: validation.error.message });
@@ -50,7 +49,6 @@ export function registerClipboardHandlers(): void {
   }));
 
   ipcMain.handle('clipboard-read-image', withContext('clipboard-read-image', async (_, projectPath?: unknown) => {
-    // Validate input
     const parsedPath = clipboardReadImageSchema.safeParse(projectPath);
     const validatedPath = parsedPath.success ? parsedPath.data : undefined;
     try {
@@ -132,7 +130,6 @@ export function registerClipboardHandlers(): void {
         }
       }
 
-      // Build final filename
       const filename = originalFilename || `paste-${Date.now()}${extension}`;
 
       // Determine save directory with validation
@@ -156,7 +153,6 @@ export function registerClipboardHandlers(): void {
       if (isUsingTempDir) {
         // Age-based cleanup of old paste-* files (respects user settings)
         try {
-          // Read cleanup settings from database via electron's settings
           // Using dynamic import to avoid loading database module until needed (lazy loading)
           const { getSetting } = await import('../../database/index.js');
           const cleanupEnabled = getSetting<boolean>('clipboardImageCleanupEnabled');
@@ -204,7 +200,6 @@ export function registerClipboardHandlers(): void {
   // ============================================================================
 
   ipcMain.handle('show-context-menu', withContext('show-context-menu', async (event, options: unknown) => {
-    // Validate input with Zod
     const validation = contextMenuOptionsSchema.safeParse(options);
     if (!validation.success) {
       logger.warn('show-context-menu validation failed', { error: validation.error.message });
@@ -267,7 +262,6 @@ export function registerClipboardHandlers(): void {
 
   // Terminal-specific context menu with clipboard access via IPC
   ipcMain.handle('show-terminal-context-menu', withContext('show-terminal-context-menu', async (event, options: unknown) => {
-    // Validate input with Zod
     const validation = terminalContextMenuOptionsSchema.safeParse(options);
     if (!validation.success) {
       logger.warn('show-terminal-context-menu validation failed', { error: validation.error.message });

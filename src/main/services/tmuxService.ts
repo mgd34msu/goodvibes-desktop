@@ -91,7 +91,7 @@ export class TmuxService {
     const escapedWindow = this.escapeSessionName(windowName);
 
     if (this.isSessionAlive(sessionName)) {
-      // Session exists — add a new window and attach to it
+      // Session exists, add a new window and attach to it
       return {
         command: 'tmux',
         args: [
@@ -102,7 +102,7 @@ export class TmuxService {
       };
     }
 
-    // Session doesn't exist — create it
+    // Session doesn't exist, create it
     return {
       command: 'tmux',
       args: [

@@ -69,7 +69,6 @@ export function InstallItemModal<T>({
     }
   }, [isOpen, itemKey]);
 
-  // Handle ESC key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;

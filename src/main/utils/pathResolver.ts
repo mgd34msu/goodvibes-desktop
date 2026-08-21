@@ -51,7 +51,7 @@ export function resolveEncodedProjectPath(encodedName: string): string | null {
       }
     }
   } catch (error) {
-    // Registry might not be initialized yet — fall through to backtracking
+    // Registry might not be initialized yet, fall through to backtracking
     logger.debug('Registry lookup failed, using backtracking', { error });
   }
 
@@ -103,7 +103,7 @@ function resolvePathSegments(segments: string[], root: string): string | null {
    */
   function backtrack(startIdx: number, currentPath: string): string | null {
     if (startIdx >= segments.length) {
-      // All segments consumed — this is a valid path
+      // All segments consumed, this is a valid path
       return currentPath;
     }
 

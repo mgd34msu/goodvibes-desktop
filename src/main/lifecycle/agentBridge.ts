@@ -84,10 +84,8 @@ function handleAgentSpawn(data: AgentSpawnData): void {
   }
   agentInstanceCounts.set(agentName, instanceNumber);
 
-  // Create a display name with instance number if > 1
   const displayName = instanceNumber > 1 ? `${agentName} #${instanceNumber}` : agentName;
 
-  // Register the new agent (always create a new one for each spawn)
   logger.debug(`Spawning new agent in registry: ${displayName} (isRealAgent: ${isRealAgent})`);
   const agent = agentRegistry.spawn({
     name: displayName,
@@ -196,7 +194,6 @@ function handleAgentActivity(data: AgentActivityData): void {
   if (!agentRegistry) return;
 
   const { terminalId } = data;
-  // Update activity for all agents in this terminal
   const agentIds = terminalToAgents.get(terminalId);
   if (agentIds) {
     for (const agentId of agentIds) {
@@ -223,19 +220,15 @@ export function wireAgentBridge(): void {
 
   logger.debug('Setting up agent:spawn event listener on streamAnalyzer');
 
-  // Define and store listener for agent:spawn
   registeredListeners.streamAnalyzer.agentSpawn = handleAgentSpawn;
   streamAnalyzer.on('agent:spawn', registeredListeners.streamAnalyzer.agentSpawn);
 
-  // Define and store listener for terminal-exited IPC event
   registeredListeners.ipcMain.terminalExited = handleTerminalExited;
   ipcMain.on('terminal-exited', registeredListeners.ipcMain.terminalExited);
 
-  // Define and store listener for agent:complete
   registeredListeners.streamAnalyzer.agentComplete = handleAgentComplete;
   streamAnalyzer.on('agent:complete', registeredListeners.streamAnalyzer.agentComplete);
 
-  // Define and store listener for agent:activity
   registeredListeners.streamAnalyzer.agentActivity = handleAgentActivity;
   streamAnalyzer.on('agent:activity', registeredListeners.streamAnalyzer.agentActivity);
 
@@ -250,7 +243,6 @@ export function wireAgentBridge(): void {
 export function wireHookServerEvents(): void {
   const hookServer = getHookServer();
 
-  // Define and store hook server listeners for cleanup
   registeredListeners.hookServer.sessionStart = (data: SessionStartData) => {
     logger.debug('[MAIN] session:start event received', data);
   };

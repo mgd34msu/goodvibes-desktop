@@ -75,7 +75,6 @@ export function registerProjectsHandlers(): void {
   }));
 
   ipcMain.handle('open-in-explorer', withContext('open-in-explorer', async (_, folderPath: unknown) => {
-    // Validate input using Zod schema
     const validation = validateInput(openInExplorerInputSchema, folderPath);
     if (!validation.success) {
       logger.warn('open-in-explorer validation failed', { error: validation.error, input: folderPath });
@@ -95,7 +94,6 @@ export function registerProjectsHandlers(): void {
   }));
 
   ipcMain.handle('add-recent-project', withContext('add-recent-project', async (_, data: unknown) => {
-    // Validate input using Zod schema
     const validation = validateInput(addRecentProjectInputSchema, data);
     if (!validation.success) {
       logger.warn('add-recent-project validation failed', { error: validation.error });
@@ -107,7 +105,6 @@ export function registerProjectsHandlers(): void {
   }));
 
   ipcMain.handle('remove-recent-project', withContext('remove-recent-project', async (_, projectPath: unknown) => {
-    // Validate input using Zod schema
     const validation = validateInput(removeRecentProjectInputSchema, projectPath);
     if (!validation.success) {
       logger.warn('remove-recent-project validation failed', { error: validation.error, input: projectPath });
@@ -119,7 +116,6 @@ export function registerProjectsHandlers(): void {
   }));
 
   ipcMain.handle('pin-project', withContext('pin-project', async (_, projectPath: unknown) => {
-    // Validate input using Zod schema
     const validation = validateInput(pinProjectInputSchema, projectPath);
     if (!validation.success) {
       logger.warn('pin-project validation failed', { error: validation.error, input: projectPath });
@@ -143,7 +139,6 @@ export function registerProjectsHandlers(): void {
   }));
 
   ipcMain.handle('add-pinned-folder', withContext('add-pinned-folder', async (_, data: unknown) => {
-    // Validate input - expect {path: string, name: string}
     if (!data || typeof data !== 'object' || !('path' in data) || !('name' in data)) {
       throw new IPCValidationError('Invalid pinned folder data: expected {path: string, name: string}');
     }

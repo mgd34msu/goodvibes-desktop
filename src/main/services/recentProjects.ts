@@ -40,13 +40,11 @@ export function saveRecentProjects(): void {
 }
 
 export function addRecentProject(projectPath: string, name?: string): void {
-  // Remove if already exists
   const existingIndex = recentProjects.findIndex(p => p.path === projectPath);
   if (existingIndex !== -1) {
     recentProjects.splice(existingIndex, 1);
   }
 
-  // Add to front
   recentProjects.unshift({
     path: projectPath,
     name: name || path.basename(projectPath),

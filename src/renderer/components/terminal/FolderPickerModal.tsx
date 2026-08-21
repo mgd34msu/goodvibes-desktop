@@ -33,7 +33,6 @@ export function FolderPickerModal(): React.JSX.Element | null {
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
 
-  // Load recent projects when modal opens
   useEffect(() => {
     if (isOpen) {
       window.goodvibes.getRecentProjects()

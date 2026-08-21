@@ -83,7 +83,6 @@ export function useAgents(): UseAgentsReturn {
       const scope: 'user' | 'project' = agent.cwd ? 'project' : 'user';
       const projectPath = agent.cwd || undefined;
 
-      // Delete from database
       await window.goodvibes.deleteAgentTemplate(id);
 
       // Uninstall from .claude/agents/ directory

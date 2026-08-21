@@ -87,7 +87,6 @@ class WorkspacePreparationService {
     let contextDir: string | null = null;
     let finalInitialPrompt = initialPrompt || null;
 
-    // Load template if specified
     let template: AgentTemplate | null = null;
     if (templateId) {
       template = getAgentTemplate(templateId);
@@ -102,12 +101,10 @@ class WorkspacePreparationService {
     // Determine CLAUDE.md content
     const finalClaudeMdContent = claudeMdContent || template?.claudeMdContent;
 
-    // Write CLAUDE.md if content provided
     if (finalClaudeMdContent) {
       claudeMdPath = await this.writeClaudeMd(cwd, finalClaudeMdContent, backupFiles, createdFiles);
     }
 
-    // Create context directory and files
     if (contextFiles.length > 0) {
       contextDir = path.join(cwd, CONTEXT_DIR_NAME);
       await this.ensureContextDir(contextDir);
@@ -117,7 +114,6 @@ class WorkspacePreparationService {
       }
     }
 
-    // Create cleanup function
     const cleanupFn = async () => {
       if (cleanupOnExit) {
         await this.cleanup(cwd, createdFiles, backupFiles);
@@ -159,7 +155,6 @@ class WorkspacePreparationService {
       filesToRestore: backups.size,
     });
 
-    // Remove created files
     for (const file of files) {
       try {
         if (existsSync(file)) {
@@ -183,7 +178,6 @@ class WorkspacePreparationService {
       }
     }
 
-    // Remove context directory if empty
     const contextDir = path.join(cwd, CONTEXT_DIR_NAME);
     if (existsSync(contextDir)) {
       try {
@@ -331,7 +325,6 @@ class WorkspacePreparationService {
 
     let content = file.content;
 
-    // Handle different write modes
     if (file.mode && existsSync(filePath)) {
       const existingContent = await fs.readFile(filePath, 'utf-8');
 
@@ -545,5 +538,4 @@ export function shutdownWorkspaceService(): void {
   }
 }
 
-// Export the class for testing
 export { WorkspacePreparationService };

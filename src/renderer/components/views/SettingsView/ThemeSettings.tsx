@@ -142,7 +142,6 @@ export function ThemeSettings({ settings, onChange }: ThemeSettingsProps): React
   const currentTheme = getAllThemes().find((t) => t.id === currentThemeId);
 
   const handleThemeSelect = (themeId: ThemeId, theme: Theme) => {
-    // Update the setting
     onChange('colorTheme', themeId);
     // Apply the theme immediately
     applyTheme(theme);

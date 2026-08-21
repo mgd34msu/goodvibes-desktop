@@ -411,7 +411,6 @@ function ActivityHeatmap({ data }: { data: Array<{ date: string; count: number }
     const dateMap = new Map(data.map(d => [d.date, d.count]));
     const max = Math.max(...data.map(d => d.count), 1);
 
-    // Format date as YYYY-MM-DD in local timezone (not UTC)
     const formatLocalDate = (date: Date): string => {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -430,7 +429,6 @@ function ActivityHeatmap({ data }: { data: Array<{ date: string; count: number }
     const startSunday = new Date(currentSunday);
     startSunday.setDate(currentSunday.getDate() - (numWeeks - 1) * 7);
 
-    // Build grid: grid[weekIndex][dayIndex] where dayIndex 0=Sun, 6=Sat
     const gridData: Array<Array<{ date: string; count: number } | null>> = [];
 
     for (let week = 0; week < numWeeks; week++) {

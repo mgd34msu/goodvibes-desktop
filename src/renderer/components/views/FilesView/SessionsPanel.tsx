@@ -46,7 +46,6 @@ function formatDateTime(isoString: string): string {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  // Format full date/time: "February 2nd 2026 10:09PM"
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'];
   const month = monthNames[date.getMonth()];
@@ -58,7 +57,6 @@ function formatDateTime(isoString: string): string {
   const displayHours = hours % 12 || 12;
   const displayMinutes = minutes.toString().padStart(2, '0');
   
-  // Add ordinal suffix to day
   const getOrdinal = (n: number) => {
     const s = ['th', 'st', 'nd', 'rd'];
     const v = n % 100;
@@ -67,7 +65,6 @@ function formatDateTime(isoString: string): string {
   
   const fullDateTime = `${month} ${day}${getOrdinal(day)} ${year} ${displayHours}:${displayMinutes}${ampm}`;
   
-  // Format recency
   let recency: string;
   if (diffMins < 1) {
     recency = 'just now';

@@ -12,7 +12,6 @@ import type { GitConflictFile } from './types.js';
 export async function gitConflictFiles(cwd: string): Promise<{ success: boolean; files: GitConflictFile[]; error?: string }> {
   if (!cwd) return { success: false, files: [], error: 'No working directory specified' };
 
-  // Get unmerged files
   const result = await runGitCommand(cwd, ['diff', '--name-only', '--diff-filter=U']);
 
   if (!result.success) {

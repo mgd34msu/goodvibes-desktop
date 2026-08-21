@@ -151,7 +151,6 @@ describe('useSessions', () => {
     });
 
     it('returns loading state while fetching', async () => {
-      // Create a promise that never resolves to keep loading state
       vi.mocked(window.goodvibes.getActiveSessions).mockImplementation(
         () => new Promise(() => {})
       );
@@ -585,7 +584,6 @@ describe('useLiveSessions', () => {
         wrapper: createWrapper(),
       });
 
-      // Wait for initial fetch
       await act(async () => {
         await vi.advanceTimersByTimeAsync(100);
       });
@@ -1192,7 +1190,6 @@ describe('useAppUptime', () => {
         vi.advanceTimersByTime(500); // Another 500ms = total 1000ms
       });
 
-      // Now it should be 1
       expect(result.current).toBe(1);
     });
 

@@ -115,22 +115,17 @@ export class Logger {
 
   private static initFileLogging(): void {
     try {
-      // Get log directory
       const logDir = Logger.config.logDir || path.join(app.getPath('userData'), 'logs');
 
-      // Create log directory if needed
       if (!fs.existsSync(logDir)) {
         fs.mkdirSync(logDir, { recursive: true });
       }
 
-      // Create log file with date
       const date = getTodayString();
       Logger.currentLogFile = path.join(logDir, `goodvibes-${date}.log`);
 
-      // Open write stream in append mode
       Logger.logStream = fs.createWriteStream(Logger.currentLogFile, { flags: 'a' });
 
-      // Set up periodic flush
       Logger.flushInterval = setInterval(() => {
         Logger.flush();
       }, 5000);
@@ -149,7 +144,6 @@ export class Logger {
         .map(f => ({ name: f, path: path.join(logDir, f), stat: fs.statSync(path.join(logDir, f)) }))
         .sort((a, b) => b.stat.mtimeMs - a.stat.mtimeMs);
 
-      // Remove old files beyond maxFiles
       while (files.length > Logger.config.maxFiles) {
         const oldFile = files.pop();
         if (oldFile) {

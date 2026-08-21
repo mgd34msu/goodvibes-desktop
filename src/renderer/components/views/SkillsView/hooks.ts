@@ -105,7 +105,6 @@ export function useAgentSkills(): UseAgentSkillsReturn {
         throw new Error('Skill not found');
       }
 
-      // Delete from database
       await window.goodvibes.deleteSkill(id);
 
       // Uninstall from .claude/skills/ directory

@@ -8,7 +8,6 @@ import { HookServerService } from './service.js';
 export type { HookPayload, HookResponse, HookHandler } from './types.js';
 export { HOOK_SERVER_PORT, getPayloadValue } from './types.js';
 
-// Import for local use
 import { HOOK_SERVER_PORT as DEFAULT_PORT } from './types.js';
 
 // Re-export the service class

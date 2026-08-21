@@ -31,16 +31,12 @@ export default function App() {
   const isLoading = useAppStore((s) => s.isLoading);
   const loadingMessage = useAppStore((s) => s.loadingMessage);
 
-  // Initialize scan status listener
   useScanStatus();
 
-  // Initialize keyboard shortcuts
   useKeyboardShortcuts();
 
-  // Initialize IPC listeners
   useIpcListeners();
 
-  // Initialize context menu support
   useContextMenu();
 
   // Apply theme class to document
@@ -49,10 +45,8 @@ export default function App() {
     document.documentElement.classList.add(theme);
   }, [theme]);
 
-  // Load settings on mount
-  // Note: loadSettings updates Zustand store directly, not component state.
-  // Zustand store updates are safe even after component unmount since they
-  // don't trigger React state updates on unmounted components.
+  // loadSettings updates the Zustand store directly, not component state, so this
+  // stays safe even if the component unmounts before it resolves.
   useEffect(() => {
     useSettingsStore.getState().loadSettings();
   }, []);

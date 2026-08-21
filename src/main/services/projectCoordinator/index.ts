@@ -107,7 +107,6 @@ export function getCoordinatorEventEmitter(): EventEmitter {
 function handleProjectRegistryEvent(data: { event: string; [key: string]: unknown }): void {
   switch (data.event) {
     case 'project:registered': {
-      // Initialize state for new project
       const project = data.project as { id?: number } | undefined;
       if (project && typeof project.id === 'number') {
         getProjectState(project.id);
@@ -125,7 +124,6 @@ function handleProjectRegistryEvent(data: { event: string; [key: string]: unknow
       break;
 
     case 'project:switched':
-      // Handle project switch
       if (typeof data.projectId === 'number') {
         broadcastToAllProjects('project:focus-changed', {
           newFocus: data.projectId,

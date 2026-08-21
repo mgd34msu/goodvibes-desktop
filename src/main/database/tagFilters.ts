@@ -254,7 +254,6 @@ export function getFilteredSessionIds(
 ): string[] {
   const { whereClause, params } = buildTagFilterQuery(expression);
   
-  // Build full query selecting from sessions table
   const query = `SELECT s.id FROM sessions s ${whereClause}`;
   
   try {

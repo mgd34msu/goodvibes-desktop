@@ -128,13 +128,11 @@ export function useTagFilter(): UseTagFilterResult {
   const [filteredSessionIds, setFilteredSessionIds] = useState<string[] | null>(null);
   const [isFiltering, setIsFiltering] = useState(false);
 
-  // Calculate active filter count from expression
   const activeFilterCount = useMemo(
     () => countTagsInExpression(tagFilterExpression),
     [tagFilterExpression]
   );
 
-  // Fetch filtered session IDs when expression changes
   useEffect(() => {
     if (!tagFilterExpression) {
       setFilteredSessionIds(null);
@@ -142,7 +140,6 @@ export function useTagFilter(): UseTagFilterResult {
       return;
     }
 
-    // Start filtering
     setIsFiltering(true);
 
     // TODO: This needs an IPC handler to be added to src/preload/api/tags.ts

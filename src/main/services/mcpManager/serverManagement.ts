@@ -89,7 +89,6 @@ export function deleteServer(
 ): void {
   const server = getMCPServer(id);
   if (server) {
-    // Stop if running
     stopServerFn(id);
     deleteMCPServer(id);
     logger.info(`Deleted MCP server: ${server.name}`);

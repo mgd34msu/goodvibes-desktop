@@ -22,7 +22,7 @@ GoodVibes is an Electron-based desktop application that provides an enhanced int
 
 ## Screenshots
 
-### Welcome Screen
+### Welcome screen
 
 The home screen provides quick access to start a new Claude session, open a recent project, use the text editor, or access the terminal.
 
@@ -34,25 +34,25 @@ Full-featured terminal with Claude CLI integration, session tabs, and a session 
 
 ![Terminal](assets/screenshots/terminal.png)
 
-### Session History & Live Monitor
+### Session history & live monitor
 
 Browse all past sessions with filtering and search. The live monitor shows real-time activity across active sessions with an activity feed.
 
 ![Session History](assets/screenshots/session-history.png)
 
-### Session Detail
+### Session detail
 
 Drill into any session to see a detailed breakdown including token usage, cost, duration, messages, and tool usage statistics.
 
 ![Session Detail](assets/screenshots/session-detail.png)
 
-### Analytics Dashboard
+### Analytics dashboard
 
-Comprehensive analytics with cost tracking, token consumption graphs, session trends, per-project breakdowns, and a contribution-style usage heatmap.
+Analytics with cost tracking, token consumption graphs, session trends, per-project breakdowns, and a contribution-style usage heatmap.
 
 ![Analytics Dashboard](assets/screenshots/analytics-dashboard.png)
 
-### File Manager
+### File manager
 
 Built-in file explorer with a tree view, icon grid, and a live preview pane that renders Markdown, displays code with syntax highlighting, and shows file metadata.
 
@@ -62,7 +62,7 @@ The session view displays Claude CLI session history with commit details and con
 
 ![File Manager - Sessions](assets/screenshots/file-manager-sessions.png)
 
-### Project Registry
+### Project registry
 
 Manage multiple projects from a single interface. Each project tracks its sessions, token usage, and cost independently.
 
@@ -74,13 +74,13 @@ Configure pre-tool and post-tool hooks to enforce safety rules, block dangerous 
 
 ![Hooks](assets/screenshots/hooks.png)
 
-### Skills Library
+### Skills library
 
 Browse and manage reusable skills (slash commands) for common workflows like code reviews, security audits, refactoring, and more.
 
 ![Skills](assets/screenshots/skills.png)
 
-### Agent Templates
+### Agent templates
 
 Pre-configured agent personalities for specialized tasks: engineering, code review, architecture, debugging, testing, deployment, and more.
 
@@ -104,7 +104,7 @@ Download the latest release for your operating system from the [Releases page](h
 
 See [Linux Setup](#linux-setup) below for additional configuration on Linux systems.
 
-## GoodVibes Plugin - Highly Recommended
+## GoodVibes plugin: highly recommended
 
 For the best experience, we recommend using GoodVibes alongside the **GoodVibes Plugin** for Claude Code. The plugin provides:
 
@@ -113,7 +113,7 @@ For the best experience, we recommend using GoodVibes alongside the **GoodVibes 
 - **Skills Library**: Reusable slash commands for common workflows (security audits, code reviews, etc.)
 - **MCP Tools**: Extended tooling via Model Context Protocol for code intelligence, validation, and automation
 
-### Quick-install plugin:
+### Quick-install plugin
 
 Copy/Paste these into your terminal of choice. 
 
@@ -126,7 +126,7 @@ curl -sL https://goodvibes.sh/install-plugin.sh | bash
 powershell -ExecutionPolicy Bypass -NoProfile -Command "& { $(Invoke-RestMethod -Uri https://goodvibes.sh/install-plugin.ps1) }"
 ```
 
-#### Download Links
+#### Download links
 - Linux & MacOS: [https://goodvibes.sh/install-plugin.sh](https://goodvibes.sh/install-plugin.sh)
 - MacOS [interactive]: [https://goodvibes.sh/install-plugin.command](https://goodvibes.sh/install-plugin.command)
 - Windows [powershell]: [https://goodvibes.sh/install-plugin.ps1](https://goodvibes.sh/install-plugin.ps1)
@@ -134,21 +134,21 @@ powershell -ExecutionPolicy Bypass -NoProfile -Command "& { $(Invoke-RestMethod 
 
 **Goodvibes Plugin Repo:** [github.com/mgd34msu/goodvibes-plugin](https://github.com/mgd34msu/goodvibes-plugin)
 
-#### Important Security Notes:
+#### Important security notes
 
 Users are **STRONGLY** encouraged to download and inspect these scripts **AND** the plugin source code prior to running / installing them.
 Regardless of what some may claim, as of January 31st 2026, **ALL** CLI plugins and MCP servers have unrestricted access to read, write, and execute code on your computer. 
 This is true for OpenAI, Google, and Anthropic CLIs, as well as any third-party CLIs. The problem is inherent in 1) the MCP standard and 2) with plugins being granted the same rights as native tools.
 
-## GitHub Integration
+## GitHub integration
 
-GoodVibes includes GitHub integration for PR management, issue tracking, and repository operations. Authentication uses GitHub's OAuth Device Flow for secure, seamless login.
+GoodVibes includes GitHub integration for PR management, issue tracking, and repository operations. Authentication uses GitHub's OAuth Device Flow.
 
-### Default Configuration
+### Default configuration
 
-Out of the box, GoodVibes uses a built-in GitHub OAuth App. This works immediately with no setup required—just click "Login with GitHub" in the settings.
+Out of the box, GoodVibes uses a built-in GitHub OAuth App. This works immediately, with no setup required. Just click "Login with GitHub" in the settings.
 
-### Custom OAuth App (Optional)
+### Custom OAuth App (optional)
 
 For users who want full control over their GitHub integration, you can configure your own GitHub OAuth App:
 
@@ -163,7 +163,7 @@ For users who want full control over their GitHub integration, you can configure
    - Choose **Device Flow** (recommended) or **Authorization Code Flow**
    - If using Authorization Code Flow, also enter your **Client Secret**
 
-### Why Use a Custom OAuth App?
+### Why use a custom OAuth App?
 
 | Built-in App | Custom App |
 |--------------|------------|
@@ -182,11 +182,11 @@ For users who want full control over their GitHub integration, you can configure
 - **Git**: Required for version control features
 - **Windows/macOS/Linux**: Cross-platform support
 
-## Linux Setup
+## Linux setup
 
 When running GoodVibes from a desktop launcher (not a terminal), your shell's PATH modifications from `.bashrc` or `.zshrc` may not be available. This can prevent GoodVibes from finding the `claude` CLI.
 
-### Fix PATH for Desktop Apps
+### Fix PATH for desktop apps
 
 Add your local bin directory to the systemd user environment:
 
@@ -197,7 +197,7 @@ echo 'PATH="$HOME/.local/bin:$PATH"' > ~/.config/environment.d/path.conf
 
 Then **log out and back in** for changes to take effect.
 
-### AppImage Desktop Entry
+### AppImage desktop entry
 
 To create a desktop entry for the AppImage with proper flags:
 
@@ -244,7 +244,7 @@ EOF
    npm run build
    ```
 
-## Development Commands
+## Development commands
 
 | Command | Description |
 |---------|-------------|
@@ -263,7 +263,7 @@ EOF
 | `npm run package:mac` | Package for macOS |
 | `npm run package:linux` | Package for Linux |
 
-## Architecture Overview
+## Architecture overview
 
 GoodVibes follows a standard Electron architecture with separate main and renderer processes:
 
@@ -308,7 +308,7 @@ goodvibes/
 └── build/                       # Build resources
 ```
 
-### Key Technologies
+### Key technologies
 
 - **Electron**: Desktop application framework
 - **React 19**: UI framework
@@ -321,7 +321,7 @@ goodvibes/
 - **xterm.js**: Terminal UI
 - **Tailwind CSS**: Styling
 
-### IPC Communication
+### IPC communication
 
 Communication between main and renderer processes uses Electron's contextBridge:
 
@@ -347,7 +347,7 @@ SQLite database with WAL mode for concurrent access. Tables include:
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License. See the LICENSE file for details.
 
 ## Acknowledgments
 

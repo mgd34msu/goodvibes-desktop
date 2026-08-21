@@ -37,7 +37,6 @@ export function prettifyJSON(content: string): React.ReactNode {
 export function PrettifiedObject({ data, indent = 0 }: PrettifiedObjectProps): React.ReactElement {
   const indentPx = indent * 16;
 
-  // Handle null/undefined
   if (data === null || data === undefined) {
     return (
       <span className="text-surface-500 text-sm italic">
@@ -46,9 +45,7 @@ export function PrettifiedObject({ data, indent = 0 }: PrettifiedObjectProps): R
     );
   }
 
-  // Handle primitives
   if (typeof data === 'string') {
-    // Check if it's a long multi-line string
     if (data.includes('\n') && data.length > 100) {
       return (
         <pre className="text-surface-300 text-sm font-mono whitespace-pre-wrap bg-surface-800/30 rounded px-2 py-1 mt-1">
@@ -67,7 +64,6 @@ export function PrettifiedObject({ data, indent = 0 }: PrettifiedObjectProps): R
     return <span className="text-amber-400 text-sm">{data ? 'true' : 'false'}</span>;
   }
 
-  // Handle arrays
   if (Array.isArray(data)) {
     // Empty array
     if (data.length === 0) {
@@ -107,7 +103,6 @@ export function PrettifiedObject({ data, indent = 0 }: PrettifiedObjectProps): R
     );
   }
 
-  // Handle objects
   if (typeof data === 'object') {
     const entries = Object.entries(data as Record<string, unknown>);
 

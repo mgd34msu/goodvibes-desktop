@@ -128,7 +128,7 @@ function validateSettingsFromIpc(
   saved: Record<string, unknown>,
   keysToSkip: Set<string>
 ): RecoveryResult<AppSettings> {
-  // First, filter out keys that should be skipped (due to migration)
+  // Keys marked for migration are skipped so their new defaults aren't overwritten by stale saved values
   const filteredSaved: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(saved)) {
     if (!keysToSkip.has(key)) {
@@ -136,7 +136,6 @@ function validateSettingsFromIpc(
     }
   }
 
-  // Validate and recover
   return validateAndRecover(filteredSaved, settingsSchema);
 }
 
@@ -178,7 +177,6 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     try {
       const saved = await window.goodvibes.getAllSettings();
 
-      // Check settings version for migrations
       const savedVersion = (saved.settingsVersion as number) || 1;
       const needsMigration = savedVersion < SETTINGS_VERSION;
 
@@ -196,7 +194,6 @@ export const useSettingsStore = create<SettingsState>((set) => ({
         });
       }
 
-      // Validate and recover settings with field-level error handling
       const recovery = validateSettingsFromIpc(saved, keysToReset);
 
       // Log recovery information
@@ -211,7 +208,6 @@ export const useSettingsStore = create<SettingsState>((set) => ({
       // This ensures that if the app crashes mid-migration, the version won't be
       // updated without the settings being reset (which would skip the migration on next run)
       if (needsMigration) {
-        // Save the reset keys with their new default values in parallel
         const migrationPromises = Array.from(keysToReset).map(async (key) => {
           try {
             const settingsKey = key as keyof AppSettings;

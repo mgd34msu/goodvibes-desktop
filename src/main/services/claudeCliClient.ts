@@ -179,7 +179,6 @@ export async function generateTagSuggestionsViaCli(
 ): Promise<TagSuggestion[]> {
   const startTime = Date.now();
 
-  // Validate inputs
   if (!sessionContext || !sessionContext.trim()) {
     logger.warn('Empty context provided to generateTagSuggestionsViaCli');
     return [];
@@ -190,14 +189,11 @@ export async function generateTagSuggestionsViaCli(
     existingTagCount: existingTags.length,
   });
 
-  // Build the prompt
   const prompt = buildPrompt(sessionContext, existingTags);
 
   try {
-    // Call Claude CLI with structured output
     const response = await callClaudeCli(prompt);
     
-    // Parse and validate response
     const suggestions = parseCliResponse(response);
 
     const duration = Date.now() - startTime;
@@ -232,7 +228,6 @@ export async function generateBatchTagSuggestions(
 ): Promise<Map<string, TagSuggestion[]>> {
   const startTime = Date.now();
 
-  // Validate inputs
   if (!sessions || sessions.length === 0) {
     logger.warn('Empty sessions array provided to generateBatchTagSuggestions');
     return new Map();
@@ -242,14 +237,11 @@ export async function generateBatchTagSuggestions(
     sessionCount: sessions.length,
   });
 
-  // Build the batch prompt
   const prompt = buildBatchPrompt(sessions);
 
   try {
-    // Call Claude CLI with structured output
     const response = await callClaudeCliBatch(prompt);
     
-    // Parse and validate response
     const results = parseBatchCliResponse(response, sessions);
 
     const duration = Date.now() - startTime;
@@ -302,7 +294,7 @@ Prefer existing tags when appropriate. Only suggest new tags if truly needed.`;
 function buildBatchPrompt(
   sessions: Array<{ sessionId: string; context: TagSuggestionContext; filePath?: string }>
 ): string {
-  // Start with [session tagging] prefix so these sessions can be identified and auto-archived
+  // The prefix lets these sessions be identified later for auto-archiving
   let prompt = `${SESSION_TAGGING_PREFIX}\n\nRead each session file below and suggest 3-5 tags per session.\n\n`;
 
   sessions.forEach((session) => {
@@ -324,7 +316,7 @@ function buildBatchPrompt(
  */
 function callClaudeCliBatch(prompt: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    // Build CLI arguments - pass prompt directly (shell: false avoids escaping issues)
+    // Passed directly as an argument rather than through a shell, so shell: false avoids escaping issues
     const args = [
       '-p', prompt,
       '--model', 'haiku',
@@ -357,7 +349,6 @@ function callClaudeCliBatch(prompt: string): Promise<string> {
     let stderr = '';
     let timeoutId: NodeJS.Timeout | null = null;
 
-    // Set up timeout (longer for batch processing)
     const batchTimeout = CLI_TIMEOUT_MS * 3; // 6 minutes for batch of up to 10 sessions
     timeoutId = setTimeout(() => {
       logger.warn('Claude CLI batch timeout, killing process');
@@ -375,7 +366,6 @@ function callClaudeCliBatch(prompt: string): Promise<string> {
       stderr += data.toString();
     });
 
-    // Handle process exit
     child.on('close', (code: number | null) => {
       cleanup();
       if (timeoutId) {
@@ -395,7 +385,6 @@ function callClaudeCliBatch(prompt: string): Promise<string> {
       resolve(stdout);
     });
 
-    // Handle spawn errors
     child.on('error', (error: Error) => {
       cleanup();
       if (timeoutId) {
@@ -419,7 +408,6 @@ function callClaudeCliBatch(prompt: string): Promise<string> {
  */
 function callClaudeCli(prompt: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    // Build CLI arguments
     const args = [
       '-p', prompt,
       '--output-format', 'json',
@@ -443,7 +431,6 @@ function callClaudeCli(prompt: string): Promise<string> {
     let stderr = '';
     let timeoutId: NodeJS.Timeout | null = null;
 
-    // Set up timeout
     timeoutId = setTimeout(() => {
       logger.warn('Claude CLI timeout, killing process');
       child.kill('SIGTERM');
@@ -460,7 +447,6 @@ function callClaudeCli(prompt: string): Promise<string> {
       stderr += data.toString();
     });
 
-    // Handle process exit
     child.on('close', (code: number | null) => {
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -479,7 +465,6 @@ function callClaudeCli(prompt: string): Promise<string> {
       resolve(stdout);
     });
 
-    // Handle spawn errors
     child.on('error', (error: Error) => {
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -571,7 +556,6 @@ function parseBatchCliResponse(
   let sessionsData: Array<{ sessionId: string; tags: TagSuggestion[] }> | undefined;
   
   // Try new format: content[].input.sessions where name === 'StructuredOutput'
-  // Handle both direct content array and message.content wrapper
   const contentArray = response.content ?? response.message?.content;
   if (contentArray && Array.isArray(contentArray)) {
     const structuredOutput = contentArray.find(
@@ -609,7 +593,6 @@ function parseBatchCliResponse(
     throw new Error('Claude CLI structured_output.sessions must be an array');
   }
 
-  // Build result map
   const results = new Map<string, TagSuggestion[]>();
   
   for (const sessionData of sessionsData) {
@@ -700,7 +683,6 @@ export async function archiveTaggingSession(): Promise<void> {
       .map(d => path.join(claudeDir, d.name));
 
     for (const projectDir of projectDirs) {
-      // Get all .jsonl files (session files) in the project directory
       const sessionFiles = fs.readdirSync(projectDir, { withFileTypes: true })
         .filter(f => f.isFile() && f.name.endsWith('.jsonl') && !f.name.startsWith('agent-'))
         .map(f => {
@@ -713,13 +695,11 @@ export async function archiveTaggingSession(): Promise<void> {
           };
         });
 
-      // Check each session for the tagging prefix
       for (const file of sessionFiles) {
         try {
           const content = fs.readFileSync(file.filePath, 'utf-8');
           const lines = content.split('\n').filter(l => l.trim());
           
-          // Check first few lines for user message with tagging prefix
           for (const line of lines.slice(0, 5)) {
             try {
               const entry = JSON.parse(line);
@@ -740,7 +720,6 @@ export async function archiveTaggingSession(): Promise<void> {
                   }
                 }
 
-                // Check if this is a tagging session
                 if (messageText.includes(SESSION_TAGGING_PREFIX)) {
                   if (!mostRecentTaggingSession || file.mtime > mostRecentTaggingSession.mtime) {
                     mostRecentTaggingSession = file;

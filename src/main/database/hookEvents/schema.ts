@@ -79,7 +79,6 @@ export function createHookEventsTables(): void {
     )
   `);
 
-  // Create indexes
   createHookEventsIndexes();
 
   logger.info('Hook events tables created');

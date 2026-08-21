@@ -86,13 +86,10 @@ describe('OnboardingWizard', () => {
         />
       );
 
-      // Check step title (as heading)
       expect(screen.getByRole('heading', { name: 'Test Step 1' })).toBeInTheDocument();
       
-      // Check step content
       expect(screen.getByTestId('step-content')).toHaveTextContent('Test Step 1 Content');
       
-      // Check progress indicator
       expect(screen.getByText('Step 1 of 3')).toBeInTheDocument();
     });
 
@@ -374,7 +371,6 @@ describe('OnboardingWizard', () => {
         expect(screen.getByRole('heading', { name: 'Step 1' })).toBeInTheDocument();
       });
 
-      // Validate should not have been called when going back
       expect(mockValidate).not.toHaveBeenCalled();
     });
   });

@@ -35,7 +35,6 @@ export async function initializeApp(): Promise<void> {
   logger.info('Initializing GoodVibes...');
 
   try {
-    // Initialize database
     await initDatabase(app.getPath('userData'));
     logger.info('Database initialized');
 
@@ -52,7 +51,6 @@ export async function initializeApp(): Promise<void> {
       logger.info('Session backup disabled in settings');
     }
 
-    // Create hook events tables
     createHookEventsTables();
     logger.info('Hook events tables created');
 
@@ -60,11 +58,9 @@ export async function initializeApp(): Promise<void> {
     clearActivityLog();
     logger.info('Activity log cleared');
 
-    // Initialize terminal manager
     initTerminalManager();
     logger.info('Terminal manager initialized');
 
-    // Initialize agent registry
     initAgentRegistry();
     logger.info('Agent registry initialized');
 
@@ -74,7 +70,6 @@ export async function initializeApp(): Promise<void> {
     // Wire up hook server events for debug logging
     wireHookServerEvents();
 
-    // Initialize session manager with status callback
     initSessionManager((status, message, progress) => {
       const mainWindow = getMainWindow();
       if (mainWindow && !mainWindow.isDestroyed()) {
@@ -83,22 +78,17 @@ export async function initializeApp(): Promise<void> {
     });
     logger.info('Session manager initialized');
 
-    // Load recent projects
     loadRecentProjects();
     logger.info('Recent projects loaded');
 
-    // Load pinned folders
     loadPinnedFolders();
     logger.info('Pinned folders loaded');
 
-    // Initialize GitHub service (restore auth state from storage)
     await initializeGitHub();
     logger.info('GitHub service initialized');
 
-    // Start hook server and install hook scripts
     await initializeHookSystem();
 
-    // Register IPC handlers
     registerAllIpcHandlers();
     logger.info('IPC handlers registered');
 
@@ -111,12 +101,10 @@ export async function initializeApp(): Promise<void> {
       logger.info('Session import complete');
     }
 
-    // Create main window
     createWindow();
     createMenu();
     logger.info('Window created');
 
-    // Start tag suggestion service after window is ready
     setupTagSuggestionService();
 
     logger.info('GoodVibes initialized successfully');
@@ -159,7 +147,6 @@ async function initializeHookSystem(): Promise<void> {
 function setupTagSuggestionService(): void {
   const mainWindow = getMainWindow();
   if (mainWindow) {
-    // Set up auto-apply listener for completed scans
     tagSuggestionService.on('complete', async (sessionId, suggestions) => {
       try {
         const mainWindow = getMainWindow();

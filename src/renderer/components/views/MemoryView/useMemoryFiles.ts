@@ -39,11 +39,9 @@ export function useMemoryFiles(
   // Track if initial file selection has been done
   const hasSelectedInitialFile = useRef(false);
 
-  // Load files - uses knowledge base as storage for CLAUDE.md content
   const loadFiles = useCallback(async () => {
     setLoading(true);
     try {
-      // Get all knowledge entries with 'claude-md' category
       const entries = await window.goodvibes.getAllKnowledgeEntries();
       const claudeMdEntries = entries.filter(
         (e: { category?: string }) => e.category === 'claude-md'
@@ -141,7 +139,6 @@ export function useMemoryFiles(
     loadFiles();
   }, [loadFiles]);
 
-  // Check for unsaved changes
   useEffect(() => {
     setHasUnsavedChanges(content !== originalContent);
   }, [content, originalContent]);
@@ -171,7 +168,6 @@ export function useMemoryFiles(
       const tags = `scope:${selectedFile.scope}`;
 
       if (selectedFile.entryId) {
-        // Update existing entry using cached ID - no fetch needed
         await window.goodvibes.updateKnowledgeEntry(
           selectedFile.entryId,
           title,
@@ -180,14 +176,12 @@ export function useMemoryFiles(
           tags
         );
       } else {
-        // Create new entry
         const newEntry = await window.goodvibes.createKnowledgeEntry(
           title,
           content,
           'claude-md',
           tags
         );
-        // Update the file with the new entry ID
         if (newEntry?.id) {
           setFiles((prev) =>
             prev.map((f) =>
@@ -197,11 +191,9 @@ export function useMemoryFiles(
         }
       }
 
-      // Update state
       setOriginalContent(content);
       setHasUnsavedChanges(false);
 
-      // Update file in list
       setFiles((prev) =>
         prev.map((f) =>
           f.path === selectedFile.path

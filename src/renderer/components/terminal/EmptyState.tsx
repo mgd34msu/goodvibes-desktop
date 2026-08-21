@@ -29,7 +29,6 @@ export function EmptyState({ onNewSession, onNewTerminal, onOpenTextEditor, onQu
   const [recentSession, setRecentSession] = useState<RecentSession | null>(null);
 
   useEffect(() => {
-    // Load most recent session for quick restart
     window.goodvibes.getMostRecentSession().then(session => {
       if (session) {
         setRecentSession({

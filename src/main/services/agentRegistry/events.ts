@@ -109,7 +109,6 @@ export function validateSessionMap(): number {
   for (const [sessionId, agentId] of sessionToAgentMap.entries()) {
     const agent = getAgent(agentId);
 
-    // Remove if agent doesn't exist or is in a terminal state
     if (!agent) {
       entriesToRemove.push(sessionId);
       cleanedCount++;
@@ -157,7 +156,7 @@ export function wireUpHookEvents(callbacks: {
     // Clear any existing listeners before adding new ones
     removeHookServerListeners();
 
-    // Define listeners as named functions so we can remove them later
+    // Named functions so removeHookServerListeners can remove these exact references later
     const onSessionStart = ({ sessionId }: { sessionId?: string }) => {
       if (sessionId) {
         // Record session-to-agent mapping
@@ -195,7 +194,6 @@ export function wireUpHookEvents(callbacks: {
       }
     };
 
-    // Register listeners and store references for cleanup
     hookServer.on('session:start', onSessionStart);
     hookServerListeners.push({ event: 'session:start', listener: onSessionStart as (...args: unknown[]) => void });
 

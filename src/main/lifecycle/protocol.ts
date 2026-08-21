@@ -43,7 +43,6 @@ export async function handleProtocolUrl(url: string): Promise<void> {
   try {
     const parsedUrl = new URL(url);
 
-    // Handle OAuth callback
     if (parsedUrl.host === 'oauth' || parsedUrl.pathname.startsWith('/oauth')) {
       const code = parsedUrl.searchParams.get('code');
       const state = parsedUrl.searchParams.get('state');
@@ -83,7 +82,6 @@ export function setupSingleInstance(): boolean {
   // Register protocol before ready (required on some platforms)
   registerProtocol();
 
-  // Handle second instance (Windows/Linux protocol handling)
   app.on('second-instance', (_event, commandLine, _workingDirectory) => {
     logger.info('Second instance detected', { commandLine });
 

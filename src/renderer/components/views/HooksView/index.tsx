@@ -64,7 +64,6 @@ export default function HooksView() {
     [confirmDeleteHook, handleDelete]
   );
 
-  // Open install modal for built-in hook
   const handleOpenInstallModal = useCallback((builtinHook: BuiltinHook) => {
     setHookToInstall(builtinHook);
   }, []);

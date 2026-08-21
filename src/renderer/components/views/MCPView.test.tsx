@@ -178,7 +178,6 @@ describe('MCPView', () => {
 
       const { container } = await renderMCPView();
 
-      // Check for loading spinner
       const spinner = container.querySelector('.animate-spin');
       expect(spinner).toBeInTheDocument();
 

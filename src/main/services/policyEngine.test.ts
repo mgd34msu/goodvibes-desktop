@@ -219,7 +219,6 @@ describe('Policy Engine', () => {
     nextPolicyId = 1;
     vi.clearAllMocks();
 
-    // Initialize fresh engine
     engine = initializePolicyEngine();
   });
 
@@ -709,7 +708,6 @@ describe('Policy Engine', () => {
   describe('Conditions - Time Windows', () => {
     it('should pass when current hour is within normal time window', async () => {
       const currentHour = new Date().getHours();
-      // Create a window that includes current hour
       const startHour = (currentHour - 1 + 24) % 24;
       const endHour = (currentHour + 2) % 24;
 
@@ -734,7 +732,6 @@ describe('Policy Engine', () => {
 
     it('should fail when current hour is outside normal time window', async () => {
       const currentHour = new Date().getHours();
-      // Create a window that excludes current hour
       const startHour = (currentHour + 2) % 24;
       const endHour = (currentHour + 4) % 24;
 
@@ -783,7 +780,6 @@ describe('Policy Engine', () => {
     });
 
     it('should reject requests during day hours for overnight-only window', async () => {
-      // Create a window that is definitely excluding daytime hours
       // Overnight window 23-1 would only allow hours 23 and 0
       // Any hour from 1-22 should be rejected
       addTestPolicy({
@@ -974,7 +970,6 @@ describe('Policy Engine', () => {
 
   describe('Queue Management', () => {
     it('should approve queued item', async () => {
-      // Add item to queue
       const request = createPermissionRequest();
       const result = await engine.processPermissionRequest(request);
 

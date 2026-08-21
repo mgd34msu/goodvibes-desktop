@@ -16,7 +16,6 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 
-// Check if better-sqlite3 can be loaded
 let canLoadDatabase = true;
 try {
   require('better-sqlite3');
@@ -374,7 +373,6 @@ describeIfDb('Tag Performance Benchmarks', () => {
   it('should handle many tags per session', async () => {
     upsertSession({ id: 'session-1' });
 
-    // Create 50 tags
     for (let i = 0; i < 50; i++) {
       createTag(`tag-${i}`, `#${i.toString(16).padStart(6, '0')}`);
     }
@@ -521,9 +519,7 @@ describeIfDb('Concurrent Access Performance Benchmarks', () => {
       'Mixed operations (100 reads + 100 writes)',
       () => {
         for (let i = 0; i < 100; i++) {
-          // Read
           getSession(`session-${i}`);
-          // Write
           upsertSession({
             id: `session-${i}`,
             tokenCount: Math.random() * 10000,

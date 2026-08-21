@@ -33,7 +33,6 @@ function useGitStateImpl(cwd: string) {
   const [state, setState] = useState<GitPanelState>(initialGitPanelState);
   const lastRemoteFetchRef = useRef<number>(0);
 
-  // Fetch LOCAL git information only (no remote calls)
   const fetchLocalGitInfo = useCallback(async () => {
     if (!cwd) return;
 
@@ -50,7 +49,6 @@ function useGitStateImpl(cwd: string) {
         return;
       }
 
-      // Fetch only LOCAL git info in parallel (no gitAheadBehind - that's remote)
       const [
         detailedStatus,
         branchesResult,
@@ -112,7 +110,6 @@ function useGitStateImpl(cwd: string) {
     }
   }, [cwd]);
 
-  // Fetch REMOTE git information (ahead/behind counts)
   const fetchRemoteGitInfo = useCallback(async () => {
     if (!cwd) return;
 
@@ -136,7 +133,6 @@ function useGitStateImpl(cwd: string) {
     }
   }, [cwd, setState]);
 
-  // Fetch ALL git information (local + remote) - used for initial load
   const fetchGitInfo = useCallback(async () => {
     await fetchLocalGitInfo();
     await fetchRemoteGitInfo();
@@ -146,7 +142,6 @@ function useGitStateImpl(cwd: string) {
   useEffect(() => {
     fetchGitInfo();
 
-    // Start watching for git changes
     window.goodvibes.gitWatch(cwd);
 
     // Listen for git-changed events
@@ -195,7 +190,6 @@ function useGitStateImpl(cwd: string) {
     window.addEventListener('focus', handleFocus);
     window.addEventListener('blur', handleBlur);
 
-    // Start if window is already focused
     if (document.hasFocus()) {
       startInterval();
     }

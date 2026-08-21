@@ -271,10 +271,6 @@ export interface ScanStatus {
   };
 }
 
-// ============================================================================
-// Export Formats
-// ============================================================================
-
 export type ExportFormat = 'markdown' | 'json' | 'html';
 
 export interface ExportOptions {

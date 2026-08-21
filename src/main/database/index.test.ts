@@ -15,7 +15,6 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 
-// Check if better-sqlite3 can be loaded
 let canLoadDatabase = true;
 try {
   require('better-sqlite3');
@@ -27,7 +26,6 @@ try {
 const describeIfDb = canLoadDatabase ? describe : describe.skip;
 
 // We need to test the actual database module, but with a test database
-// Create a temporary directory for the test database
 const TEST_DIR = path.join(os.tmpdir(), 'goodvibes-test-' + Date.now());
 
 // Since the database module uses a global instance, we need to import it
@@ -47,7 +45,7 @@ vi.mock('../services/logger.js', () => ({
   },
 }));
 
-// Import after mocks - use dynamic import to prevent module load errors
+// Dynamic import: importing before mocks are registered would load the real module
 let initDatabase: typeof import('./index.js').initDatabase;
 let closeDatabase: typeof import('./index.js').closeDatabase;
 let getDatabase: typeof import('./index.js').getDatabase;
@@ -118,12 +116,10 @@ beforeAll(async () => {
   logActivity = dbModule.logActivity;
   getRecentActivity = dbModule.getRecentActivity;
 
-  // Create test directory
   if (!fs.existsSync(TEST_DIR)) {
     fs.mkdirSync(TEST_DIR, { recursive: true });
   }
 
-  // Initialize database
   await initDatabase(TEST_DIR);
 });
 

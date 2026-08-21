@@ -47,7 +47,6 @@ export const EntryBlock = React.memo(function EntryBlock({ entry, settings, glob
   const effectiveExpanded = globalExpanded !== null ? globalExpanded : getDefaultExpand();
   const [isExpanded, setIsExpanded] = useState(effectiveExpanded);
 
-  // Update when global expand changes
   useEffect(() => {
     if (globalExpanded !== null) {
       setIsExpanded(globalExpanded);
@@ -61,14 +60,12 @@ export const EntryBlock = React.memo(function EntryBlock({ entry, settings, glob
     return text.slice(0, 100).trim() + '...';
   }, [entry.content]);
 
-  // Get copyable content and label for this entry
   const { copyContent, copyLabel } = useMemo(() => {
     return getEntryCopyInfo(entry);
   }, [entry]);
 
   const handleToggle = () => setIsExpanded(!isExpanded);
 
-  // Handle keyboard interaction
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();

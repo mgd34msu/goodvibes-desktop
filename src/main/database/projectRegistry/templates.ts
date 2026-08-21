@@ -139,7 +139,6 @@ export function applyTemplateToProject(projectId: number, templateId: number): R
 
   if (!template || !project) return null;
 
-  // Update project settings from template
   updateRegisteredProject(projectId, { settings: template.settings });
 
   // Clear existing agents and apply template agents

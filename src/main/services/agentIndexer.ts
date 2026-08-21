@@ -123,7 +123,6 @@ export class AgentIndexer extends EventEmitter {
       // Clear existing agents (full reindex)
       clearIndexedAgents();
 
-      // Parse and index each agent
       const categoryCache = new Map<string, AgencyCategory>();
       let indexed = 0;
 
@@ -263,7 +262,6 @@ export class AgentIndexer extends EventEmitter {
         .join(' ');
     }
 
-    // Calculate category path from directory structure
     const relativePath = path.relative(agentsPath, filePath);
     const categoryPath = path.dirname(relativePath).replace(/\\/g, '/');
 
@@ -288,7 +286,6 @@ export class AgentIndexer extends EventEmitter {
   private parseFrontmatter(content: string): AgentFrontmatter {
     const result: AgentFrontmatter = { name: '' };
 
-    // Check for YAML frontmatter
     const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
     if (!frontmatterMatch) {
       // Try to extract name from first heading
@@ -392,20 +389,17 @@ export class AgentIndexer extends EventEmitter {
     categoryPath: string,
     cache: Map<string, AgencyCategory>
   ): Promise<AgencyCategory> {
-    // Check cache first
     const cached = cache.get(categoryPath);
     if (cached) {
       return cached;
     }
 
-    // Check database
     const existing = getCategoryByPath(`agent:${categoryPath}`);
     if (existing) {
       cache.set(categoryPath, existing);
       return existing;
     }
 
-    // Create category and parent categories
     const parts = categoryPath.split('/').filter(p => p.length > 0);
     let parentId: number | null = null;
     let currentPath = '';

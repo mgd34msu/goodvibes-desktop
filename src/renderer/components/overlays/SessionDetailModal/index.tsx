@@ -45,7 +45,6 @@ export function SessionDetailModal({ session, onClose }: SessionDetailModalProps
     enabled: activeTab === 'messages',
   });
 
-  // Fetch fresh session data with token stats immediately on modal open
   const { data: refreshedSession } = useQuery({
     queryKey: ['session-refresh', session.id],
     queryFn: () => window.goodvibes.refreshSession(session.id),
@@ -67,7 +66,6 @@ export function SessionDetailModal({ session, onClose }: SessionDetailModalProps
     onClose();
   };
 
-  // Calculate session duration
   const duration = currentSession.startTime && currentSession.endTime
     ? Math.floor((new Date(currentSession.endTime).getTime() - new Date(currentSession.startTime).getTime()) / 1000)
     : null;

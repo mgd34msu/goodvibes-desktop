@@ -17,7 +17,6 @@ export function TagSettings({ settings, onChange }: TagSettingsProps): React.JSX
   const [isScanModalOpen, setIsScanModalOpen] = useState(false);
   const [isLoadingCount, setIsLoadingCount] = useState(true);
 
-  // Fetch pending session count on mount
   useEffect(() => {
     const fetchPendingCount = async () => {
       try {
