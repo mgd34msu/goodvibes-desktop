@@ -7,7 +7,6 @@
     "_failedTestCountComment": "Advisory only, recorded as the highest of four runs on 2026-08-20 (188, 190, 191, 192). The tests that move live in src/main/services/git.test.ts, which is already listed below; the set of failing FILES was identical in all four runs. The file list is the gate, this number is not.",
     "failedTestCount": 192,
     "failingFiles": [
-      "src/main/database/__tests__/migrations.test.ts",
       "src/main/database/agencyIndex/agencyIndex.test.ts",
       "src/main/database/benchmark.test.ts",
       "src/main/database/database-extended.test.ts",
