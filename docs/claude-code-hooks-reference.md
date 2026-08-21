@@ -1,6 +1,21 @@
 # Claude Code Hooks: Comprehensive Reference Guide
 
-Hooks are shell commands or LLM prompts that execute automatically at specific points in Claude Code's lifecycle. They provide deterministic control over Claude's behavior—unlike instructions in CLAUDE.md which are suggestions, hooks are guaranteed to run.
+Hooks are shell commands or LLM prompts that execute automatically at specific points in
+Claude Code's lifecycle. They give deterministic control over Claude's behavior. Instructions
+in CLAUDE.md are suggestions that Claude may weigh against everything else in context, whereas
+a hook is a program that runs every time its event fires.
+
+### Scope of this document
+
+This is a reference for Claude Code's own hook system, covering all thirteen events the CLI
+exposes. It is included here because GoodVibes configures those hooks on your behalf, and the
+schemas below are what your hook scripts will actually receive.
+
+The GoodVibes **Hooks** view creates hooks for six of these events, namely `PreToolUse`,
+`PostToolUse`, `SessionStart`, `SessionEnd`, `Notification`, and `Stop`. The remaining events
+documented here are reachable by editing your Claude Code settings files directly, using the
+configuration described in the next section. Where this document and the GoodVibes interface
+disagree on what is available, the interface is the narrower of the two by design.
 
 ---
 

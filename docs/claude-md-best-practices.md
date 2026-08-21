@@ -17,6 +17,26 @@ Claude Code loads these in order (higher = more authoritative, loaded first):
 
 ---
 
+## Editing these files in GoodVibes
+
+The **Memory** view is the built-in editor for these files. It covers three of the four levels
+above, namely user, project, and project local. Enterprise policy files are deliberately out
+of scope, since they are managed by whoever administers the machine rather than by the person
+using it.
+
+The view lists the files it found, opens each in a Markdown editor, and offers starter
+templates drawn from the practices in this document. Templates carry `{{placeholder}}` fields,
+such as `{{project_name}}` and `{{package_manager}}`, which you fill in when applying one, so
+a new file starts as a filled-in draft rather than a blank page.
+
+Templates are grouped by the level they suit. User templates cover personal preferences and
+tooling shortcuts. Project templates range from a minimal command-and-architecture skeleton to
+fuller ones for monorepos, APIs, and frontend applications. Local templates cover development
+environment overrides, worktree notes, and rules being trialled before being proposed to the
+team.
+
+---
+
 ## User-level (`~/.claude/CLAUDE.md`)
 
 **Best for:**
