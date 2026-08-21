@@ -28,10 +28,11 @@ jobs:
           node-version: ${{ inputs.node_version }}
       - name: Install the requested spec
         run: npm install ${{ inputs.package_spec }} --save
-      - name: Verify Electron's binary landed, retry its installer once if not
+      - name: Run native install scripts explicitly and verify
         run: |
-          node -e "require('electron')" 2>/dev/null || node node_modules/electron/install.js
+          npm rebuild electron better-sqlite3
           node -e "console.log('electron ok:', typeof require('electron'))"
+          node -e "new (require('better-sqlite3'))(':memory:').close(); console.log('better-sqlite3 ok')"
       - name: Ratchets and build
         run: |
           node scripts/ci/check-typecheck-ratchet.mjs
